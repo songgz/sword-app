@@ -1,0 +1,7 @@
+{
+  "name": "sword-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
