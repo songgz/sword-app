@@ -234,3 +234,54 @@
     --ion-card-background: #1e1e1e;
   }
 }
+
+
+
+
+
+
+
+
+// Main color
+:root {
+  --ion-color-primary: #212121;
+  --ion-color-primary-rgb: 33, 33, 33;
+}
+
+// Background color
+ion-content {
+  --ion-background-color: #f2f2f2;
+}
+
+// Toolbar color
+ion-toolbar {
+  --background: #212121;
+  --color: #fff;
+}
+
+// Tab bar color
+ion-tab-bar {
+  --background: #212121;
+  --color-selected: #fff;
+}
+
+// Button color
+ion-button {
+  --background: #212121;
+  --color: #fff;
+
+  &.button-outline {
+    --border-color: #212121;
+    --color: #212121;
+  }
+}
+
+// Input color
+ion-input {
+  --background: #fff;
+  --color: #000;
+  --placeholder-color: #9e9e9e;
+  --border-color: #212121;
+  --border-radius: 0.5rem;
+}
+
