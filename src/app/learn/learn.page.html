@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-button> Start </ion-button>
     </ion-buttons>
-    <ion-title>Start / End Buttons</ion-title>
+    <ion-title >Start / End Buttons</ion-title>
     <ion-buttons slot="end">
       <ion-button> End </ion-button>
     </ion-buttons>
@@ -11,9 +11,30 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">learn</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-accordion-group [multiple]="true" [value]="getBookCategoryCodes()">
+    <ion-accordion *ngFor="let category of bookCategories"  [value]="category.code">
+      <ion-item slot="header" color="light">
+        <ion-label>{{category.name}}</ion-label>
+      </ion-item>
+      <div class="ion-padding my-book-card-container" slot="content">
+        <ion-card *ngFor="let book of filterBook(category.code)" class="my-book-card">
+          <div class="my-book-card-content">
+            <ion-img slot="start" [src]="getWordImg(book.cover)"></ion-img>
+            <div class="my-book-card-text">
+              <ion-card-header>
+                <ion-card-title>{{ book.name }}</ion-card-title>
+                <ion-card-subtitle>{{book.kind}}</ion-card-subtitle>
+              </ion-card-header>
+              <div class="my-book-card-buttons">
+                <ion-button size="small" color="light" >删除</ion-button>
+                <ion-button size="small" color="light" [routerLink]="['/tabs/word']" [queryParams]="{bookId:book.id}">学习</ion-button>
+              </div>
+            </div>
+          </div>
+          <ion-progress-bar value="0.5"></ion-progress-bar>
+        </ion-card>
+      </div>
+    </ion-accordion>
+
+  </ion-accordion-group>
 </ion-content>

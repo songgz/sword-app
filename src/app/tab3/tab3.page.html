@@ -13,7 +13,7 @@
     </ion-toolbar>
   </ion-header>
 
- 
+
   <ion-row class="ion-no-padding">
     <ion-col size="2" class="ion-no-padding">
       <ion-button size="small" (click)="changeTab(0)" [color]="activeTab === 0 ? 'secondary' : 'light'" >Tab 1</ion-button>
@@ -34,7 +34,7 @@
       <ion-button (click)="changeTab(5)" [color]="activeTab === 5 ? 'secondary' : 'light'" expand="full">Tab 6</ion-button>
     </ion-col>
   </ion-row>
-  
+
   <ion-row>
       <ion-col>
         <div *ngIf="activeTab === 0">
@@ -53,21 +53,18 @@
                         <ion-card-title>{{ book.name }}</ion-card-title>
                         <ion-card-subtitle>{{book.kind}}</ion-card-subtitle>
                       </ion-card-header>
-                                     
-            
                       <div class="card-buttons">
                         <ion-button size="small" color="light">删除</ion-button>
                         <ion-button size="small" color="light">学习</ion-button>
                       </div>
                     </div>
                   </div>
-                  
                   <ion-progress-bar value="0.5"></ion-progress-bar>
                 </ion-card>
 
 
 
-                
+
               </div>
             </ion-card-content>
           </ion-card>
@@ -99,5 +96,5 @@
         </div>
       </ion-col>
     </ion-row>
- 
+
 </ion-content>
