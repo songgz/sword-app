@@ -1,0 +1,60 @@
+<ion-menu contentId="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menu Content</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+    <ion-list>
+      <ion-item *ngFor="let unit of units" (click)="openUnit(unit.id)">
+        <ion-label>
+          <h2>{{unit.name}}</h2>
+          <p style="text-align: right">条目:{{unit.word_count}} | 已学: 0 | 错误: 0</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<div class="ion-page word-content" id="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-card class="word-card">
+      <ion-item lines="none" color="#fff">
+        <ion-thumbnail slot="start" *ngIf="true" >
+          <ion-img [src]="getWordImg(word.picture)"></ion-img>
+        </ion-thumbnail>
+        <ion-card-header>
+          <ion-card-title color="danger">{{word.word}}</ion-card-title>
+          <ion-card-subtitle>{{word.phonetic_symbol}}</ion-card-subtitle>
+          <ion-card-subtitle *ngIf="state === 'test'">{{word.usage}}</ion-card-subtitle>
+          <ion-card-subtitle *ngIf="state === 'review'">{{word.acceptation}}</ion-card-subtitle>
+        </ion-card-header>
+      </ion-item>
+    </ion-card>
+    <ion-item lines="none" *ngIf="state === 'test'">
+      <ion-button slot="end" (click)="know(true)" size="default" color="success" class="custom-width-button">认识</ion-button>
+      <ion-button slot="end" (click)="know(false)" size="default" color="danger" class="custom-width-button">不认识</ion-button>
+    </ion-item>
+    <ion-item lines="none" *ngIf="state === 'review'">
+      <ion-button slot="end" (click)="review(true)" size="default" color="success" class="custom-width-button">认对了</ion-button>
+      <ion-button slot="end" (click)="review(false)" size="default" color="danger" class="custom-width-button">认错了</ion-button>
+    </ion-item>
+    <ion-item lines="none" *ngIf="state === 'read'">
+      <ion-button slot="end" (click)="know(true)" size="default" color="success" class="custom-width-button">跟读</ion-button>
+    </ion-item>
+    <ion-card class="word-card" *ngIf="state !== 'test'">
+      <ion-card-content>
+        <p [innerHTML]="formatText(word.example || '')"></p>
+        <p [innerHTML]="formatText(word.parse || '')"></p>
+      </ion-card-content>
+    </ion-card>
+
+  </ion-content>
+</div>
