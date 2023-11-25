@@ -33,8 +33,8 @@
         <ion-card-header mode="md">
           <ion-card-title color="danger">{{word.word}}</ion-card-title>
           <ion-card-subtitle>{{word.phonetic_symbol}}</ion-card-subtitle>
-          <ion-card-subtitle *ngIf="state === 'test'">{{word.usage}}</ion-card-subtitle>
-          <ion-card-subtitle *ngIf="state === 'review'">{{word.acceptation}}</ion-card-subtitle>
+          <ion-card-subtitle *ngIf="state === 'survey'">{{word.usage}}</ion-card-subtitle>
+          <ion-card-subtitle *ngIf="state === 'evaluate'||'next'">{{word.acceptation}}</ion-card-subtitle>
         </ion-card-header>
       </ion-item>
     </ion-card>
@@ -52,7 +52,7 @@
     <ion-item lines="none" *ngIf="state === 'next'">
       <ion-button slot="end" (click)="next()" size="default" color="success" class="custom-width-button">下一个</ion-button>
     </ion-item>
-    <ion-card class="word-card" *ngIf="state !== 'test'">
+    <ion-card class="word-card" *ngIf="state !== 'survey'">
       <ion-card-content>
         <p [innerHTML]="formatText(word.example || '')"></p>
         <p [innerHTML]="formatText(word.parse || '')"></p>

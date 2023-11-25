@@ -19,6 +19,10 @@ export const routes: Routes = [
         loadComponent: () => import('../book/book.page').then( m => m.BookPage)
       },
       {
+        path: 'quiz',
+        loadComponent: () => import('../quiz/quiz.page').then( m => m.QuizPage)
+      },
+      {
         path: 'tab1',
         loadComponent: () => import('../tab1/tab1.page').then((m) => m.Tab1Page),
       },
