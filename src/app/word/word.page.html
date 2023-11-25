@@ -30,7 +30,7 @@
         <ion-thumbnail slot="start" *ngIf="true" >
           <ion-img [src]="getWordImg(word.picture)"></ion-img>
         </ion-thumbnail>
-        <ion-card-header>
+        <ion-card-header mode="md">
           <ion-card-title color="danger">{{word.word}}</ion-card-title>
           <ion-card-subtitle>{{word.phonetic_symbol}}</ion-card-subtitle>
           <ion-card-subtitle *ngIf="state === 'test'">{{word.usage}}</ion-card-subtitle>
@@ -38,21 +38,34 @@
         </ion-card-header>
       </ion-item>
     </ion-card>
-    <ion-item lines="none" *ngIf="state === 'test'">
-      <ion-button slot="end" (click)="know(true)" size="default" color="success" class="custom-width-button">认识</ion-button>
-      <ion-button slot="end" (click)="know(false)" size="default" color="danger" class="custom-width-button">不认识</ion-button>
+    <ion-item lines="none" *ngIf="state === 'survey'">
+      <ion-button slot="end" (click)="survey(true)" size="default" color="success" class="custom-width-button">认识</ion-button>
+      <ion-button slot="end" (click)="survey(false)" size="default" color="danger" class="custom-width-button">不认识</ion-button>
     </ion-item>
-    <ion-item lines="none" *ngIf="state === 'review'">
-      <ion-button slot="end" (click)="review(true)" size="default" color="success" class="custom-width-button">认对了</ion-button>
-      <ion-button slot="end" (click)="review(false)" size="default" color="danger" class="custom-width-button">认错了</ion-button>
+    <ion-item lines="none" *ngIf="state === 'evaluate'">
+      <ion-button slot="end" (click)="evaluate(true)" size="default" color="success" class="custom-width-button">认对了</ion-button>
+      <ion-button slot="end" (click)="evaluate(false)" size="default" color="danger" class="custom-width-button">认错了</ion-button>
     </ion-item>
-    <ion-item lines="none" *ngIf="state === 'read'">
-      <ion-button slot="end" (click)="know(true)" size="default" color="success" class="custom-width-button">跟读</ion-button>
+    <ion-item lines="none" *ngIf="state === 'repeater'">
+      <ion-button slot="end" (click)="repeater()" size="default" color="success" class="custom-width-button">跟读</ion-button>
+    </ion-item>
+    <ion-item lines="none" *ngIf="state === 'next'">
+      <ion-button slot="end" (click)="next()" size="default" color="success" class="custom-width-button">下一个</ion-button>
     </ion-item>
     <ion-card class="word-card" *ngIf="state !== 'test'">
       <ion-card-content>
         <p [innerHTML]="formatText(word.example || '')"></p>
         <p [innerHTML]="formatText(word.parse || '')"></p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="word-card">
+      <ion-card-content>
+        <ion-item button detail="false">
+          <ion-label>
+            <h3>Button Item</h3>
+          </ion-label>
+        </ion-item>
       </ion-card-content>
     </ion-card>
 

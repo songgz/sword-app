@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import {ActivatedRoute} from "@angular/router";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {RestApiService} from "../services/rest-api.service";
+import {AudioService} from "../services/audio.service";
 
 @Component({
   selector: 'app-word',
@@ -17,10 +18,13 @@ export class WordPage implements OnInit {
   units: any[] = [];
   words: any[] = [];
   word: any = {};
-  states: any = {test: {result: null, color: ''}, review: {result: null, color: ''}, read: {result: null}};
-  state: any = 'test';
+  states: any = {survey: {result: null, color: ''}, evaluate: {result: null, color: ''}, repeater: {result: null}, next: {result: null}};
+  state: any = 'survey';
+  errLevels: number[] = [1, 3, 6, 12, 24, 48];
+  learnedUnit: any = {};
+  traces: string[] = [];
 
-  constructor(private router: ActivatedRoute, private rest: RestApiService,private sanitizer: DomSanitizer) { }
+  constructor(private router: ActivatedRoute, private rest: RestApiService,private sanitizer: DomSanitizer, private audio: AudioService) { }
 
   ngOnInit() {
     this.router.queryParams.subscribe((res)=>{
@@ -42,7 +46,7 @@ export class WordPage implements OnInit {
       this.words = res.data;
       this.word = this.words[0];
     });
-
+    this.loadLearnedUnits('653c68696eec2f1ea8aa1a2a', unitId);
   }
 
   loadUnits(bookId: string) {
@@ -52,36 +56,74 @@ export class WordPage implements OnInit {
     });
   }
 
+  loadLearnedUnits(studentId: string, unitId: string) {
+    this.rest.index('learned_units', {student_id: studentId, unit_id: unitId}).subscribe(res => {
+      this.learnedUnit = res.data[0];
+    });
+  }
+
   openUnit(unitId: string) {
     this.loadWords(unitId);
   }
 
-  know(value: boolean) {
-    this.states['test']['result'] = value;
+  survey(value: boolean) {
+    this.states['survey']['result'] = value;
     if (value) {
-      this.state = 'review';
+      this.state = 'evaluate';
     } else {
-      this.state = 'read';
+      this.state = 'repeater';
     }
   }
+  //Xs = ["#946E02", "#008B2D", "#0076AA", "#660066", "#081189", "#000000", "#FF0000"]
+  //var xo = {
+  //       DEFAULT: 6,
+  //       LISTEN: 6,
+  //       SPELL: 3
+  //     }
+  //
+  //var i = [1, 3, 6, 12, 24, 48][e]
 
-  review(value: boolean) {
-    this.states['review']['result'] = value;
+  evaluate(value: boolean) {
+    this.states['evaluate']['result'] = value;
     if (value) {
-      this.state = 'test' ;
+      this.state = 'survey' ;
       this.nextWord();
     } else {
-      this.state = 'read';
+      this.state = 'repeater';
     }
 
   }
 
+  repeater() {
+    this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe(a => {
+
+    });
+    this.state = 'next';
+  }
+
+  next() {
+      this.state = 'survey';
+      this.nextWord();
+  }
   nextWord() {
+
     let index = this.words.findIndex(w => w.id === this.word.id);
     let next = index + 1;
     if (next < this.words.length) {
       this.word = this.words[next];
     }
+
+  }
+
+  getWordAudio(file: string): string {
+    if (file) {
+      return this.rest.getAssetUrl() + 'quick/v' + file;
+    }
+    return '';
+  }
+
+  makeQuestion() {
+
   }
 
 }
