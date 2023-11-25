@@ -67,6 +67,7 @@ export class WordPage implements OnInit {
   }
 
   survey(value: boolean) {
+    this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe();
     this.states['survey']['result'] = value;
     if (value) {
       this.state = 'evaluate';
@@ -88,9 +89,7 @@ export class WordPage implements OnInit {
   }
 
   repeater() {
-    this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe(a => {
-
-    });
+    this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe();
     this.state = 'next';
   }
 
