@@ -74,14 +74,7 @@ export class WordPage implements OnInit {
       this.state = 'repeater';
     }
   }
-  //Xs = ["#946E02", "#008B2D", "#0076AA", "#660066", "#081189", "#000000", "#FF0000"]
-  //var xo = {
-  //       DEFAULT: 6,
-  //       LISTEN: 6,
-  //       SPELL: 3
-  //     }
-  //
-  //var i = [1, 3, 6, 12, 24, 48][e]
+
 
   evaluate(value: boolean) {
     this.states['evaluate']['result'] = value;
