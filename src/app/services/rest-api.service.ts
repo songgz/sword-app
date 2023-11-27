@@ -3,7 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 
 //'http://114.55.39.31:3200/v1/
-const env = {apiUrl: 'http://114.55.39.31:3200/v1/', wordUrl: '', assetUrl: 'http://114.55.39.31:8790/'};
+const env = {apiUrl: 'http://localhost:3000/v1/', wordUrl: '', assetUrl: 'http://114.55.39.31:8790/'};
 
 const HEADERS = new HttpHeaders({
   'Content-Type': 'application/json',

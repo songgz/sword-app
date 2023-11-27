@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {interval, map, Subscription, take, tap} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-quiz',
@@ -23,10 +24,13 @@ export class QuizPage implements OnInit {
   count: Subscription | undefined;
 
 
-  constructor(private rest: RestApiService) { }
+  constructor(private rest: RestApiService, private activatedRouter: ActivatedRoute) { }
 
   ngOnInit() {
-    this.loadQuiz('653c68696eec2f1ea8aa1a2a', '65109c936eec2f38fc2610d6');
+    this.activatedRouter.queryParams.subscribe((params) => {
+      this.loadQuiz('653c68696eec2f1ea8aa1a2a', params['unitId']);
+    });
+
 
   }
 

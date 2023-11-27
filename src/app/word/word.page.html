@@ -6,7 +6,7 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-list>
-      <ion-item *ngFor="let unit of units" (click)="openUnit(unit.id)">
+      <ion-item button *ngFor="let unit of units" (click)="openUnit(unit.id)" >
         <ion-label>
           <h2>{{unit.name}}</h2>
           <p style="text-align: right">条目:{{unit.word_count}} | 已学: 0 | 错误: 0</p>
@@ -31,7 +31,7 @@
           <ion-img [src]="getWordImg(word.picture)"></ion-img>
         </ion-thumbnail>
         <ion-card-header mode="md">
-          <ion-card-title color="danger">{{word.word}}</ion-card-title>
+          <ion-card-title [color]="'err'+tracker.getErrLevel()">{{word.word}}</ion-card-title>
           <ion-card-subtitle>{{word.phonetic_symbol}}{{state}}</ion-card-subtitle>
           <ion-card-subtitle *ngIf="state === 'survey'">{{word.usage}}</ion-card-subtitle>
           <ion-card-subtitle *ngIf="state !== 'survey'">{{word.acceptation}}</ion-card-subtitle>
@@ -59,15 +59,17 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-card class="word-card">
+    <ion-card class="word-card" *ngIf="tracker.getErrLevel() === 5">
       <ion-card-content>
-        <ion-item button detail="false">
+        <ion-item button detail="false" *ngFor="let option of options" (click)="replyOption(option.id)" class="question-option">
           <ion-label>
-            <h3>Button Item</h3>
+            <h3>{{option.acceptation}}</h3>
           </ion-label>
         </ion-item>
       </ion-card-content>
     </ion-card>
+
+
 
   </ion-content>
 </div>
