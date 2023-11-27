@@ -12,7 +12,11 @@ export const routes: Routes = [
   {
     path: 'forgot-password',
     loadComponent: () => import('./forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
+  },  {
+    path: 'student',
+    loadComponent: () => import('./student/student.page').then( m => m.StudentPage)
   },
+
 
 
 

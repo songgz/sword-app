@@ -15,12 +15,16 @@ export const routes: Routes = [
         loadComponent: () => import('../word/word.page').then( m => m.WordPage)
       },
       {
+        path: 'quiz',
+        loadComponent: () => import('../quiz/quiz.page').then( m => m.QuizPage)
+      },
+      {
         path: 'book',
         loadComponent: () => import('../book/book.page').then( m => m.BookPage)
       },
       {
-        path: 'quiz',
-        loadComponent: () => import('../quiz/quiz.page').then( m => m.QuizPage)
+        path: 'student',
+        loadComponent: () => import('../student/student.page').then( m => m.StudentPage)
       },
       {
         path: 'tab1',
