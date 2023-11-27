@@ -185,9 +185,7 @@ export class WordPage implements OnInit {
                     text: '确定',
                     role: 'confirm',
                     handler: () => {
-                        //this.router.navigate(['/devicepay/'],{queryParams:{id:key}})
                         this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.unit.id}});
-                        console.log('Alert confirmed');
                     },
                 }
             ]
