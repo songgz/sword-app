@@ -39,7 +39,7 @@ export class QuizPage implements OnInit {
     this.question = this.quiz.questions[this.index];
     this.index = this.index + 1;
     this.count = this.countDown(5000).subscribe({
-      next: step => {},
+      //next: step => {},
       error: err => console.error(err),
       complete: () => {
         this.choice_answer();

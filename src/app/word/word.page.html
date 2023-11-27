@@ -6,7 +6,7 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-list>
-      <ion-item button *ngFor="let unit of units" (click)="openUnit(unit.id)" >
+      <ion-item button="" *ngFor="let unit of units" (click)="openUnit(unit.id)" >
         <ion-label>
           <h2>{{unit.name}}</h2>
           <p style="text-align: right">条目:{{unit.word_count}} | 已学: 0 | 错误: 0</p>
@@ -61,7 +61,7 @@
 
     <ion-card class="word-card" *ngIf="tracker.getErrLevel() === 5">
       <ion-card-content>
-        <ion-item button detail="false" *ngFor="let option of options" (click)="replyOption(option.id)" class="question-option">
+        <ion-item button="" detail="false" *ngFor="let option of options" (click)="replyOption(option.id)" class="question-option">
           <ion-label>
             <h3>{{option.acceptation}}</h3>
           </ion-label>

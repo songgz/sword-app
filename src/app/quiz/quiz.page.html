@@ -17,7 +17,7 @@
     </ion-card-header>
 
     <ion-card-content mode='ios'>
-      <ion-item class="quiz-item"  button detail="false" *ngFor="let choice of question.choices" (click)="choice_answer(choice.id)" [color]="showAnswer(choice.id)">
+      <ion-item class="quiz-item" button="" detail="false" *ngFor="let choice of question.choices" (click)="choice_answer(choice.id)" [color]="showAnswer(choice.id)">
         <ion-label>{{choice.title}}</ion-label>
         <ion-icon  name="close-circle-outline" *ngIf="question.right_answer !== choice.id && question.user_answer === choice.id" ></ion-icon>
         <ion-icon color="warning"  name="checkmark-circle-outline" *ngIf="answered && question.right_answer === choice.id"></ion-icon>
