@@ -3,3 +3,15 @@
   flex-wrap: wrap;
   //justify-content: space-around;
 }
+
+ion-img {
+  cursor: pointer;
+}
+
+ion-img.disabled {
+  pointer-events: none;
+}
+
+ion-img.grayscale {
+  filter: grayscale(100%);
+}

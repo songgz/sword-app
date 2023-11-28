@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {IonicModule, ModalController} from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import {BookModalComponent} from "../book-modal/book-modal.component";
 
 @Component({
   selector: 'app-book',
@@ -28,17 +30,31 @@ export class BookPage implements OnInit {
     {code: "COMMON", name: "通用"}
   ];
   books: any[] = [];
+  learnedBooks: any[] = [];
   activeKind: string = "FREE";
 
-  constructor(private rest: RestApiService) { }
+  constructor(private rest: RestApiService, private sanitizer: DomSanitizer, private modalController: ModalController) {
+    this.loadLearnedBooks('653c68696eec2f1ea8aa1a2a');
+    this.loadBooks(this.activeKind);
+  }
 
   ngOnInit() {
-    this.loadBooks(this.activeKind);
+
+  }
+
+  isLearned(bookId: string) {
+    return  -1 !== this.learnedBooks.findIndex(b => b.book_id === bookId);
   }
 
   loadBooks(kind: string) {
     this.rest.index('books', {kind: kind, per: 999}).subscribe(res => {
       this.books = res.data;
+    });
+  }
+
+  loadLearnedBooks(studentId: string) {
+    this.rest.index('learned_books', {student_id: studentId, per: 999}).subscribe(res => {
+      this.learnedBooks = res.data;
     });
   }
 
@@ -51,9 +67,9 @@ export class BookPage implements OnInit {
     return this.rest.getAssetUrl() + file;
   }
 
-  add(id: string) {
-    console.log(id);
-  }
+
+
+
 
   filterBook(category: string) :any[] {
     return this.books.filter(b => b.category === category);
@@ -61,6 +77,40 @@ export class BookPage implements OnInit {
 
   getCategoryCodes(): string[] {
     return this.bookCategories.map(b => b.code);
+  }
+
+  formatText(text: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(text.replace(/<br\/>/g, '<br/>'));
+  }
+
+  async presentCustomAlert(bookId: string) {
+    let book = this.books.find(b => b.id === bookId);
+    const modal = await this.modalController.create({
+      component: BookModalComponent,
+      componentProps: {
+        title: book.name,
+        message: book.desc,
+        cover: this.getWordImg(book.cover)
+      },
+
+    });
+
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data) {
+      this.addBook('653c68696eec2f1ea8aa1a2a', book.id);
+    }
+  }
+
+  addBook(studentId: string, bookId: string) {
+    this.rest.create('learned_books', {student_id: studentId, book_id: bookId}).subscribe(res => {
+      this.learnedBooks.push(res.data);
+    });
+  }
+
+  add(id: string) {
+    this.presentCustomAlert(id);
+    console.log(id);
   }
 
 }

@@ -29,8 +29,8 @@ export class RestApiService {
     return this.http.post(env.apiUrl + path + '.json', JSON.stringify(body), {headers: HEADERS});
   }
 
-  show(path: string): Observable<any> {
-    return this.http.get(env.apiUrl + path + '.json', {headers: HEADERS});
+  show(path: string, params: any): Observable<any> {
+    return this.http.get(env.apiUrl + path + '.json', {params: params, headers: HEADERS});
   }
 
   update(path: string, body: any): Observable<any> {

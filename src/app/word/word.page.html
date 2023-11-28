@@ -6,7 +6,7 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-list>
-      <ion-item button="" *ngFor="let unit of units" (click)="openUnit(unit.id)" >
+      <ion-item button="" *ngFor="let unit of units" (click)="openUnit(unit.id)">
         <ion-label>
           <h2>{{unit.name}}</h2>
           <p style="text-align: right">条目:{{unit.word_count}} | 已学: 0 | 错误: 0</p>
@@ -25,9 +25,12 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
+    <ion-item>
+      <ion-label>智能复习中</ion-label>
+    </ion-item>
     <ion-card class="word-card">
       <ion-item lines="none" color="#fff">
-        <ion-thumbnail slot="start" *ngIf="true" >
+        <ion-thumbnail slot="start" *ngIf="true">
           <ion-img [src]="getWordImg(word.picture)"></ion-img>
         </ion-thumbnail>
         <ion-card-header mode="md">
@@ -38,20 +41,30 @@
         </ion-card-header>
       </ion-item>
     </ion-card>
-    <ion-item lines="none" *ngIf="state === 'survey'">
-      <ion-button slot="end" (click)="survey(true)" size="default" color="success" class="custom-width-button">认识</ion-button>
-      <ion-button slot="end" (click)="survey(false)" size="default" color="danger" class="custom-width-button">不认识</ion-button>
+    <ion-item lines="none" >
+      <label>｛｛tracker.status｝｝: {{tracker.complets}}/{{tracker.words.length}}</label>
+      <div slot="end" *ngIf="state === 'survey' && word.repeats !== 5">
+        <ion-button (click)="survey(true)" size="default" color="success" class="custom-width-button">认识</ion-button>
+        <ion-button (click)="survey(false)" size="default" color="danger" class="custom-width-button"> 不认识</ion-button>
+      </div>
+      <div slot="end" *ngIf="state === 'evaluate'">
+        <ion-button  (click)="evaluate(true)" size="default" color="success" class="custom-width-button">
+          认对了
+        </ion-button>
+        <ion-button  (click)="evaluate(false)" size="default" color="danger" class="custom-width-button">
+          认错了
+        </ion-button>
+      </div>
+      <div slot="end" *ngIf="state === 'repeater'">
+        <ion-button  (click)="repeater()" size="default" color="success" class="custom-width-button">跟读
+        </ion-button>
+      </div>
+      <div slot="end" *ngIf="state === 'next'">
+        <ion-button  (click)="next()" size="default" color="success" class="custom-width-button">下一个
+        </ion-button>
+      </div>
     </ion-item>
-    <ion-item lines="none" *ngIf="state === 'evaluate'">
-      <ion-button slot="end" (click)="evaluate(true)" size="default" color="success" class="custom-width-button">认对了</ion-button>
-      <ion-button slot="end" (click)="evaluate(false)" size="default" color="danger" class="custom-width-button">认错了</ion-button>
-    </ion-item>
-    <ion-item lines="none" *ngIf="state === 'repeater'">
-      <ion-button slot="end" (click)="repeater()" size="default" color="success" class="custom-width-button">跟读</ion-button>
-    </ion-item>
-    <ion-item lines="none" *ngIf="state === 'next'">
-      <ion-button slot="end" (click)="next()" size="default" color="success" class="custom-width-button">下一个</ion-button>
-    </ion-item>
+
     <ion-card class="word-card" *ngIf="state !== 'survey'">
       <ion-card-content>
         <p [innerHTML]="formatText(word.example || '')"></p>
@@ -61,14 +74,14 @@
 
     <ion-card class="word-card" *ngIf="tracker.getErrLevel() === 5">
       <ion-card-content>
-        <ion-item button="" detail="false" *ngFor="let option of options" (click)="replyOption(option.id)" class="question-option">
+        <ion-item button="" detail="false" *ngFor="let option of options" (click)="replyOption(option.id)"
+                  class="question-option">
           <ion-label>
             <h3>{{option.acceptation}}</h3>
           </ion-label>
         </ion-item>
       </ion-card-content>
     </ion-card>
-
 
 
   </ion-content>

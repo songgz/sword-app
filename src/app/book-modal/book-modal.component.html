@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" >
+        <p [innerHTML]="'<img align=\'left\' width=\'150\' hspace=\'5\' vspace=\'10\'  src=\'' +cover+'\'>'+ message"></p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="4"></ion-col>
+      <ion-col size="4">
+        <ion-button expand="block" (click)="selectBook()">加入学习</ion-button>
+      </ion-col>
+      <ion-col></ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

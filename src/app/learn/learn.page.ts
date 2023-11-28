@@ -23,18 +23,17 @@ export class LearnPage implements OnInit {
   constructor(private rest: RestApiService) { }
 
   ngOnInit() {
-    console.log(this.bookCategories.map(b => b.code));
-    this.loadBooks();
+    this.loadLearnedBooks('653c68696eec2f1ea8aa1a2a');
   }
 
-  loadBooks() {
-    this.rest.index('books').subscribe(res => {
+  loadLearnedBooks(studentId: string) {
+    this.rest.index('learned_books', {student_id: studentId,per: 999}).subscribe(res => {
       this.books = res.data || [];
     });
   }
 
   filterBook(category: string) :any[] {
-    return this.books.filter(b => b.category === category);
+    return this.books.filter(b => b.book?.category === category);
   }
 
   getWordImg(file: string) :string {

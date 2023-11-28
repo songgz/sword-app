@@ -7,6 +7,7 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { provideHttpClient } from '@angular/common/http';
+import {QuizAlertComponent} from "./app/quiz-alert/quiz-alert.component";
 
 if (environment.production) {
   enableProdMode();
@@ -19,6 +20,7 @@ bootstrapApplication(AppComponent, {
     },
     importProvidersFrom(IonicModule.forRoot({ mode: 'md' })),
     provideRouter(routes),
-    provideHttpClient()
+    provideHttpClient(),
+      QuizAlertComponent
   ],
 });

@@ -15,21 +15,14 @@
         <ion-label>{{category.name}}</ion-label>
       </ion-item>
       <div class="image-grid" slot="content">
-        <ion-card *ngFor="let book of filterBook(category.code)">
-          <ion-img slot="start" [src]="getWordImg(book.cover)"></ion-img>
-          <ion-card-header mode="ios">
-            <ion-card-title>{{ book.name }}</ion-card-title>
-            <ion-card-subtitle>{{book.kind}}</ion-card-subtitle>
-          </ion-card-header>
-        </ion-card>
-
-
-        <ion-img *ngFor="let book of filterBook(category.code)"
+        <ion-img *ngFor="let book of filterBook(category.code)" [class]="isLearned(book.id) ? 'disabled grayscale' : ''"
                  (click)="add(book.id)" style="width:150px; height:150px; margin: 10px"
                  [src]="getWordImg(book.cover)" [alt]="book.name">
         </ion-img>
+
       </div>
     </ion-accordion>
 
   </ion-accordion-group>
+
 </ion-content>
