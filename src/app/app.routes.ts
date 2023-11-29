@@ -20,7 +20,11 @@ export const routes: Routes = [
   {
     path: 'quiz-alert',
     loadComponent: () => import('./quiz-alert/quiz-alert.component').then( m => m.QuizAlertComponent)
+  },  {
+    path: 'match-game',
+    loadComponent: () => import('./match-game/match-game.page').then( m => m.MatchGamePage)
   },
+
 
 
 

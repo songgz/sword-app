@@ -163,7 +163,9 @@ export class WordPage implements OnInit {
         this.openUnit(this.learnedUnit.unit_id);
       }
       if (this.learnType === 'read') {
-        this.presentAfter();
+        this.router.navigate(['/match-game'], {queryParams: {unitId: this.learnedUnit.unit_id}});
+
+        //this.presentAfter();
       }
 
 
