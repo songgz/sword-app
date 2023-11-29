@@ -31,6 +31,7 @@ export class WordTracker {
         repeats: ew?.repeats || this.maxRepeats,
         learns: ew?.learns || 0,
         reviews: ew?.reviews || 0,
+        is_wrong: ew?.is_wrong || false,
         completed: false
       };
       this.wordStates.push(state);
@@ -52,6 +53,7 @@ export class WordTracker {
         repeats: this.maxRepeats,
         learns: 0,
         reviews: 0,
+        is_wrong: false,
         completed: false
       };
       this.wordStates.push(state);
@@ -82,6 +84,7 @@ export class WordTracker {
 
   wrongAnswer() {
     let state: WordState = this.getWordState();
+    state.is_wrong = true;
     state.repeats = 0;
     state.learns = state.learns + 1;
   }

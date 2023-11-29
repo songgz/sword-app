@@ -6,11 +6,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {RestApiService} from "../services/rest-api.service";
 import {AudioService} from "../services/audio.service";
-import {WordTrackerService} from "../services/word-tracker.service";
 import {QuizAlertComponent} from "../quiz-alert/quiz-alert.component";
 import {WordTracker} from "../services/WordTracker";
-import {WordState} from "../services/word-state";
-
 
 @Component({
   selector: 'app-word',
@@ -20,7 +17,7 @@ import {WordState} from "../services/word-state";
   imports: [IonicModule, CommonModule, FormsModule, QuizAlertComponent]
 })
 export class WordPage implements OnInit {
-  units: any[] = [];
+  //units: any[] = [];
   unit: any = {};
   //words: any[] = [];
   word: any = {};
@@ -32,16 +29,23 @@ export class WordPage implements OnInit {
   tracker: WordTracker;
   options: any[] = [];
   answer: boolean = false;
-  learnTypes: any[] = [{code: 'review', name: '复习'}, {code: 'read', name: '认读'}, {code: 'listen', name: '听读'}];
-  learnType: string = '';
-  bookId: string = '';
+  learnTypes: any[] = [
+    {code: 'review', name: '复习'},
+    {code: 'beforeQuiz', name: '课前测试'},
+    {code: 'afterQuiz', name: '课后测试'},
+    {code: 'read', name: '认读'},
+    {code: 'listen', name: '听读'},
+    {code: 'spell', name: '拼写'},
+    {code: 'matchGame', name: '消消乐'}
+  ];
+  learnType: string = 'review';
+  book: any = {};
 
   constructor(private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private alertController: AlertController) {
     this.tracker = new WordTracker();
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.bookId = params['bookId'];
-      this.loadLearnedBook('653c68696eec2f1ea8aa1a2a', this.bookId);
-      this.loadUnits(this.bookId);
+      this.loadLearnedBook('653c68696eec2f1ea8aa1a2a', params['bookId']);
+      //this.loadUnits(params['bookId']);
     });
 
   }
@@ -55,28 +59,27 @@ export class WordPage implements OnInit {
   }
 
 
-  loadUnits(bookId: string) {
-    this.rest.index('units', {book_id: bookId}).subscribe(res => {
-      this.units = res.data;
-      this.unit = this.units[0];
-      //this.loadWords(this.unit.id);
-      // this.loadErrorWords('653c68696eec2f1ea8aa1a2a', this.unit.id);
-    });
-  }
+  // loadUnits(bookId: string) {
+  //   this.rest.index('units', {book_id: bookId}).subscribe(res => {
+  //     // this.units = res.data;
+  //     // this.unit = this.units[0];
+  //     //this.loadWords(this.unit.id);
+  //     // this.loadErrorWords('653c68696eec2f1ea8aa1a2a', this.unit.id);
+  //   });
+  // }
 
   loadLearnedBook(studentId: string, bookId: string) {
     this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId}).subscribe(res => {
-
-
       this.learnedUnits = res.data.learned_units;
+      this.book = res.data.book;
       let errorWords = res.data.error_words;
-
       if (errorWords.length > 0) {
-        this.learnType = 'review';
         this.tracker.loadErrWords(errorWords);
         this.word = this.tracker.getWord();
-
-
+      }else{
+        this.learnType = 'read';
+        let unit = this.learnedUnits.find(u => u.learns !== u.words);
+        this.openUnit(unit.unit_id);
       }
     });
   }
@@ -94,8 +97,8 @@ export class WordPage implements OnInit {
   }
 
   openUnit(unitId: string) {
-    this.unit = this.units.find(u => u.id === unitId);
-    this.loadWords(this.unit.id);
+    //this.unit = this.units.find(u => u.id === unitId);
+    this.loadWords(unitId);
     //this.loadErrorWords('653c68696eec2f1ea8aa1a2a', this.unit.id);
     this.presentAlert();
   }
@@ -133,6 +136,15 @@ export class WordPage implements OnInit {
   }
 
   next() {
+    if (this.learnType == 'read') {
+      if (!this.answer) {
+        this.unit.wrongs++;
+      }
+      this.unit.learns++;
+    }
+
+
+
     if (this.answer) {
       this.tracker.correctAnswer();
     }else{
@@ -150,10 +162,8 @@ export class WordPage implements OnInit {
       this.saveWordState();
 
 
-
-      if (this.learnedUnits.length > 0) {
-        this.loadWords(this.learnedUnits[0].unit_id);
-      }
+     let unit = this.learnedUnits.find(u => u.learns !== u.words);
+     this.openUnit(unit.unit_id);
 
     }else{
       this.tracker.next();
@@ -165,15 +175,27 @@ export class WordPage implements OnInit {
   saveWordState() {
     let error_words: any[] = [];
     this.tracker.wordStates.forEach(s => {
-      error_words.push({
-        unit_id: s.unit_id,
-        word_id: s.word_id,
-        repeats: s.repeats,
-        learns: s.learns,
-        reviews: s.reviews
-      });
+      if (s.is_wrong) {
+        error_words.push({
+          unit_id: s.unit_id,
+          word_id: s.word_id,
+          repeats: s.repeats,
+          learns: s.learns,
+          reviews: s.reviews,
+          is_wrong: s.is_wrong
+        });
+      }
     });
-    this.rest.create('learned_books', {student_id: '653c68696eec2f1ea8aa1a2a', book_id: this.bookId, error_words: error_words}).subscribe();
+
+    let body: any = {
+      student_id: '653c68696eec2f1ea8aa1a2a',
+      book_id: this.book.id,
+      error_words: error_words,
+    };
+    if (this.learnType === 'read') {
+      body.learned_units = this.learnedUnits;
+    }
+    this.rest.create('learned_books', body).subscribe();
   }
 
   getWordImg(file: string): string {
@@ -222,13 +244,14 @@ export class WordPage implements OnInit {
           text: '取消',
           role: 'cancel',
           handler: () => {
-            console.log('Alert canceled');
+            this.learnType = 'read';
           },
         },
         {
           text: '确定',
           role: 'confirm',
           handler: () => {
+            this.learnType = 'beforeQuiz'
             this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.unit.id}});
           },
         }

@@ -6,10 +6,10 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-list>
-      <ion-item button="" *ngFor="let unit of units" (click)="openUnit(unit.id)">
+      <ion-item button="" *ngFor="let unit of learnedUnits" (click)="openUnit(unit.unit_id)">
         <ion-label>
-          <h2>{{unit.name}}</h2>
-          <p style="text-align: right">条目:{{unit.word_count}} | 已学: 0 | 错误: 0</p>
+          <h2>{{unit.unit_name}}</h2>
+          <p style="text-align: right">条目:{{unit.words}} | 已学: {{unit.learns}} | 错误: {{unit.wrongs}}</p>
         </ion-label>
       </ion-item>
     </ion-list>
