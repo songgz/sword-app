@@ -1,0 +1,23 @@
+<ion-header [translucent]="true" mode="ios">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button>ss</ion-button>
+      <ion-back-button>返回</ion-back-button>
+    </ion-buttons>
+    <ion-title withd="300px">单词消消乐</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-item lines="none"><ion-label slot="start">当前第 {{page_no}}/{{page_count}} 组</ion-label> <ion-label>本组进度: {{count}}/10<ion-progress-bar slot="end" [value]="count/10"></ion-progress-bar></ion-label></ion-item>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-button *ngFor="let word of xCol" (click)="clickX(word)" [color]="x.id === word.id ? 'err6' : 'err2'" [class]="word.hedden" fill="outline" class="my-button1">{{word.word}}</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button *ngFor="let word of yCol" (click)="clickY(word)" [color]="y.id === word.id ? 'err6' : 'err2'" [class]="word.hedden" fill="outline" class="my-button1">{{word.acceptation}}</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

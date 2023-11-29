@@ -1,0 +1,31 @@
+.my-button {
+
+  display: block;
+  width: 40%;
+  height: 60px;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #2196f3;
+  color: white;
+  border-radius: 30px;
+  text-align: center;
+  line-height: 60px;
+  margin-top: 20px;
+}
+
+.my-button1 {
+  width: 40%;
+  text-transform: lowercase;
+}
+
+.myButton {
+  visibility: hidden;
+}
+
+.border-button {
+  border: 2px solid #2196f3;
+  background-color: transparent;
+  color: #2196f3;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
