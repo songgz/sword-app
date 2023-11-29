@@ -32,12 +32,16 @@ export class WordPage implements OnInit {
   tracker: WordTracker;
   options: any[] = [];
   answer: boolean = false;
+  learnTypes: any[] = [{code: 'review', name: '复习'}, {code: 'read', name: '认读'}, {code: 'listen', name: '听读'}];
+  learnType: string = '';
+  bookId: string = '';
 
   constructor(private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private alertController: AlertController) {
     this.tracker = new WordTracker();
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.loadLearnedBook('653c68696eec2f1ea8aa1a2a', params['bookId']);
-      this.loadUnits(params['bookId']);
+      this.bookId = params['bookId'];
+      this.loadLearnedBook('653c68696eec2f1ea8aa1a2a', this.bookId);
+      this.loadUnits(this.bookId);
     });
 
   }
@@ -63,9 +67,12 @@ export class WordPage implements OnInit {
   loadLearnedBook(studentId: string, bookId: string) {
     this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId}).subscribe(res => {
 
-      let errorWords = res.data.error_words;
+
       this.learnedUnits = res.data.learned_units;
+      let errorWords = res.data.error_words;
+
       if (errorWords.length > 0) {
+        this.learnType = 'review';
         this.tracker.loadErrWords(errorWords);
         this.word = this.tracker.getWord();
 
@@ -139,9 +146,13 @@ export class WordPage implements OnInit {
     }
 
     if (this.tracker.isOver()) {
+      //保存
+      this.saveWordState();
+
+
+
       if (this.learnedUnits.length > 0) {
         this.loadWords(this.learnedUnits[0].unit_id);
-
       }
 
     }else{
@@ -149,6 +160,20 @@ export class WordPage implements OnInit {
       this.word = this.tracker.getWord();
       this.state = 'survey';
     }
+  }
+
+  saveWordState() {
+    let error_words: any[] = [];
+    this.tracker.wordStates.forEach(s => {
+      error_words.push({
+        unit_id: s.unit_id,
+        word_id: s.word_id,
+        repeats: s.repeats,
+        learns: s.learns,
+        reviews: s.reviews
+      });
+    });
+    this.rest.create('learned_books', {student_id: '653c68696eec2f1ea8aa1a2a', book_id: this.bookId, error_words: error_words}).subscribe();
   }
 
   getWordImg(file: string): string {

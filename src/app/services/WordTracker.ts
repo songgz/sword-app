@@ -24,9 +24,10 @@ export class WordTracker {
     this.total = errWords.length;
     this.stepper = new WordStepper(errWords.length);
 
-
     errWords.forEach(ew => {
       let state: WordState = {
+        unit_id: ew?.unit_id,
+        word_id: ew?.word_id,
         repeats: ew?.repeats || this.maxRepeats,
         learns: ew?.learns || 0,
         reviews: ew?.reviews || 0,
@@ -46,6 +47,8 @@ export class WordTracker {
 
     words.forEach((w,i) => {
       let state: WordState = {
+        unit_id: w.unit_id,
+        word_id: w.id,
         repeats: this.maxRepeats,
         learns: 0,
         reviews: 0,
