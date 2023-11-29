@@ -17,8 +17,8 @@ export class QuizPage implements OnInit {
   quiz: any = {};
   index: number = 0;
   question: any = {};
-  corrects: number = 0;
-  errors: number = 0;
+  //corrects: number = 0;
+  //errors: number = 0;
   progress: number = 1;
   answered: boolean = false;
   count: Subscription | undefined;
@@ -28,13 +28,23 @@ export class QuizPage implements OnInit {
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.loadQuiz('653c68696eec2f1ea8aa1a2a', params['unitId']);
+      this.loadQuiz('653c68696eec2f1ea8aa1a2a', params['unitId'], params['testType']);
     });
 
 
   }
 
+  saveQuiz() {
+    this.rest.update("quizzes/" + this.quiz.id, this.quiz).subscribe(res => {
+
+    });
+  }
+
   next() {
+    if (this.index === this.quiz.questions.length) {
+      this.saveQuiz();
+
+    }
     this.answered = false;
     this.question = this.quiz.questions[this.index];
     this.index = this.index + 1;
@@ -56,8 +66,8 @@ export class QuizPage implements OnInit {
     );
   }
 
-  loadQuiz(studentId: string, unitId: string) {
-    this.rest.create('quizzes',{student_id: studentId, unit_id: unitId}).subscribe(res => {
+  loadQuiz(studentId: string, unitId: string, testType: string) {
+    this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType}).subscribe(res => {
       this.quiz = res.data;
       this.next();
     });
@@ -68,11 +78,11 @@ export class QuizPage implements OnInit {
     console.log(this.question.right_answer === choiceId);
     this.count?.unsubscribe();
     this.question.user_answer = choiceId;
-    if (this.question.right_answer === choiceId) {
+    if (this.question.right_answer === this.question.user_answer) {
       this.question.result = true;
-      this.corrects = this.corrects + 1;
+      this.quiz.corrects = this.quiz.corrects + 1;
     } else {
-      this.errors = this.errors + 1;
+      this.quiz.wrongs = this.quiz.wrongs + 1;
     }
     this.answered = true;
     await this.sleep(2500);
@@ -99,7 +109,6 @@ export class QuizPage implements OnInit {
         }
       }
     }
-
     return '';
   }
 

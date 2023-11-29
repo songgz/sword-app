@@ -8,7 +8,7 @@
   <ion-item lines="none">
     <ion-label slot="start">等级: {{quiz.unit_name}}{{answered}}</ion-label>
     <ion-label>进度: {{index - 1}}/{{quiz.questions?.length}}</ion-label>
-    <ion-label color="success" slot="end">正确: {{corrects}}</ion-label><ion-label color="danger" slot="end">错误: {{errors}}</ion-label>
+    <ion-label color="success" slot="end">正确: {{quiz.corrects}}</ion-label><ion-label color="danger" slot="end">错误: {{quiz.wrongs}}</ion-label>
   </ion-item>
   <ion-card class="quiz-card">
     <ion-card-header class="quiz-header">

@@ -41,14 +41,14 @@ export class WordTracker {
     this.learnType = '复习';
   }
 
-  loadWords(words :any[]) {
+  loadWords(words :any[], unitId: string) {
     this.init();
     this.total = words.length;
     this.stepper = new WordStepper(words.length);
 
     words.forEach((w,i) => {
       let state: WordState = {
-        unit_id: w.unit_id,
+        unit_id: unitId,
         word_id: w.id,
         repeats: this.maxRepeats,
         learns: 0,

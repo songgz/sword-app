@@ -18,7 +18,7 @@ import {WordTracker} from "../services/WordTracker";
 })
 export class WordPage implements OnInit {
   //units: any[] = [];
-  unit: any = {};
+  learnedUnit: any = {};
   //words: any[] = [];
   word: any = {};
   //wordState: WordState|undefined;
@@ -78,8 +78,8 @@ export class WordPage implements OnInit {
         this.word = this.tracker.getWord();
       }else{
         this.learnType = 'read';
-        let unit = this.learnedUnits.find(u => u.learns !== u.words);
-        this.openUnit(unit.unit_id);
+        this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
+        this.openUnit(this.learnedUnit.unit_id);
       }
     });
   }
@@ -88,7 +88,7 @@ export class WordPage implements OnInit {
     this.rest.index('words', {unit_id: unitId, per: 999}).subscribe(res => {
       console.log(res.data);
       let words = res.data;
-      this.tracker.loadWords(words);
+      this.tracker.loadWords(words, unitId);
       console.log(this.tracker.words);
       this.word = this.tracker.getWord();
       //this.wordState = this.tracker.getWordState();
@@ -138,9 +138,9 @@ export class WordPage implements OnInit {
   next() {
     if (this.learnType == 'read') {
       if (!this.answer) {
-        this.unit.wrongs++;
+        this.learnedUnit.wrongs++;
       }
-      this.unit.learns++;
+      this.learnedUnit.learns = this.tracker.completions;
     }
 
 
@@ -150,20 +150,23 @@ export class WordPage implements OnInit {
     }else{
       this.tracker.wrongAnswer();
     }
-
     this.tracker.jump();
-
     if (this.tracker.testable()) {
       this.getRandomWords(4);
     }
 
     if (this.tracker.isOver()) {
-      //保存
-      this.saveWordState();
+      this.saveWordState();//保存
+
+      if (this.learnType === 'review') {
+        this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
+        this.openUnit(this.learnedUnit.unit_id);
+      }
+      if (this.learnType === 'read') {
+        this.presentAfter();
+      }
 
 
-     let unit = this.learnedUnits.find(u => u.learns !== u.words);
-     this.openUnit(unit.unit_id);
 
     }else{
       this.tracker.next();
@@ -252,7 +255,33 @@ export class WordPage implements OnInit {
           role: 'confirm',
           handler: () => {
             this.learnType = 'beforeQuiz'
-            this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.unit.id}});
+            this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: this.learnType}});
+          },
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async presentAfter() {
+    const alert = await this.alertController.create({
+      header: '学习提示',
+      message: '是否进行章节后测试？',
+      buttons: [
+        {
+          text: '取消',
+          role: 'cancel',
+          handler: () => {
+            this.learnType = 'read';
+          },
+        },
+        {
+          text: '确定',
+          role: 'confirm',
+          handler: () => {
+            this.learnType = 'beforeQuiz'
+            this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: this.learnType}});
           },
         }
       ]
