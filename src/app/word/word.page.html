@@ -34,7 +34,7 @@
           <ion-img [src]="getWordImg(word.picture)"></ion-img>
         </ion-thumbnail>
         <ion-card-header mode="md">
-          <ion-card-title [color]="'err'+tracker.getErrLevel()">{{word.word}}</ion-card-title>
+          <ion-card-title [color]="tracker.getColor()">{{word.word}}</ion-card-title>
           <ion-card-subtitle>{{word.phonetic_symbol}}{{state}}</ion-card-subtitle>
           <ion-card-subtitle *ngIf="state === 'survey'">{{word.usage}}</ion-card-subtitle>
           <ion-card-subtitle *ngIf="state !== 'survey'">{{word.acceptation}}</ion-card-subtitle>
@@ -42,8 +42,8 @@
       </ion-item>
     </ion-card>
     <ion-item lines="none" >
-      <label>｛｛tracker.status｝｝: {{tracker.complets}}/{{tracker.words.length}}</label>
-      <div slot="end" *ngIf="state === 'survey' && word.repeats !== 5">
+      <label>{{tracker.learnType}}: {{tracker.completions}}/{{tracker.total}}</label>
+      <div slot="end" *ngIf="state === 'survey' && !tracker.testable()">
         <ion-button (click)="survey(true)" size="default" color="success" class="custom-width-button">认识</ion-button>
         <ion-button (click)="survey(false)" size="default" color="danger" class="custom-width-button"> 不认识</ion-button>
       </div>
@@ -72,7 +72,7 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-card class="word-card" *ngIf="tracker.getErrLevel() === 5">
+    <ion-card class="word-card" *ngIf="tracker.testable()">
       <ion-card-content>
         <ion-item button="" detail="false" *ngFor="let option of options" (click)="replyOption(option.id)"
                   class="question-option">
