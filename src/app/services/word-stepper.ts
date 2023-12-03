@@ -25,10 +25,11 @@ export class WordStepper {
   }
 
   next() {
-    if (this.completions === this.getIndexValue()) {
-      this.completions++;
-    }
+
     if (!this.isOver()) {
+      if (this.completions === this.getIndexValue()) {
+        ++this.completions;
+      }
       ++this.index;
     }
   }

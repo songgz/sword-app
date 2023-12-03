@@ -31,16 +31,25 @@ export class LearnPage implements OnInit {
   ];
   selectedItem: any = this.learnTypes[2];
 
-  constructor(private ctx: AppCtxService, private rest: RestApiService) { }
+  constructor(private ctx: AppCtxService, private rest: RestApiService) {
+    this.selectedItem = this.learnTypes.find(lt=> lt.code === this.ctx.learnType);
+    this.selectedItem.selected = true;
+  }
 
   ngOnInit() {
-    this.loadLearnedBooks(this.ctx.user.id, this.ctx.learnType);
+
+  }
+
+  ionViewDidEnter(): void {
+    this.loadLearnedBooks(this.ctx.user_id, this.ctx.learnType);
   }
 
   selectItem(selectedItem: any) {
     this.learnTypes.forEach(item => item.selected = false);
     selectedItem.selected = true;
+    this.selectedItem = selectedItem;
     this.ctx.learnType = selectedItem.code;
+    this.loadLearnedBooks(this.ctx.user_id, this.ctx.learnType);
   }
 
   loadLearnedBooks(studentId: string, learnType: string) {

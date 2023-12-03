@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {interval, map, Subscription, take, tap} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
+import {AppCtxService} from "../services/app-ctx.service";
 
 @Component({
   selector: 'app-quiz',
@@ -24,11 +25,11 @@ export class QuizPage implements OnInit {
   count: Subscription | undefined;
 
 
-  constructor(private rest: RestApiService, private activatedRouter: ActivatedRoute) { }
+  constructor(private ctx: AppCtxService, private rest: RestApiService, private activatedRouter: ActivatedRoute) { }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.loadQuiz('653c68696eec2f1ea8aa1a2a', params['unitId'], params['testType']);
+      this.loadQuiz(this.ctx.user_id, params['unitId'], params['testType'], this.ctx.learnType);
     });
 
 
@@ -66,8 +67,8 @@ export class QuizPage implements OnInit {
     );
   }
 
-  loadQuiz(studentId: string, unitId: string, testType: string) {
-    this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType}).subscribe(res => {
+  loadQuiz(studentId: string, unitId: string, testType: string, learnType: string) {
+    this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType, learn_type: learnType}).subscribe(res => {
       this.quiz = res.data;
       this.next();
     });

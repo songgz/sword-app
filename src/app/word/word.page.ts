@@ -9,6 +9,7 @@ import {AudioService} from "../services/audio.service";
 import {QuizAlertComponent} from "../quiz-alert/quiz-alert.component";
 import {WordTracker} from "../services/WordTracker";
 import {StreamState} from "../services/stream-state";
+import {AppCtxService} from "../services/app-ctx.service";
 
 @Component({
   selector: 'app-word',
@@ -43,12 +44,13 @@ export class WordPage implements OnInit {
   learnType: string = 'read';
   book: any = {};
   isReview: boolean = false;
+  spells: any[][] = [[],[],[],[]];
 
-  constructor(private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private alertController: AlertController) {
+  constructor(private ctx: AppCtxService, private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private alertController: AlertController) {
     this.tracker = new WordTracker();
     this.activatedRouter.queryParams.subscribe((params) => {
       this.learnType = params['learnType'];
-      this.loadLearnedBook('653c68696eec2f1ea8aa1a2a', params['bookId'], params['learnType']);
+      this.loadLearnedBook(this.ctx.user_id, params['bookId'], this.ctx.learnType);
       //this.loadUnits(params['bookId']);
     });
 
@@ -66,15 +68,6 @@ export class WordPage implements OnInit {
     //this.presentAlert();
   }
 
-
-  // loadUnits(bookId: string) {
-  //   this.rest.index('units', {book_id: bookId}).subscribe(res => {
-  //     // this.units = res.data;
-  //     // this.unit = this.units[0];
-  //     //this.loadWords(this.unit.id);
-  //     // this.loadErrorWords('653c68696eec2f1ea8aa1a2a', this.unit.id);
-  //   });
-  // }
 
   loadLearnedBook(studentId: string, bookId: string, learnType: string) {
     this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId, learn_type: learnType}).subscribe(res => {
@@ -107,9 +100,7 @@ export class WordPage implements OnInit {
   }
 
   openUnit(unitId: string) {
-    //this.unit = this.units.find(u => u.id === unitId);
     this.loadWords(unitId);
-    //this.loadErrorWords('653c68696eec2f1ea8aa1a2a', this.unit.id);
     this.presentAlert();
   }
 
@@ -125,6 +116,12 @@ export class WordPage implements OnInit {
     this.options = [];
     if (this.isReview === true && this.tracker.testable()) {
       this.getWordOptions(4);
+    }
+    if (this.ctx.learnType === 'spell') {
+
+      console.log('spell');
+      this.randSpell();
+      console.log(this.spells);
     }
 
   }
@@ -165,11 +162,9 @@ export class WordPage implements OnInit {
   next() {
     this.updateWordState(this.answer);
 
+    console.log(this.tracker.getCompletions());
+    console.log(this.tracker.stepper.completions);
 
-    if (!this.isReview && this.learnType == 'read') {
-      this.learnedUnit.wrongs = this.tracker.rights;
-      this.learnedUnit.learns = this.tracker.getCompletions();
-    }
 
     if (this.tracker.isOver()) {
       this.saveWordState();//保存
@@ -184,6 +179,7 @@ export class WordPage implements OnInit {
 
           //this.presentAfter();
         }
+
       }
 
 
@@ -191,6 +187,10 @@ export class WordPage implements OnInit {
 
     }else{
       this.tracker.next();
+      if (!this.isReview && this.learnedUnit) {
+        this.learnedUnit.wrongs = this.tracker.wrongs;
+        this.learnedUnit.learns = this.tracker.getCompletions();
+      }
       this.start();
     }
   }
@@ -202,8 +202,6 @@ export class WordPage implements OnInit {
       this.tracker.wrongAnswer();
     }
   }
-
-
 
   saveWordState() {
     let error_words: any[] = [];
@@ -221,12 +219,12 @@ export class WordPage implements OnInit {
     });
 
     let body: any = {
-      student_id: '653c68696eec2f1ea8aa1a2a',
+      student_id: this.ctx.user_id,
       book_id: this.book.id,
-      learn_type: this.learnType,
+      learn_type: this.ctx.learnType,
       error_words: error_words,
     };
-    if (this.learnType === 'read') {
+    if (!this.isReview) {
       body.learned_units = this.learnedUnits;
     }
     this.rest.create('learned_books', body).subscribe();
@@ -326,5 +324,109 @@ export class WordPage implements OnInit {
     return this.sanitizer.bypassSecurityTrustHtml(text.replace(/<br\/>/g, '<br/>'));
   }
 
-  protected readonly JSON = JSON;
+  randSpell() {
+    this.spells = [[],[],[],[],[]];
+    let w1 = this.word.word;
+    let w2 = this.getRandomLetters(w1);
+    let n = 0;
+
+    for (let i = 0; i < w1.length; i++) {
+      n = Math.floor(Math.random() * 100);
+      if (n % 2 === 0) {
+        this.spells[0].push(w1[i]);
+        this.spells[1].push(w2[i]);
+      }else{
+        this.spells[0].push(w2[i]);
+        this.spells[1].push(w1[i]);
+      }
+
+    }
+
+
+  }
+
+  getRandomLetters(str: string): string {
+    const letters: string = 'abcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    let c: string = '';
+    for (let i = 0; i < str.length; i++) {
+      const randomIndex = Math.floor(Math.random() * letters.length);
+      c = letters.charAt(randomIndex);
+      if (c === str[i]) {
+        c = letters.charAt(randomIndex - 3) || letters.charAt(randomIndex + 3);
+      }
+      if (str[i] === ' ') {
+        c = ' ';
+      }
+      result += c;
+    }
+    return result;
+  }
+
+  sp(i: number, row: number) {
+    if (i === this.spells[2].length) {
+      this.spells[2].push(row);
+    }else if(i < this.spells[2].length){
+      this.spells[2][i] = row;
+    }
+    if(this.spells[2].length === this.spells[0].length) {
+      if(this.spells[3].length === 0) {
+        this.answer = this.checkSpell(3);
+        this.checkSpell(4);
+        if(this.answer) {
+          this.state = 'next';
+        }
+      }else{
+        if (this.checkSpell(4)) {
+          this.state = 'next';
+        }
+      }
+
+    }
+    console.log(this.spells);
+  }
+
+  // sp2(i: number) {
+  //   if (i === this.spells[2].length) {
+  //     this.spells[2].push(1);
+  //   }else if(i < this.spells[2].length){
+  //     this.spells[2][i] = 1;
+  //   }
+  //   if(this.spells[2].length === this.spells[0].length) {
+  //     this.checkSpell();
+  //   }
+  //   console.log(this.spells);
+  // }
+
+  checkSpell(m:number) {
+    let r: number = 0;
+    let w: string = this.word.word;
+    for (let i = 0; i < this.spells[0].length; i++) {
+      if (this.spells[this.spells[2][i]][i] === w[i]) {
+        console.log(this.spells[3][i]);
+        this.spells[m][i]===undefined ? this.spells[m].push(1) : this.spells[m][i] = 1;
+          r++;
+      }else{
+        this.spells[m][i]===undefined ? this.spells[m].push(0) : this.spells[m][i]  = 0;
+      }
+    }
+    return r === this.spells[m].length;
+  }
+
+  updateSpell(i: number, row: number) {
+    if(this.spells[3][i] === 0 && this.spells[2][i] === row) {
+      this.spells[3][i] = 1;
+    }
+  }
+
+  isErrSpell(i: number, row: number) {
+    if(this.spells[4][i] === 0) {
+      if (this.spells[2][i] === 0) {
+        return row !== 0;
+      }else if (this.spells[2][i] === 1) {
+        return row !== 1;
+      }
+    }
+    return false;
+  }
 }

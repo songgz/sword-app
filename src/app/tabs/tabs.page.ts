@@ -1,5 +1,5 @@
 import { Component, EnvironmentInjector, inject } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import {IonicModule, IonTabs} from '@ionic/angular';
 
 @Component({
   selector: 'app-tabs',
@@ -12,4 +12,9 @@ export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);
 
   constructor() {}
+
+  onTabChange(event: any): void {
+    const selectedTab = event;
+    console.log('激活的 Tab 标签是：', selectedTab);
+  }
 }

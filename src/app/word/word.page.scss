@@ -38,3 +38,46 @@
   margin-bottom: 10px;
 }
 
+
+
+.custom-grid {
+  table-layout: fixed;
+  //border:  solid 1px #ff0000;
+}
+ion-grid ion-row ion-col.custom-col {
+  outline: 1px solid red;
+  border-collapse: separate;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 26px;
+}
+
+ion-grid ion-row ion-col.hui-col {
+  background-color: #b2aeae;
+
+}
+
+ion-grid ion-row ion-col.err-col {
+  background-color: #ab9348;
+
+}
+
+.centered-subtitle {
+  text-align: center;
+}
+
+.no-shadow-header {
+  --box-shadow: none;
+}
+//.custom-col {
+//  width: 100px; /* 设置单元格固定宽度 */
+//  height: 50px; /* 设置单元格固定高度 */
+//  text-align: center;
+//  text-align: center; /* 文字居中 */
+//  border: 1px solid red;
+//  cursor: pointer;
+//}

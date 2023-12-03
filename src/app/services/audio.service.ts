@@ -51,7 +51,7 @@ export class AudioService {
       // Play audio
       this.audioObj.src = url;
       this.audioObj.load();
-      this.audioObj.play();
+      this.audioObj.play().then();
 
       const handler = (event: Event) => {
         this.updateStateEvents(event);

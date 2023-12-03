@@ -57,9 +57,47 @@
       </ion-item>
     </ion-card>
 
+    <ion-card class="word-card" *ngIf="learnType === 'spell'" mode="ios">
+      <ion-header  class="no-shadow-header"><ion-card-subtitle class="centered-subtitle">{{tracker.word.acceptation}}</ion-card-subtitle></ion-header>
+      <ion-item lines="none" color="#fff" >
+        <ion-thumbnail slot="start">
+         <ion-img *ngIf="state !== 'survey'" [src]="getWordImg(tracker.word.picture)"></ion-img>
+        </ion-thumbnail>
+        <ion-card-content>
+          <ion-grid class="custom-grid" *ngIf="spells[3].length === 0">
+            <ion-row>
+              <ion-col>
+                <ion-card-title *ngIf="state !== 'survey'"   [color]="tracker.getColor()">{{tracker.word.word}}</ion-card-title>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col *ngFor="let w1 of spells[0]; let i = index" [class]="spells[2][i]===0 ? 'hui-col':''" (click)="sp(i,0)" class="custom-col">{{w1}}</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col *ngFor="let w2 of spells[1]; let i = index" [class]="spells[2][i]===1 ? 'hui-col':''" (click)="sp(i,1)" class="custom-col">{{w2}}</ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid class="custom-grid" *ngIf="spells[3].length !== 0">
+            <ion-row>
+              <ion-col>
+                <ion-card-title >{{tracker.word.word}}</ion-card-title>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col *ngFor="let w1 of spells[0]; let i = index" [class]="isErrSpell(i, 0)  ? 'err-col':''" (click)="sp(i,0)" class="custom-col">{{w1}}</ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col *ngFor="let w2 of spells[1]; let i = index" [class]="isErrSpell(i, 1) ? 'err-col':''" (click)="sp(i,1)" class="custom-col">{{w2}}</ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-item>
+    </ion-card>
+
     <ion-item lines="none" >
       <label>{{tracker.learnType}}: {{tracker.getCompletions()}}/{{tracker.total}}</label>
-      <div slot="end" *ngIf="state === 'survey' && !tracker.testable()">
+      <div slot="end" *ngIf="state === 'survey' && !tracker.testable() && learnType!=='spell'">
         <ion-button (click)="survey(true)" size="default" color="success" class="custom-width-button">认识</ion-button>
         <ion-button (click)="survey(false)" size="default" color="danger" class="custom-width-button"> 不认识</ion-button>
       </div>

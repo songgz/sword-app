@@ -18,7 +18,7 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy,
       useClass: IonicRouteStrategy
     },
-    importProvidersFrom(IonicModule.forRoot({ mode: 'md' })),
+    importProvidersFrom(IonicModule.forRoot({ })),
     provideRouter(routes),
     provideHttpClient(),
       QuizAlertComponent

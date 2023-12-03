@@ -5,6 +5,7 @@ import {IonicModule, ModalController} from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {BookModalComponent} from "../book-modal/book-modal.component";
+import {AppCtxService} from "../services/app-ctx.service";
 
 @Component({
   selector: 'app-book',
@@ -33,8 +34,8 @@ export class BookPage implements OnInit {
   learnedBooks: any[] = [];
   activeKind: string = "FREE";
 
-  constructor(private rest: RestApiService, private sanitizer: DomSanitizer, private modalController: ModalController) {
-    this.loadLearnedBooks('653c68696eec2f1ea8aa1a2a');
+  constructor(private ctx: AppCtxService, private rest: RestApiService, private sanitizer: DomSanitizer, private modalController: ModalController) {
+    this.loadLearnedBooks(this.ctx.user_id, this.ctx.learnType);
     this.loadBooks(this.activeKind);
   }
 
@@ -52,8 +53,8 @@ export class BookPage implements OnInit {
     });
   }
 
-  loadLearnedBooks(studentId: string) {
-    this.rest.index('learned_books', {student_id: studentId, per: 999}).subscribe(res => {
+  loadLearnedBooks(studentId: string, learnType: string) {
+    this.rest.index('learned_books', {student_id: studentId, learn_type: learnType, per: 999}).subscribe(res => {
       this.learnedBooks = res.data;
     });
   }
@@ -66,10 +67,6 @@ export class BookPage implements OnInit {
   getWordImg(file: string) :string {
     return this.rest.getAssetUrl() + file;
   }
-
-
-
-
 
   filterBook(category: string) :any[] {
     return this.books.filter(b => b.category === category);
@@ -98,12 +95,12 @@ export class BookPage implements OnInit {
     await modal.present();
     const { data } = await modal.onDidDismiss();
     if (data) {
-      this.addBook('653c68696eec2f1ea8aa1a2a', book.id);
+      this.addBook(this.ctx.user_id, book.id, this.ctx.learnType);
     }
   }
 
-  addBook(studentId: string, bookId: string) {
-    this.rest.create('learned_books', {student_id: studentId, book_id: bookId}).subscribe(res => {
+  addBook(studentId: string, bookId: string, learnType: string) {
+    this.rest.create('learned_books', {student_id: studentId, book_id: bookId, learn_type: learnType}).subscribe(res => {
       this.learnedBooks.push(res.data);
     });
   }

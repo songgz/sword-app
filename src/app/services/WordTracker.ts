@@ -13,7 +13,7 @@ export class WordTracker {
   colors: string[] = ['err0', 'err1', 'err2', 'err3', 'err4', 'err5', 'err6'];
   private unitId: string | undefined;
   rights: number = 0;
-  answer: boolean = false;
+  wrongs: number = 0;
   word: any = {};
 
   constructor() { }
@@ -88,20 +88,25 @@ export class WordTracker {
   // }
 
   wrongAnswer() {
-    let state = this.wordStates[this.stepper.getIndexValue()] = this.wordStates[this.stepper.getIndexValue()] || {
-      unit_id: '',
-      word_id: '',
-      repeats: 0,
-      learns: 0,
-      reviews: 0,
-      is_wrong: true,
-      completed: false};
+    let state = this.wordStates[this.stepper.getIndexValue()];
+    if (!state) {
+      this.wrongs++;
+      state = {
+        unit_id: this.unitId,
+        word_id: this.getWord().id,
+        repeats: 0,
+        learns: 0,
+        reviews: 0,
+        is_wrong: true,
+        completed: false};
+    }
+
     console.log(state);
-    state.unit_id = state.unit_id || this.unitId;
-    state.word_id = state.word_id || this.getWord().id;
     state.repeats = 0;
     state.learns = state.learns + 1;
     this.stepper.jump(0);
+    this.wordStates[this.getIndexValue()] = state;
+
     console.log(this.wordStates);
   }
 

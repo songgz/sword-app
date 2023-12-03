@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AlertController, AlertOptions, IonicModule} from "@ionic/angular";
 import {CommonModule} from "@angular/common";
+import {AppCtxService} from "../services/app-ctx.service";
 
 @Component({
   selector: 'app-quiz-alert',
