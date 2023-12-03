@@ -8,6 +8,7 @@ import {RestApiService} from "../services/rest-api.service";
 import {AudioService} from "../services/audio.service";
 import {QuizAlertComponent} from "../quiz-alert/quiz-alert.component";
 import {WordTracker} from "../services/WordTracker";
+import {StreamState} from "../services/stream-state";
 
 @Component({
   selector: 'app-word',
@@ -25,6 +26,7 @@ export class WordPage implements OnInit {
   learnedUnits: any[] = [];
   //errorWords: any[] = [];
 
+  audioState: StreamState | undefined;
   state: any = 'survey';
   tracker: WordTracker;
   options: any[] = [];
@@ -38,14 +40,20 @@ export class WordPage implements OnInit {
     {code: 'spell', name: '拼写'},
     {code: 'matchGame', name: '消消乐'}
   ];
-  learnType: string = 'review';
+  learnType: string = 'read';
   book: any = {};
+  isReview: boolean = false;
 
   constructor(private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private alertController: AlertController) {
     this.tracker = new WordTracker();
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.loadLearnedBook('653c68696eec2f1ea8aa1a2a', params['bookId']);
+      this.learnType = params['learnType'];
+      this.loadLearnedBook('653c68696eec2f1ea8aa1a2a', params['bookId'], params['learnType']);
       //this.loadUnits(params['bookId']);
+    });
+
+    this.audio.getState().subscribe(state => {
+      this.audioState = state;
     });
 
   }
@@ -68,16 +76,17 @@ export class WordPage implements OnInit {
   //   });
   // }
 
-  loadLearnedBook(studentId: string, bookId: string) {
-    this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId}).subscribe(res => {
+  loadLearnedBook(studentId: string, bookId: string, learnType: string) {
+    this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId, learn_type: learnType}).subscribe(res => {
       this.learnedUnits = res.data.learned_units;
       this.book = res.data.book;
       let errorWords = res.data.error_words;
       if (errorWords.length > 0) {
+        this.isReview = true;
         this.tracker.loadErrWords(errorWords);
-        this.word = this.tracker.getWord();
+        this.start();
+
       }else{
-        this.learnType = 'read';
         this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
         this.openUnit(this.learnedUnit.unit_id);
       }
@@ -86,11 +95,12 @@ export class WordPage implements OnInit {
 
   loadWords(unitId: string) {
     this.rest.index('words', {unit_id: unitId, per: 999}).subscribe(res => {
-      console.log(res.data);
+     // console.log(res.data);
       let words = res.data;
       this.tracker.loadWords(words, unitId);
-      console.log(this.tracker.words);
-      this.word = this.tracker.getWord();
+      this.start();
+      //console.log(this.tracker.words);
+      //this.word = this.tracker.getWord();
       //this.wordState = this.tracker.getWordState();
 
     });
@@ -107,13 +117,26 @@ export class WordPage implements OnInit {
     this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe();
   }
 
-  survey(value: boolean) {
+  start() {
+    this.state = 'survey';
+    this.word = this.tracker.getWord();
     this.playWord();
+
+    this.options = [];
+    if (this.isReview === true && this.tracker.testable()) {
+      this.getWordOptions(4);
+    }
+
+  }
+
+  survey(value: boolean) {
+    //this.playWord();
 
     if (value) {
       this.state = 'evaluate';
     } else {
       this.answer = false;
+
       this.state = 'repeater';
     }
   }
@@ -122,10 +145,12 @@ export class WordPage implements OnInit {
   evaluate(value: boolean) {
     if (value) {
       this.answer = true;
+
       this.next();
       this.state = 'survey';
     } else {
       this.answer = false;
+
       this.state = 'repeater';
     }
   }
@@ -135,52 +160,56 @@ export class WordPage implements OnInit {
     this.state = 'next';
   }
 
+
+
   next() {
-    if (this.learnType == 'read') {
-      if (!this.answer) {
-        this.learnedUnit.wrongs++;
-      }
-      this.learnedUnit.learns = this.tracker.completions;
-    }
+    this.updateWordState(this.answer);
 
 
-
-    if (this.answer) {
-      this.tracker.correctAnswer();
-    }else{
-      this.tracker.wrongAnswer();
-    }
-    this.tracker.jump();
-    if (this.tracker.testable()) {
-      this.getRandomWords(4);
+    if (!this.isReview && this.learnType == 'read') {
+      this.learnedUnit.wrongs = this.tracker.rights;
+      this.learnedUnit.learns = this.tracker.getCompletions();
     }
 
     if (this.tracker.isOver()) {
       this.saveWordState();//保存
 
-      if (this.learnType === 'review') {
+      if (this.isReview === true) {
+        this.isReview = false;
         this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
         this.openUnit(this.learnedUnit.unit_id);
-      }
-      if (this.learnType === 'read') {
-        this.router.navigate(['/match-game'], {queryParams: {unitId: this.learnedUnit.unit_id}});
+      }else{
+        if (this.learnType === 'read') {
+          this.router.navigate(['/match-game'], {queryParams: {unitId: this.learnedUnit.unit_id}});
 
-        //this.presentAfter();
+          //this.presentAfter();
+        }
       }
+
 
 
 
     }else{
       this.tracker.next();
-      this.word = this.tracker.getWord();
-      this.state = 'survey';
+      this.start();
     }
   }
 
+  updateWordState(value: boolean) {
+    if (value) {
+      this.tracker.correctAnswer();
+    }else{
+      this.tracker.wrongAnswer();
+    }
+  }
+
+
+
   saveWordState() {
     let error_words: any[] = [];
-    this.tracker.wordStates.forEach(s => {
-      if (s.is_wrong) {
+    //console.log(this.tracker.wordStates);
+    Object.keys(this.tracker.wordStates).forEach(key => {
+      let s = this.tracker.wordStates[key];
         error_words.push({
           unit_id: s.unit_id,
           word_id: s.word_id,
@@ -189,12 +218,12 @@ export class WordPage implements OnInit {
           reviews: s.reviews,
           is_wrong: s.is_wrong
         });
-      }
     });
 
     let body: any = {
       student_id: '653c68696eec2f1ea8aa1a2a',
       book_id: this.book.id,
+      learn_type: this.learnType,
       error_words: error_words,
     };
     if (this.learnType === 'read') {
@@ -217,28 +246,29 @@ export class WordPage implements OnInit {
     return '';
   }
 
-  getRandomWords(n: number): any[] {
+  getWordOptions(n: number): any[] {
     this.options = [];
-    let m = this.tracker.getIndexValue();
+    this.options.push(this.tracker.words[this.tracker.getIndexValue()]);
     let randomIndex = -1;
+    let w: any = {};
     while (this.options.length < n) {
       randomIndex = Math.floor(Math.random() * this.tracker.words.length);
-      if (m !== randomIndex) {
-        this.options.push(this.tracker.words[randomIndex]);
-      }
-      if (this.options.length === n - 1) {
-        this.options.splice(m % n, 0, this.tracker.getWord());
+      w = this.tracker.words[randomIndex];
+      if (this.options.findIndex(o => o.id === w.id) === -1) {
+        this.options.push(w);
       }
     }
+    let j = randomIndex % n;
+    [this.options[1], this.options[j]] = [this.options[j], this.options[1]];
     return this.options;
   }
 
   replyOption(wordId: string) {
     this.answer = (wordId === this.word.id);
     this.next();
-
-
   }
+
+
 
   async presentAlert() {
     const alert = await this.alertController.create({
@@ -249,14 +279,14 @@ export class WordPage implements OnInit {
           text: '取消',
           role: 'cancel',
           handler: () => {
-            this.learnType = 'read';
+            //this.learnType = 'read';
           },
         },
         {
           text: '确定',
           role: 'confirm',
           handler: () => {
-            this.learnType = 'beforeQuiz'
+            //this.learnType = 'beforeQuiz'
             this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: this.learnType}});
           },
         }

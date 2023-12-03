@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {RouterLink} from "@angular/router";
+import {AppCtxService} from "../services/app-ctx.service";
 
 @Component({
   selector: 'app-learn',
@@ -19,15 +20,31 @@ export class LearnPage implements OnInit {
     {code: 'CHINESE_WORD', name: '汉字速记'}
   ];
   books: any[] = [];
+//<ion-icon name="eye-outline"></ion-icon>
+ //<ion-icon name="headset-outline"></ion-icon>
+  //<ion-icon name="create-outline"></ion-icon>
+  //<ion-icon name="pencil-outline"></ion-icon>
+  learnTypes: any[] = [
+    { iconName: 'pencil-outline', code: 'spell', selected: false },
+    { iconName: 'headset-outline',code: 'listen', selected: false },
+    { iconName: 'eye-outline', code: 'read', selected: false }
+  ];
+  selectedItem: any = this.learnTypes[2];
 
-  constructor(private rest: RestApiService) { }
+  constructor(private ctx: AppCtxService, private rest: RestApiService) { }
 
   ngOnInit() {
-    this.loadLearnedBooks('653c68696eec2f1ea8aa1a2a');
+    this.loadLearnedBooks(this.ctx.user.id, this.ctx.learnType);
   }
 
-  loadLearnedBooks(studentId: string) {
-    this.rest.index('learned_books', {student_id: studentId,per: 999}).subscribe(res => {
+  selectItem(selectedItem: any) {
+    this.learnTypes.forEach(item => item.selected = false);
+    selectedItem.selected = true;
+    this.ctx.learnType = selectedItem.code;
+  }
+
+  loadLearnedBooks(studentId: string, learnType: string) {
+    this.rest.index('learned_books', {student_id: studentId, learn_type: learnType ,per: 999}).subscribe(res => {
       this.books = res.data || [];
     });
   }

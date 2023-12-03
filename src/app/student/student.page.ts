@@ -11,7 +11,7 @@ import { IonicModule } from '@ionic/angular';
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class StudentPage implements OnInit {
-
+  progress: number = 60;
   constructor() { }
 
   ngOnInit() {

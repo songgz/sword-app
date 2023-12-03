@@ -2,11 +2,15 @@ export class WordStepper {
   index: number = 0;
   indexValues: number[] = [];
   intervals: number[] = [1, 3, 6, 12, 24, 48];
+  completions: number = 0;
 
   constructor(indexSize: number) {
     for (let i = 0; i < indexSize; i++) {
       this.indexValues.push(i);
     }
+    // if (this.completions === this.index && this.indexValues.length > 0) {
+    //   this.completions++;
+    // }
   }
 
   jump(step: number) {
@@ -21,6 +25,9 @@ export class WordStepper {
   }
 
   next() {
+    if (this.completions === this.getIndexValue()) {
+      this.completions++;
+    }
     if (!this.isOver()) {
       ++this.index;
     }
