@@ -67,7 +67,7 @@
           <ion-grid class="custom-grid" *ngIf="spells[3].length === 0">
             <ion-row>
               <ion-col>
-                <ion-card-title *ngIf="state !== 'survey'"   [color]="tracker.getColor()">{{tracker.word.word}}</ion-card-title>
+                <ion-card-title *ngIf="state !== 'survey'" ></ion-card-title>
               </ion-col>
             </ion-row>
             <ion-row>
@@ -81,7 +81,7 @@
           <ion-grid class="custom-grid" *ngIf="spells[3].length !== 0">
             <ion-row>
               <ion-col>
-                <ion-card-title >{{tracker.word.word}}</ion-card-title>
+                <ion-card-title ><ion-text *ngFor="let a of tracker.word.word.split(''); let i = index" [color]="getErrColor(i)">{{a}}</ion-text></ion-card-title>
               </ion-col>
             </ion-row>
             <ion-row>

@@ -324,9 +324,12 @@ export class WordPage implements OnInit {
     return this.sanitizer.bypassSecurityTrustHtml(text.replace(/<br\/>/g, '<br/>'));
   }
 
+  wordSpells: string[] = [];
+
   randSpell() {
     this.spells = [[],[],[],[],[]];
     let w1 = this.word.word;
+    this.wordSpells = w1.split('');
     let w2 = this.getRandomLetters(w1);
     let n = 0;
 
@@ -417,6 +420,32 @@ export class WordPage implements OnInit {
     if(this.spells[3][i] === 0 && this.spells[2][i] === row) {
       this.spells[3][i] = 1;
     }
+  }
+
+//   getLetterColor(t) {
+//   var e = t.status
+// , i = "gray";
+//   if (this.optStatus > 0)
+//   switch (e) {
+//   case "error":
+//     i = "#56BDFF";
+//     break;
+//   case "checked":
+//     i = "orange";
+//     break;
+//   default:
+//     i = "#ff0000"
+//   }
+//   return i
+// }
+
+  getErrColor(i:number) {
+    if(this.spells[4][i] === 1 && this.spells[3][i] === 0){
+      return 'err0';
+    }else if (this.spells[3][i] === 0) {
+      return 'err2';
+    }
+    return 'err6';
   }
 
   isErrSpell(i: number, row: number) {
