@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {IonicModule, ModalController} from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
+import {AlertModalComponent} from "../alert-modal/alert-modal.component";
+import {AppCtxService} from "../services/app-ctx.service";
 
 @Component({
   selector: 'app-match-game',
@@ -21,15 +23,18 @@ export class MatchGamePage implements OnInit {
   count: number = 0;
   page_count: number = 0;
   page_no: number = 0;
+  unitId: string = '';
+  bookId: string = '';
 
-  constructor(private rest: RestApiService, private activatedRouter: ActivatedRoute) {
+  constructor(private ctx: AppCtxService, private rest: RestApiService, private activatedRouter: ActivatedRoute,private router: Router, private modalCtrl: ModalController) {
 
   }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
-      //this.loadQuiz('653c68696eec2f1ea8aa1a2a', params['unitId'], params['testType']);
-      this.loadWords(params['unitId'], 1);
+      this.unitId = params['unitId'];
+      this.bookId = params['bookId'];
+      this.loadWords(this.unitId, 1);
     });
 
   }
@@ -74,9 +79,41 @@ export class MatchGamePage implements OnInit {
       // let m = this.yCol.findIndex(c => c.id === this.y.id);
       // this.yCol.splice(m,1);
     }
-    if (this.count == 10 && this.page_no <= this.page_count) {
-      this.loadWords('65109f9c6eec2f38fc262392', ++this.page_no);
+
+    if (this.page_no === this.page_count && this.words.length === this.count) {
+      this.nextUnitModal();
+
+    }
+    if (this.count === 10 && this.page_no <= this.page_count) {
+
+      this.loadWords(this.unitId, ++this.page_no);
       this.count = 0;
+    }
+  }
+
+  async nextUnitModal() {
+    const modal = await this.modalCtrl.create({
+      component: AlertModalComponent,
+      cssClass: 'custom-modal',
+      componentProps: {
+        title: '学习提示',
+        message: '是否进行章节后测试？'
+      }
+    });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      //this.message = `Hello, ${data}!`;
+      this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.unitId, testType: this.ctx.learnType}});
+
+    }
+
+    if (role === 'cancel') {
+      this.router.navigate(['/tabs/word'], {queryParams: {bookId: this.bookId, unitId: this.unitId}});
+
+
     }
   }
 

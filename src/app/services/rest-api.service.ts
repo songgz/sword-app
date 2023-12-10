@@ -9,6 +9,7 @@ const HEADERS = new HttpHeaders({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${localStorage.getItem('token')}` });
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,10 +20,7 @@ export class RestApiService {
   }
 
   index(path: string, params = {}): Observable<any> {
-    return this.http.get(env.apiUrl + path + '.json', {
-      headers: HEADERS,
-      params,
-    });
+    return this.http.get(env.apiUrl + path + '.json', {headers: HEADERS, params});
   }
 
   create(path:string, body: any): Observable<any> {

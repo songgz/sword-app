@@ -1,17 +1,4 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button> Start </ion-button>
-    </ion-buttons>
-    <ion-title >Start / End Buttons</ion-title>
-    <ion-buttons slot="end">
-      <ion-button shape="round">
-        <ion-icon slot="icon-only" name="menu"></ion-icon>
-      </ion-button>
-
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-header [title]="'学习中心'"></app-header>
 
 <ion-content [fullscreen]="true">
   <ion-accordion-group [multiple]="true" [value]="getBookCategoryCodes()">
@@ -29,7 +16,7 @@
                 <ion-card-subtitle>{{book.book?.kind}}</ion-card-subtitle>
               </ion-card-header>
               <div class="my-book-card-buttons">
-                <ion-button size="small" color="light" >删除</ion-button>
+                <ion-button size="small" color="light" (click)="removeBookModal()" >删除</ion-button>
                 <ion-button size="small" color="light" [routerLink]="['/tabs/word']" [queryParams]="{bookId:book.book?.id, learnType:selectedItem.code}">学习</ion-button>
               </div>
             </div>

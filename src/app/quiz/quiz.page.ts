@@ -29,7 +29,7 @@ export class QuizPage implements OnInit {
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.loadQuiz(this.ctx.user_id, params['unitId'], params['testType'], this.ctx.learnType);
+      this.loadQuiz(this.ctx.getUserId(), params['unitId'], params['testType'], this.ctx.learnType);
     });
 
 

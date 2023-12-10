@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {AlertController, IonicModule} from '@ionic/angular';
+import {IonicModule, ModalController} from '@ionic/angular';
 import {ActivatedRoute, Router} from "@angular/router";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {RestApiService} from "../services/rest-api.service";
@@ -10,6 +10,7 @@ import {QuizAlertComponent} from "../quiz-alert/quiz-alert.component";
 import {WordTracker} from "../services/WordTracker";
 import {StreamState} from "../services/stream-state";
 import {AppCtxService} from "../services/app-ctx.service";
+import {AlertModalComponent} from "../alert-modal/alert-modal.component";
 
 @Component({
   selector: 'app-word',
@@ -45,12 +46,18 @@ export class WordPage implements OnInit {
   book: any = {};
   isReview: boolean = false;
   spells: any[][] = [[],[],[],[]];
+  started: boolean = false;
+  bookId: string = '';
+  lastUpdate: Date = new Date("2000-01-01T08:00:00");
 
-  constructor(private ctx: AppCtxService, private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private alertController: AlertController) {
+  constructor(private ctx: AppCtxService, private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private modalCtrl: ModalController) {
+
     this.tracker = new WordTracker();
+
     this.activatedRouter.queryParams.subscribe((params) => {
       this.learnType = params['learnType'];
-      this.loadLearnedBook(this.ctx.user_id, params['bookId'], this.ctx.learnType);
+      this.bookId = params['bookId'];
+      this.loadLearnedBook(this.ctx.getUserId(), params['bookId'], this.ctx.learnType);
       //this.loadUnits(params['bookId']);
     });
 
@@ -65,25 +72,35 @@ export class WordPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.started = false;
     //this.presentAlert();
   }
 
 
   loadLearnedBook(studentId: string, bookId: string, learnType: string) {
     this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId, learn_type: learnType}).subscribe(res => {
+      this.lastUpdate = new Date(res.data.updated_at);
       this.learnedUnits = res.data.learned_units;
+
       this.book = res.data.book;
       let errorWords = res.data.error_words;
-      if (errorWords.length > 0) {
+      if (errorWords.length > 0 && this.reviewedToursDiff() > 12) {
         this.isReview = true;
         this.tracker.loadErrWords(errorWords);
+        this.started = true
         this.start();
-
       }else{
+        this.isReview = false;
         this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
         this.openUnit(this.learnedUnit.unit_id);
       }
     });
+  }
+
+  reviewedToursDiff() {
+    const timeDiff = Math.abs((new Date()).getTime() - this.lastUpdate.getTime());
+    const hoursDiff = Math.ceil(timeDiff / (1000 * 60 * 60));
+    return hoursDiff;
   }
 
   loadWords(unitId: string) {
@@ -91,7 +108,7 @@ export class WordPage implements OnInit {
      // console.log(res.data);
       let words = res.data;
       this.tracker.loadWords(words, unitId);
-      this.start();
+
       //console.log(this.tracker.words);
       //this.word = this.tracker.getWord();
       //this.wordState = this.tracker.getWordState();
@@ -100,8 +117,9 @@ export class WordPage implements OnInit {
   }
 
   openUnit(unitId: string) {
+    this.started = false;
     this.loadWords(unitId);
-    this.presentAlert();
+    this.prevUnitModal();
   }
 
   playWord() {
@@ -113,22 +131,22 @@ export class WordPage implements OnInit {
     this.word = this.tracker.getWord();
     this.playWord();
 
-    this.options = [];
-    if (this.isReview === true && this.tracker.testable()) {
+    console.log(this.tracker.getWordState());
+    if (this.tracker.testable()) {
+      console.log('ee----gg')
       this.getWordOptions(4);
     }
+
     if (this.ctx.learnType === 'spell') {
 
       console.log('spell');
       this.randSpell();
       console.log(this.spells);
     }
-
   }
 
   survey(value: boolean) {
-    //this.playWord();
-
+    this.playWord();
     if (value) {
       this.state = 'evaluate';
     } else {
@@ -142,7 +160,6 @@ export class WordPage implements OnInit {
   evaluate(value: boolean) {
     if (value) {
       this.answer = true;
-
       this.next();
       this.state = 'survey';
     } else {
@@ -162,8 +179,8 @@ export class WordPage implements OnInit {
   next() {
     this.updateWordState(this.answer);
 
-    console.log(this.tracker.getCompletions());
-    console.log(this.tracker.stepper.completions);
+    // console.log(this.tracker.getCompletions());
+    // console.log(this.tracker.stepper.completions);
 
 
     if (this.tracker.isOver()) {
@@ -174,17 +191,16 @@ export class WordPage implements OnInit {
         this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
         this.openUnit(this.learnedUnit.unit_id);
       }else{
-        if (this.learnType === 'read') {
-          this.router.navigate(['/match-game'], {queryParams: {unitId: this.learnedUnit.unit_id}});
+        if (this.ctx.learnType === 'read') {
+          this.router.navigate(['/match-game'], {queryParams: {unitId: this.learnedUnit.unit_id,bookId: this.bookId}});
 
           //this.presentAfter();
         }
+        if(this.ctx.learnType === 'listen') {
+          this.nextUnitModal();
+        }
 
       }
-
-
-
-
     }else{
       this.tracker.next();
       if (!this.isReview && this.learnedUnit) {
@@ -219,7 +235,7 @@ export class WordPage implements OnInit {
     });
 
     let body: any = {
-      student_id: this.ctx.user_id,
+      student_id: this.ctx.getUserId(),
       book_id: this.book.id,
       learn_type: this.ctx.learnType,
       error_words: error_words,
@@ -227,7 +243,7 @@ export class WordPage implements OnInit {
     if (!this.isReview) {
       body.learned_units = this.learnedUnits;
     }
-    this.rest.create('learned_books', body).subscribe();
+    this.rest.update('learned_books/0', body).subscribe();
   }
 
   getWordImg(file: string): string {
@@ -246,6 +262,9 @@ export class WordPage implements OnInit {
 
   getWordOptions(n: number): any[] {
     this.options = [];
+    if (n > this.tracker.words.length) {
+      n = this.tracker.words.length;
+    }
     this.options.push(this.tracker.words[this.tracker.getIndexValue()]);
     let randomIndex = -1;
     let w: any = {};
@@ -267,58 +286,108 @@ export class WordPage implements OnInit {
   }
 
 
-
-  async presentAlert() {
-    const alert = await this.alertController.create({
-      header: '学习提示',
-      message: '是否进行章节前测试？',
-      buttons: [
-        {
-          text: '取消',
-          role: 'cancel',
-          handler: () => {
-            //this.learnType = 'read';
-          },
-        },
-        {
-          text: '确定',
-          role: 'confirm',
-          handler: () => {
-            //this.learnType = 'beforeQuiz'
-            this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: this.learnType}});
-          },
-        }
-      ]
+  async prevUnitModal() {
+    const modal = await this.modalCtrl.create({
+      component: AlertModalComponent,
+      cssClass: 'custom-modal',
+      componentProps: {
+        title: '学习提示',
+        message: '是否进行章节前测试？'
+      }
     });
+    modal.present();
 
-    await alert.present();
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      //this.message = `Hello, ${data}!`;
+       this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: 'beforeLearn'}});
+
+    }
+
+    if (role === 'cancel') {
+      this.started = true;
+      this.start();
+    }
   }
 
-  async presentAfter() {
-    const alert = await this.alertController.create({
-      header: '学习提示',
-      message: '是否进行章节后测试？',
-      buttons: [
-        {
-          text: '取消',
-          role: 'cancel',
-          handler: () => {
-            this.learnType = 'read';
-          },
-        },
-        {
-          text: '确定',
-          role: 'confirm',
-          handler: () => {
-            this.learnType = 'beforeQuiz'
-            this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: this.learnType}});
-          },
-        }
-      ]
+  async nextUnitModal() {
+    const modal = await this.modalCtrl.create({
+      component: AlertModalComponent,
+      cssClass: 'custom-modal',
+      componentProps: {
+        title: '学习提示',
+        message: '是否进行章节前测试？'
+      }
     });
+    modal.present();
 
-    await alert.present();
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      //this.message = `Hello, ${data}!`;
+      this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: 'afterLearn'}});
+
+    }
+
+    if (role === 'cancel') {
+      this.started = true;
+      this.start();
+    }
   }
+
+
+  // async presentAlert() {
+  //   const alert = await this.alertController.create({
+  //     header: '学习提示',
+  //     message: '是否进行章节前测试？',
+  //     buttons: [
+  //       {
+  //         text: '取消',
+  //         role: 'cancel',
+  //         handler: () => {
+  //           //this.learnType = 'read';
+  //         },
+  //       },
+  //       {
+  //         text: '确定',
+  //         role: 'confirm',
+  //         handler: () => {
+  //           //this.learnType = 'beforeQuiz'
+  //           this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: this.learnType}});
+  //         },
+  //       }
+  //     ]
+  //   });
+  //
+  //   await alert.present();
+  // }
+
+  // async presentAfter() {
+  //   const alert = await this.alertController.create({
+  //     header: '学习提示',
+  //     message: '是否进行章节后测试？',
+  //     buttons: [
+  //       {
+  //         text: '取消',
+  //         role: 'cancel',
+  //         handler: () => {
+  //           this.learnType = 'read';
+  //         },
+  //       },
+  //       {
+  //         text: '确定',
+  //         role: 'confirm',
+  //         handler: () => {
+  //           this.learnType = 'beforeQuiz'
+  //           this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.learnedUnit.unit_id, testType: this.learnType}});
+  //         },
+  //       }
+  //     ]
+  //   });
+  //
+  //   await alert.present();
+  // }
 
   formatText(text: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(text.replace(/<br\/>/g, '<br/>'));
@@ -457,5 +526,23 @@ export class WordPage implements OnInit {
       }
     }
     return false;
+  }
+
+  onInputFocus() {
+    // 处理输入框焦点激活事件
+  }
+
+  onInputChange(event: any) {
+    // 处理输入框变化事件
+  }
+
+  onEnterPressed() {
+    // 处理回车键按下事件
+  }
+
+  delayedInteraction() {
+    setTimeout(() => {
+      // 在此处编写延迟交互的逻辑代码
+    }, 2000); // 2秒延迟
   }
 }

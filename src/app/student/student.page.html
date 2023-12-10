@@ -1,25 +1,81 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>student</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [title]="'个人中心'"></app-header>
 
 <ion-content >
   <ion-grid>
-    <ion-row>
-      <ion-col class="custom-border">
-        <!-- 单元格内容 -->
+    <ion-row >
+      <ion-col size="auto">
+        <ion-card  style="width:250px;background: #fff;">
+          <img style="width:200px;height:200px;margin: 10px;position: relative;" alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+          <ion-card-header>
+            <ion-card-subtitle>昵称: {{ctx.getUser().name}}</ion-card-subtitle>
+            <ion-card-subtitle>年级: {{ctx.getUser()}}</ion-card-subtitle>
+            <ion-card-subtitle>生日:</ion-card-subtitle>
+            <ion-card-subtitle>VIP剩余天数: {{ctx.getUser().vip_days}}天</ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+
+              <ion-button (click)="rechargeModal()">充值</ion-button>
+              <ion-button (click)="changePasswordModal()">修改密码</ion-button>
+
+          </ion-card-content>
+        </ion-card>
+
       </ion-col>
-      <ion-col class="custom-border">
-        <!-- 单元格内容 -->
+      <ion-col size="auto">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-card  style="width:260px;height:140px;background: #fff;">
+                <ion-card-header mode="ios">
+                  <ion-card-title style="text-align: center;">5</ion-card-title>
+                  <ion-card-subtitle>当日积分</ion-card-subtitle>
+                </ion-card-header>
+                <ion-item lines="none" style="--background: #ffffff;">
+                  <ion-button slot="end" fill="clear">更多</ion-button>
+                </ion-item>
+              </ion-card>
+            </ion-col>
+            <ion-col>
+              <ion-card style="width:260px;height:140px;background: #fff;">
+                <ion-card-header mode="ios">
+                  <ion-card-title style="text-align: center;">5</ion-card-title>
+                  <ion-card-subtitle>本周积分</ion-card-subtitle>
+                </ion-card-header>
+                <ion-item lines="none" style="--background: #ffffff;">
+                  <ion-button slot="end" fill="clear">更多</ion-button>
+                </ion-item>
+              </ion-card>
+            </ion-col>
+            <ion-col>
+              <ion-card style="width:260px;height:140px;background: #fff;">
+                <ion-card-header mode="ios">
+                  <ion-card-title style="text-align: center;">5</ion-card-title>
+                  <ion-card-subtitle>总积分</ion-card-subtitle>
+                </ion-card-header>
+                <ion-item lines="none" style="--background: #ffffff;">
+                  <ion-button slot="end" fill="clear">更多</ion-button>
+                </ion-item>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-img style="width:260px;height:411px;margin:10px" src="assets/images/learn_statistics.jpg"></ion-img>
+            </ion-col>
+            <ion-col>
+              <ion-img style="width:260px;height:200px;margin:10px" src="assets/images/learn_course.jpg"></ion-img>
+              <ion-img style="width:260px;height:200px;margin:10px" src="assets/images/test_sorce.jpg"></ion-img>
+            </ion-col>
+            <ion-col>
+              <ion-img style="width:260px;height:200px;margin:10px" src="assets/images/word_test.jpg"></ion-img>
+              <ion-img style="width:260px;height:200px;margin:10px" src="assets/images/about.jpg"></ion-img>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </ion-col>
-      <ion-col class="custom-border">
-        <!-- 单元格内容 -->
-      </ion-col><ion-col class="custom-border">
-      <!-- 单元格内容 -->
-    </ion-col><ion-col class="custom-border">
-      <!-- 单元格内容 -->
-    </ion-col>
     </ion-row>
   </ion-grid>
+
+
 </ion-content>

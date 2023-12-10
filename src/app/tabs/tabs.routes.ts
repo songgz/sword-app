@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import {authGuard} from "../auths/auth.guard";
 
 export const routes: Routes = [
   {
@@ -8,7 +9,8 @@ export const routes: Routes = [
     children: [
       {
         path: 'learn',
-        loadComponent: () => import('../learn/learn.page').then( m => m.LearnPage)
+        loadComponent: () => import('../learn/learn.page').then( m => m.LearnPage),
+        canActivate: [authGuard]
       },
       {
         path: 'word',
@@ -20,11 +22,13 @@ export const routes: Routes = [
       },
       {
         path: 'book',
-        loadComponent: () => import('../book/book.page').then( m => m.BookPage)
+        loadComponent: () => import('../book/book.page').then( m => m.BookPage),
+        canActivate: [authGuard]
       },
       {
         path: 'student',
-        loadComponent: () => import('../student/student.page').then( m => m.StudentPage)
+        loadComponent: () => import('../student/student.page').then( m => m.StudentPage),
+        canActivate: [authGuard]
       },
       {
         path: 'tab1',

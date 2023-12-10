@@ -1,8 +1,4 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>book</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [title]="'课程中心'"></app-header>
 
 <ion-content [fullscreen]="true">
   <ion-item>
@@ -16,7 +12,7 @@
       </ion-item>
       <div class="image-grid" slot="content">
         <ion-img *ngFor="let book of filterBook(category.code)" [class]="isLearned(book.id) ? 'disabled grayscale' : ''"
-                 (click)="add(book.id)" style="width:150px; height:150px; margin: 10px"
+                 (click)="addBook(book.id)" style="width:150px; height:150px; margin: 10px"
                  [src]="getWordImg(book.cover)" [alt]="book.name">
         </ion-img>
 

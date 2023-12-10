@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {IonicModule, ModalController} from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {RouterLink} from "@angular/router";
 import {AppCtxService} from "../services/app-ctx.service";
+import {HeaderComponent} from "../header/header.component";
+import {ChangePasswordModalComponent} from "../change-password-modal/change-password-modal.component";
+import {RemoveBookModalComponent} from "../remove-book-modal/remove-book-modal.component";
 
 @Component({
   selector: 'app-learn',
   templateUrl: './learn.page.html',
   styleUrls: ['./learn.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, RouterLink]
+  imports: [IonicModule, CommonModule, FormsModule, RouterLink, HeaderComponent]
 })
 export class LearnPage implements OnInit {
   bookCategories: any[] = [
@@ -31,7 +34,7 @@ export class LearnPage implements OnInit {
   ];
   selectedItem: any = this.learnTypes[2];
 
-  constructor(private ctx: AppCtxService, private rest: RestApiService) {
+  constructor(public ctx: AppCtxService, private rest: RestApiService, private modalCtrl: ModalController) {
     this.selectedItem = this.learnTypes.find(lt=> lt.code === this.ctx.learnType);
     this.selectedItem.selected = true;
   }
@@ -41,7 +44,7 @@ export class LearnPage implements OnInit {
   }
 
   ionViewDidEnter(): void {
-    this.loadLearnedBooks(this.ctx.user_id, this.ctx.learnType);
+    this.loadLearnedBooks(this.ctx.getUserId(), this.ctx.learnType);
   }
 
   selectItem(selectedItem: any) {
@@ -49,7 +52,7 @@ export class LearnPage implements OnInit {
     selectedItem.selected = true;
     this.selectedItem = selectedItem;
     this.ctx.learnType = selectedItem.code;
-    this.loadLearnedBooks(this.ctx.user_id, this.ctx.learnType);
+    this.loadLearnedBooks(this.ctx.getUserId(), this.ctx.learnType);
   }
 
   loadLearnedBooks(studentId: string, learnType: string) {
@@ -68,6 +71,23 @@ export class LearnPage implements OnInit {
 
   getBookCategoryCodes(): string[] {
     return this.bookCategories.map(b => b.code);
+  }
+
+  deleteBook() {
+
+  }
+
+  async removeBookModal() {
+    const modal = await this.modalCtrl.create({
+      component: RemoveBookModalComponent,
+    });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      //this.message = `Hello, ${data}!`;
+    }
   }
 
 }

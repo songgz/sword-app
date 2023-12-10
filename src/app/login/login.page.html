@@ -1,25 +1,26 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>login1</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="ion-padding">
+  <div class="login-container">
+    <div class="login-header">
+      <img src="assets/logo.png" alt="Logo" class="logo">
+      <h1>欢迎登录</h1>
+    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <ion-list  lines="full" class="ion-margin-top">
+      <ion-item lines="none">
+        <ion-input type="text" label="用户:" formControlName="username" errorText="用户为必填项。" required></ion-input>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-input type="password" label="密码:" formControlName="password" errorText="密码为必填项。" required></ion-input>
+      </ion-item>
+    </ion-list>
 
-<ion-content>
-  <form>
-    <ion-item lines="full">
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="text" required></ion-input>
-    </ion-item>
+    <div class="ion-padding">
+      <ion-button expand="block" type="submit" class="ion-margin-top">登录</ion-button>
+    </div>
+    </form>
 
-    <ion-item lines="full">
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" required></ion-input>
-    </ion-item>
-
-    <ion-row>
-      <ion-col>
-        <ion-button type="submit" color="danger" expand="block">Sign In</ion-button>        
-      </ion-col>
-    </ion-row>
-  </form>
+    <div class="login-footer">
+      <p>还没有账户？<a href="#">立即注册</a></p>
+    </div>
+  </div>
 </ion-content>

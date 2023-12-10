@@ -1,18 +1,20 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {IonicModule, ModalController} from '@ionic/angular';
+import {IonicModule, ModalController, ToastController} from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {BookModalComponent} from "../book-modal/book-modal.component";
 import {AppCtxService} from "../services/app-ctx.service";
+import {HeaderComponent} from "../header/header.component";
+import {RechargeComponent} from "../recharge/recharge.component";
 
 @Component({
   selector: 'app-book',
   templateUrl: './book.page.html',
   styleUrls: ['./book.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, NgOptimizedImage]
+  imports: [IonicModule, CommonModule, FormsModule, NgOptimizedImage, HeaderComponent]
 })
 export class BookPage implements OnInit {
   bookCategories: any[] = [
@@ -34,13 +36,17 @@ export class BookPage implements OnInit {
   learnedBooks: any[] = [];
   activeKind: string = "FREE";
 
-  constructor(private ctx: AppCtxService, private rest: RestApiService, private sanitizer: DomSanitizer, private modalController: ModalController) {
-    this.loadLearnedBooks(this.ctx.user_id, this.ctx.learnType);
-    this.loadBooks(this.activeKind);
+  constructor(private ctx: AppCtxService, private rest: RestApiService, private sanitizer: DomSanitizer, private modalCtrl: ModalController, private toastCtl: ToastController) {
+
   }
 
   ngOnInit() {
 
+  }
+
+  ionViewDidEnter(): void {
+    this.loadLearnedBooks(this.ctx.getUserId(), this.ctx.learnType);
+    this.loadBooks(this.activeKind);
   }
 
   isLearned(bookId: string) {
@@ -82,7 +88,7 @@ export class BookPage implements OnInit {
 
   async presentCustomAlert(bookId: string) {
     let book = this.books.find(b => b.id === bookId);
-    const modal = await this.modalController.create({
+    const modal = await this.modalCtrl.create({
       component: BookModalComponent,
       componentProps: {
         title: book.name,
@@ -95,19 +101,56 @@ export class BookPage implements OnInit {
     await modal.present();
     const { data } = await modal.onDidDismiss();
     if (data) {
-      this.addBook(this.ctx.user_id, book.id, this.ctx.learnType);
+      //this.addBook(this.ctx.getUserId(), book.id, this.ctx.learnType);
+      this.rest.create('learned_books', {student_id: this.ctx.getUserId(), book_id: bookId, learn_type: this.ctx.learnType}).subscribe({
+        next: res => {
+          this.loadLearnedBooks(this.ctx.getUserId(), this.ctx.learnType);
+        },
+        error: err => {
+          this.presentToast(err.error.messages, "middle").then();
+        }
+      });
     }
   }
 
-  addBook(studentId: string, bookId: string, learnType: string) {
-    this.rest.create('learned_books', {student_id: studentId, book_id: bookId, learn_type: learnType}).subscribe(res => {
-      this.learnedBooks.push(res.data);
+  addBook(bookId: string) {
+    let book = this.books.find(b => b.id === bookId);
+    if (book.kind == 'FREE' || this.ctx.getUserVipDays() > 0) {
+      this.presentCustomAlert(bookId);
+    }else{
+      this.rechargeModal();
+    }
+
+
+  }
+
+  async rechargeModal() {
+    const modal = await this.modalCtrl.create({
+      component: RechargeComponent,
     });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      //this.message = `Hello, ${data}!`;
+    }
   }
 
   add(id: string) {
     this.presentCustomAlert(id);
     console.log(id);
+  }
+
+  async presentToast(msg: string, position: 'top' | 'middle' | 'bottom') {
+    const toast = await this.toastCtl.create({
+      message: msg,
+      duration: 2500,
+      position: position,
+      color: 'danger'
+    });
+
+    await toast.present();
   }
 
 }
