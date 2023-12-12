@@ -7,7 +7,7 @@ import {CtxStorageService} from "./ctx-storage.service";
   providedIn: 'root'
 })
 export class AppCtxService {
-  learnType: string = 'spell';
+  learnType: string = 'read';
   authenticated: boolean = false;
   userSubject: BehaviorSubject<User>;
   user: Observable<User>;

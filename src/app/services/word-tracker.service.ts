@@ -3,6 +3,9 @@ import {WordStepper} from "./word-stepper";
 import {WordState} from "./word-state";
 import {RestApiService} from "./rest-api.service";
 import {Observable, tap} from "rxjs";
+import {AudioService} from "./audio.service";
+import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
+import {StreamState} from "./stream-state";
 
 @Injectable({
   providedIn: 'root'
@@ -21,13 +24,19 @@ export class WordTrackerService {
   wrongs: number = 0;
   word: any = {};
   learnedUnits: any[] = [];
-  private lastUpdate: Date = new Date("2023-01-01T08:00:00");
+  lastUpdate: Date = new Date("2023-01-01T08:00:00");
   book: any = {};
   isReview: boolean = false;
   learnedUnit: any = {};
   lastWordIndex: number = 0;
+  audioState: StreamState | undefined;
+  options: any[] = [];
 
-  constructor(private rest: RestApiService) { }
+  constructor(private rest: RestApiService, private audio: AudioService, private sanitizer: DomSanitizer) {
+    this.audio.getState().subscribe(state => {
+      this.audioState = state;
+    });
+  }
 
   init(bookId: string, studentId: string, learnType: string) {
     this.words = [];
@@ -40,15 +49,16 @@ export class WordTrackerService {
     return this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId, learn_type: learnType}).pipe(
         tap(d => {
           this.book = d.data.book;
+          this.lastUpdate = new Date(d.data.updated_at);
           this.learnedUnits = d.data.learned_units;
           if (this.learnedUnits.length > 0) {
-            this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
+            this.nextLearnedUnit();
           }
-          this.lastUpdate = new Date(d.data.updated_at);
           if (d.data.error_words.length > 0 && this.reviewedToursDiff(this.lastUpdate) > 12) {
             this.isReview = true;
             this.loadErrWords(d.data.error_words);
           }else{
+            this.isReview = false;
             this.loadUnitWords(this.learnedUnit.unit_id).subscribe();
           }
         })
@@ -56,7 +66,12 @@ export class WordTrackerService {
 
   }
 
+  nextLearnedUnit(): any {
+    return this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
+  }
+
   loadUnitWords(unitId: string): Observable<any> {
+    this.isReview = false;
     this.learnedUnit = this.learnedUnits.find(lu => lu.unit_id === unitId);
     return this.rest.index('words', {unit_id: unitId, per: 999}).pipe(
         tap(d => {
@@ -255,12 +270,62 @@ export class WordTrackerService {
   }
 
   isOver(): boolean {
-    if (this.stepper.isOver()) {
-      this.isReview = false;
-      this.words = [];
-      this.wordStates = {};
-    }
+    // if (this.stepper.isOver()) {
+    //   this.isReview = false;
+    //   this.words = [];
+    //   this.wordStates = {};
+    // }
     return this.stepper.isOver();
+  }
+
+  updateWordState(value: boolean) {
+    if (value) {
+      this.correctAnswer();
+    }else{
+      this.wrongAnswer();
+    }
+  }
+
+  getWordImg(file: string): string {
+    if (file) {
+      return this.rest.getAssetUrl() + 'quick/img' + file;
+    }
+    return '';
+  }
+
+  getWordAudio(file: string): string {
+    if (file) {
+      return this.rest.getAssetUrl() + 'quick/v' + file;
+    }
+    return '';
+  }
+
+  playWord() {
+    this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe();
+  }
+
+  getWordOptions(n: number): any[] {
+    this.options = [];
+    if (n > this.words.length) {
+      n = this.words.length;
+    }
+    this.options.push(this.words[this.getIndexValue()]);
+    let randomIndex = -1;
+    let w: any = {};
+    while (this.options.length < n) {
+      randomIndex = Math.floor(Math.random() * this.words.length);
+      w = this.words[randomIndex];
+      if (this.options.findIndex(o => o.id === w.id) === -1) {
+        this.options.push(w);
+      }
+    }
+    let j = randomIndex % n;
+    [this.options[1], this.options[j]] = [this.options[j], this.options[1]];
+    return this.options;
+  }
+
+  formatText(text: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(text.replace(/<br\/>/g, '<br/>'));
   }
 
 }
