@@ -1,0 +1,67 @@
+<ion-grid>
+  <ion-row><ion-col><label>{{ctx.learnType}}: {{tracker.getCompletions()}}/{{tracker.total}}</label></ion-col></ion-row>
+  <ion-row style="height:200px; background-color: #fff">
+    <ion-col size="2">
+      <ion-img style="height: 180px; width: 180px" [src]="tracker.getWordImg(tracker.word.picture)"></ion-img>
+    </ion-col>
+    <ion-col size="10">
+      <h1><ion-text [color]="tracker.getColor()">{{tracker.word.word}}</ion-text></h1>
+      <h2>{{tracker.word.phonetic_symbol}}</h2>
+      <h2 *ngIf="currentState === State.Survey">{{tracker.word.usage}}</h2>
+      <h2 *ngIf="currentState !== State.Survey">{{tracker.word.acceptation}}</h2>
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="currentState === State.Survey && !tracker.testable()">
+    <ion-col size="6"></ion-col>
+    <ion-col size="3"><ion-button expand="full"  (click)="performAction('survey',true)" size="large" color="success" class="custom-width-button">认识</ion-button>
+    </ion-col>
+    <ion-col size="3"><ion-button expand="full" (click)="performAction('survey',false)" size="large" color="danger" class="custom-width-button"> 不认识</ion-button>
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="currentState === State.Evaluate">
+    <ion-col size="6"></ion-col>
+    <ion-col size="3"><ion-button expand="full"   (click)="performAction('evaluate',true)" size="large" color="success" class="custom-width-button">
+      认对了
+    </ion-button>
+    </ion-col>
+    <ion-col size="3"><ion-button expand="full"  (click)="performAction('evaluate',false)" size="large" color="danger" class="custom-width-button">
+      认错了
+    </ion-button></ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="currentState === State.Repeater">
+    <ion-col size="6"></ion-col>
+    <ion-col size="3"></ion-col>
+    <ion-col size="3"><ion-button expand="full"  (click)="performAction('repeater')" size="large" color="success" class="custom-width-button">跟读
+    </ion-button></ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="currentState === State.Next">
+    <ion-col size="6"></ion-col>
+    <ion-col size="3"></ion-col>
+    <ion-col size="3"><ion-button expand="full"  (click)="performAction('next')" size="large" color="success" class="custom-width-button">下一个
+    </ion-button></ion-col>
+  </ion-row>
+
+
+  <ion-row *ngIf="currentState !== State.Survey" style="background-color: #fff">
+    <ion-col>
+      <p [innerHTML]="tracker.formatText(tracker.word.example || '')"></p>
+      <p [innerHTML]="tracker.formatText(tracker.word.parse || '')"></p>
+    </ion-col>
+  </ion-row>
+  <ion-row *ngIf="tracker.testable()">
+    <ion-col>
+      <ion-list>
+        <ion-item button="" detail="false" *ngFor="let option of tracker.options" (click)="replyOption(option.id)"
+                  class="question-option">
+          <ion-label>
+            <h3>{{option.acceptation}}</h3>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+</ion-grid>

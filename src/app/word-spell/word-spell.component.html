@@ -1,0 +1,64 @@
+<ion-grid>
+    <ion-row>
+        <ion-col><label>{{ctx.learnType}}: {{tracker.getCompletions()}}/{{tracker.total}} {{tracker.isReview}}</label>
+        </ion-col>
+    </ion-row>
+    <ion-row style="height:170px; background-color: #fff">
+        <ion-col style="flex: 0 0 180px;">
+            <ion-img *ngIf="currentState !== State.Survey" style="height: 160px; width: 160px"
+                     [src]="tracker.getWordImg(tracker.word.picture)"></ion-img>
+        </ion-col>
+        <ion-col style="flex: 1;">
+            <h3 style="margin-bottom: 20px"><ion-text [color]="tracker.getColor()">{{tracker.word.acceptation}}</ion-text></h3>
+
+            <div style="display: flex" [formGroup]="wordForm" >
+
+                <ion-input formControlName="wordInput" style="width: 200px;font-size: 22px" [pattern]="tracker.word.word" label="拼写" labelPlacement="stacked" fill="outline" [counter]="true" [maxlength]="tracker.word.word.length"
+                           (ionInput)="onInputChange($event)"
+                           (keyup.enter)="onEnterPressed()" helper-text="使用键盘输入"
+                           error-text="拼写错误！">
+                </ion-input>
+                <ion-label style="margin-left: 20px" *ngIf="currentState === State.Evaluate">
+                    <ion-text style="font-size: 42px;" *ngFor="let a of mySpell.word; let i = index"
+                                                                                                 [color]="getLetterColor(i)">{{a}}</ion-text>
+                </ion-label>
+
+            </div>
+
+
+        </ion-col>
+    </ion-row>
+    <ion-row style="height:100px; background-color: #fff">
+        <ion-col style="flex: 0 0 180px;"></ion-col>
+        <ion-col style="flex: 1;">
+            <table class="word-spell" >
+                <tr>
+                    <td *ngFor="let w1 of mySpell.option1; let i = index" [class]="getCellColor('option1', i)"
+                        (click)="spellOptionReply('option1',i)" ><ion-text [color]="tracker.getColor()">{{w1}}</ion-text></td>
+                </tr>
+                <tr>
+                    <td *ngFor="let w2 of mySpell.option2; let i = index" [class]="getCellColor('option2', i)"
+                        (click)="spellOptionReply('option2',i)" ><ion-text [color]="tracker.getColor()">{{w2}}</ion-text></td>
+                </tr>
+            </table>
+
+        </ion-col>
+    </ion-row>
+    <ion-row>
+        <ion-col>
+
+        </ion-col>
+    </ion-row>
+    <ion-row *ngIf="currentState === State.Next">
+        <ion-col size="6"></ion-col>
+        <ion-col size="3"></ion-col>
+        <ion-col size="3"><ion-button expand="full"  (click)="performAction('next')" size="large" color="success" class="custom-width-button">下一个
+        </ion-button></ion-col>
+    </ion-row>
+    <ion-row *ngIf="currentState !== State.Survey" style="background-color: #fff">
+        <ion-col>
+            <p [innerHTML]="tracker.formatText(tracker.word.example || '')"></p>
+            <p [innerHTML]="tracker.formatText(tracker.word.parse || '')"></p>
+        </ion-col>
+    </ion-row>
+</ion-grid>

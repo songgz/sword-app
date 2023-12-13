@@ -1,0 +1,23 @@
+.word-spell {
+  border-collapse: collapse;
+}
+
+.word-spell td {
+  border: 1px solid black;
+  width: 45px;
+  height: 45px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 26px;
+}
+
+.hui-col {
+  background-color: #b2aeae;
+
+}
+
+.err-col {
+  background-color: #ab9348;
+
+}
