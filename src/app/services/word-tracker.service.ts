@@ -300,8 +300,16 @@ export class WordTrackerService {
     return '';
   }
 
-  playWord() {
-    this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe();
+  findWord(wordId: string) {
+    return this.words.find(w => w.id === wordId);
+  }
+
+  playWord(word?: any) {
+    if(word) {
+      this.audio.playStream(this.getWordAudio(word.pronunciation)).subscribe();
+    }else{
+      this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe();
+    }
   }
 
   getWordOptions(n: number): any[] {

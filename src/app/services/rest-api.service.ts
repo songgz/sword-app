@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
+import {environment} from "../../environments/environment"
 
 //'http://114.55.39.31:3200/v1/
-const env = {apiUrl: 'http://localhost:3000/v1/', wordUrl: '', assetUrl: 'http://114.55.39.31:8790/'};
+//const env = {apiUrl: 'http://114.55.39.31:3200/v1/', wordUrl: '', assetUrl: 'http://114.55.39.31:8790/'};
 
 const HEADERS = new HttpHeaders({
   'Content-Type': 'application/json',
@@ -20,32 +21,32 @@ export class RestApiService {
   }
 
   index(path: string, params = {}): Observable<any> {
-    return this.http.get(env.apiUrl + path + '.json', {headers: HEADERS, params});
+    return this.http.get(environment.apiUrl + path + '.json', {headers: HEADERS, params});
   }
 
   create(path:string, body: any): Observable<any> {
-    return this.http.post(env.apiUrl + path + '.json', JSON.stringify(body), {headers: HEADERS});
+    return this.http.post(environment.apiUrl + path + '.json', JSON.stringify(body), {headers: HEADERS});
   }
 
   show(path: string, params: any): Observable<any> {
-    return this.http.get(env.apiUrl + path + '.json', {params: params, headers: HEADERS});
+    return this.http.get(environment.apiUrl + path + '.json', {params: params, headers: HEADERS});
   }
 
   update(path: string, body: any): Observable<any> {
-    return this.http.patch(env.apiUrl + path + '.json', body, {headers: HEADERS});
+    return this.http.patch(environment.apiUrl + path + '.json', body, {headers: HEADERS});
   }
 
   get(path: string): Observable<any> {
-    return this.http.get(env.apiUrl + path + '.json', {headers: HEADERS});
+    return this.http.get(environment.apiUrl + path + '.json', {headers: HEADERS});
   }
 
   post(path:string, body: any): Observable<any> {
-    return this.http.post(env.apiUrl + path + '.json',JSON.stringify(body), {headers: HEADERS});
+    return this.http.post(environment.apiUrl + path + '.json',JSON.stringify(body), {headers: HEADERS});
   }
 
   // Delete
   destroy(path: string): Observable<any> {
-    return this.http.delete(env.apiUrl + path + '.json', {headers: HEADERS});
+    return this.http.delete(environment.apiUrl + path + '.json', {headers: HEADERS});
   }
 
   login(credentails :any): Observable<any> {
@@ -57,10 +58,10 @@ export class RestApiService {
   }
 
   getWordUrl() :string {
-    return env.wordUrl;
+    return environment.wordUrl;
   }
 
   getAssetUrl() :string {
-    return env.assetUrl;
+    return environment.assetUrl;
   }
 }

@@ -26,7 +26,7 @@ export class WordReadComponent  implements OnInit {
   }
 
   performAction(action: string, option?: boolean) {
-    console.log('55555555555555555');
+    //console.log('55555555555555555');
     switch (action) {
       case 'initial':
 

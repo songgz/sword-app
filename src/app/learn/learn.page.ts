@@ -77,9 +77,14 @@ export class LearnPage implements OnInit {
 
   }
 
-  async removeBookModal() {
+  async removeBookModal(book: any) {
+    console.log(book);
     const modal = await this.modalCtrl.create({
       component: RemoveBookModalComponent,
+      componentProps: {
+        title: book.book.name,
+        message: ''
+      }
     });
     modal.present();
 
@@ -89,5 +94,7 @@ export class LearnPage implements OnInit {
       //this.message = `Hello, ${data}!`;
     }
   }
+
+
 
 }

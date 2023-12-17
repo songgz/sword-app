@@ -10,12 +10,12 @@
 </ion-header>
 <ion-content class="ion-text-center">
   <p style="font-size: 26px">恭喜您，本章节学习完成!</p>
-  <p style="font-size: 20px">单词总数:49，生词:6</p>
+  <p style="font-size: 20px">单词总数:{{tracker.words.length}}，生词:{{tracker.wrongs}}</p>
 </ion-content>
 <ion-footer>
   <ion-item>
-    <ion-button slot="end" size="Default" color="medium" >单节学测试</ion-button>
-    <ion-button slot="end" size="Default">继续学习</ion-button>
-    <ion-button slot="end" size="Default">返回我的课程</ion-button>
+    <ion-button (click)="afterQuiz()" slot="end" size="Default" color="medium" >章节后学测试</ion-button>
+    <ion-button (click)="nextUnit()" slot="end" size="Default">继续学习</ion-button>
+    <ion-button (click)="blackLearnCenter()" slot="end" size="Default" color="medium">返回我的课程</ion-button>
   </ion-item>
 </ion-footer>

@@ -6,6 +6,7 @@ import {RestApiService} from "../services/rest-api.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AlertModalComponent} from "../alert-modal/alert-modal.component";
 import {AppCtxService} from "../services/app-ctx.service";
+import {QuizModalComponent} from "../quiz-modal/quiz-modal.component";
 
 @Component({
   selector: 'app-match-game',
@@ -93,7 +94,7 @@ export class MatchGamePage implements OnInit {
 
   async nextUnitModal() {
     const modal = await this.modalCtrl.create({
-      component: AlertModalComponent,
+      component: QuizModalComponent,
       cssClass: 'custom-modal',
       componentProps: {
         title: '学习提示',
@@ -106,12 +107,12 @@ export class MatchGamePage implements OnInit {
 
     if (role === 'confirm') {
       //this.message = `Hello, ${data}!`;
-      this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.unitId, testType: this.ctx.learnType}});
+      //this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.unitId, testType: this.ctx.learnType}});
 
     }
 
     if (role === 'cancel') {
-      this.router.navigate(['/tabs/word'], {queryParams: {bookId: this.bookId, unitId: this.unitId}});
+      //this.router.navigate(['/tabs/word'], {queryParams: {bookId: this.bookId, unitId: this.unitId}});
 
 
     }

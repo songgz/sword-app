@@ -1,0 +1,9 @@
+ion-item {
+  width: 70%;
+}
+
+@media (max-width: 767px) {
+  ion-item {
+    width: 100%;
+  }
+}

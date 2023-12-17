@@ -1,11 +1,18 @@
 <ion-grid>
-  <ion-row><ion-col><label>{{ctx.learnType}}: {{tracker.getCompletions()}}/{{tracker.total}}</label></ion-col></ion-row>
-  <ion-row style="height:200px; background-color: #fff">
-    <ion-col size="2">
-      <ion-img style="height: 180px; width: 180px" [src]="tracker.getWordImg(tracker.word.picture)"></ion-img>
+  <ion-row>
+    <ion-col>
+    <ion-item lines="none">
+      <ion-label slot="start">{{tracker.isReview ? '智能复习' : '认读'}}: {{tracker.getCompletions()}}/{{tracker.total}}</ion-label>
+      <ion-label slot="end">本组进度 ({{tracker.total}}-<ion-text color="success">{{tracker.getCompletions()}}</ion-text>) 生词 (<ion-text color="danger">{{tracker.wrongs}}</ion-text>)  课程总进度 ({{tracker.book?.book_total||0}} - <ion-text color="success">{{tracker.book?.book_complete || 0}}</ion-text>) 生词本 (<ion-text color="danger">{{tracker.book?.book_wrongs||0}}</ion-text>)</ion-label>
+    </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row style="height:250px; background-color: #fff">
+    <ion-col size="2" style="display:flex;height:100%;align-items: center">
+      <ion-img *ngIf="tracker.word.picture" style="height: 180px; width: 180px" [src]="tracker.getWordImg(tracker.word.picture)"></ion-img>
     </ion-col>
     <ion-col size="10">
-      <h1><ion-text [color]="tracker.getColor()">{{tracker.word.word}}</ion-text></h1>
+      <h1><ion-text style="font-size: 76px" [color]="tracker.getColor()">{{tracker.word.word}}</ion-text></h1>
       <h2>{{tracker.word.phonetic_symbol}}</h2>
       <h2 *ngIf="currentState === State.Survey">{{tracker.word.usage}}</h2>
       <h2 *ngIf="currentState !== State.Survey">{{tracker.word.acceptation}}</h2>
@@ -47,7 +54,7 @@
 
 
   <ion-row *ngIf="currentState !== State.Survey" style="background-color: #fff">
-    <ion-col>
+    <ion-col style="font-size: 20px;line-height: 40px">
       <p [innerHTML]="tracker.formatText(tracker.word.example || '')"></p>
       <p [innerHTML]="tracker.formatText(tracker.word.parse || '')"></p>
     </ion-col>

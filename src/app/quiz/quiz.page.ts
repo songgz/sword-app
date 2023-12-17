@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {IonicModule, ModalController} from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {interval, map, Subscription, take, tap} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {AppCtxService} from "../services/app-ctx.service";
+import {QuizModalComponent} from "../quiz-modal/quiz-modal.component";
+import {WordTrackerService} from "../services/word-tracker.service";
+import {OverModalComponent} from "../over-modal/over-modal.component";
 
 @Component({
   selector: 'app-quiz',
@@ -23,16 +26,25 @@ export class QuizPage implements OnInit {
   progress: number = 1;
   answered: boolean = false;
   count: Subscription | undefined;
+  options: string[] = ['A','B','C','D'];
+  private unitId: any;
 
 
-  constructor(private ctx: AppCtxService, private rest: RestApiService, private activatedRouter: ActivatedRoute) { }
+  constructor(private ctx: AppCtxService, private tracker: WordTrackerService, private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController) { }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.loadQuiz(this.ctx.getUserId(), params['unitId'], params['testType'], this.ctx.learnType);
+      this.unitId = params['unitId'];
+      //this.loadQuiz(this.ctx.getUserId(), params['unitId'], params['testType'], this.ctx.learnType);
+      this.loadQuiz('6573ea546eec2f4aa8c3ccb8', '65109f9c6eec2f38fc262392', 'afterQuiz', 'read');
     });
+  }
 
-
+  loadQuiz(studentId: string, unitId: string, testType: string, learnType: string) {
+    this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType, learn_type: learnType}).subscribe(res => {
+      this.quiz = res.data;
+      this.next();
+    });
   }
 
   saveQuiz() {
@@ -44,18 +56,20 @@ export class QuizPage implements OnInit {
   next() {
     if (this.index === this.quiz.questions.length) {
       this.saveQuiz();
-
+      this.quizOverModal();
+    }else{
+      this.answered = false;
+      this.question = this.quiz.questions[this.index];
+      this.index = this.index + 1;
+      this.count = this.countDown(10000).subscribe({
+        //next: step => {},
+        error: err => console.error(err),
+        complete: () => {
+          this.choice_answer();
+        }
+      });
     }
-    this.answered = false;
-    this.question = this.quiz.questions[this.index];
-    this.index = this.index + 1;
-    this.count = this.countDown(5000).subscribe({
-      //next: step => {},
-      error: err => console.error(err),
-      complete: () => {
-        this.choice_answer();
-      }
-    });
+
   }
 
   countDown(delay: number ) {
@@ -67,12 +81,7 @@ export class QuizPage implements OnInit {
     );
   }
 
-  loadQuiz(studentId: string, unitId: string, testType: string, learnType: string) {
-    this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType, learn_type: learnType}).subscribe(res => {
-      this.quiz = res.data;
-      this.next();
-    });
-  }
+
 
   async choice_answer(choiceId?: string) {
     console.log(choiceId);
@@ -86,7 +95,7 @@ export class QuizPage implements OnInit {
       this.quiz.wrongs = this.quiz.wrongs + 1;
     }
     this.answered = true;
-    await this.sleep(2500);
+    await this.sleep(2000);
     this.next();
 
     if (this.index === this.quiz.questions.length) {
@@ -111,6 +120,32 @@ export class QuizPage implements OnInit {
       }
     }
     return '';
+  }
+
+
+
+  async quizOverModal() {
+    const modal = await this.modalCtrl.create({
+      component: OverModalComponent,
+      cssClass: 'custom-modal',
+      componentProps: {
+        total: this.quiz.questions?.length,
+        rights: this.quiz.corrects,
+        wrongs: this.quiz.wrongs,
+        score: 0
+      }
+    });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      //this.message = `Hello, ${data}!`;
+      this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.ctx.getUserId()}});
+
+    }
+
+
   }
 
 }

@@ -13,6 +13,7 @@ import {WordTrackerService} from "../services/word-tracker.service";
 import {WordReadComponent} from "../word-read/word-read.component";
 import {WordListenComponent} from "../word-listen/word-listen.component";
 import {WordSpellComponent} from "../word-spell/word-spell.component";
+import {QuizModalComponent} from "../quiz-modal/quiz-modal.component";
 
 @Component({
   selector: 'app-word',
@@ -336,7 +337,17 @@ export class WordPage implements OnInit {
 
     if (role === 'confirm') {
       //this.message = `Hello, ${data}!`;
-       this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, testType: 'beforeLearn'}});
+      if(this.ctx.learnType === 'read') {
+        this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+      }
+      if(this.ctx.learnType === 'listen') {
+        this.router.navigate(['/tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+
+      }
+      if(this.ctx.learnType === 'spell') {
+        this.router.navigate(['/tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+
+      }
 
     }
 
@@ -348,12 +359,8 @@ export class WordPage implements OnInit {
 
   async nextUnitModal() {
     const modal = await this.modalCtrl.create({
-      component: AlertModalComponent,
-      cssClass: 'custom-modal',
-      componentProps: {
-        title: '学习提示',
-        message: '是否进行章节后测试？'
-      }
+      component: QuizModalComponent,
+      cssClass: 'custom-modal'
     });
     modal.present();
 
@@ -361,13 +368,23 @@ export class WordPage implements OnInit {
 
     if (role === 'confirm') {
       //this.message = `Hello, ${data}!`;
-      this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, testType: 'afterLearn'}});
+      // if(this.ctx.learnType === 'read'){
+      //   this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'afterLearn'}});
+      // }
+      // if(this.ctx.learnType === 'listen') {
+      //   this.router.navigate(['/tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'afterLearn'}});
+      //
+      // }
+      // if(this.ctx.learnType === 'spell') {
+      //   this.router.navigate(['/tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'afterLearn'}});
+      //
+      // }
 
     }
 
     if (role === 'cancel') {
-      this.started = true;
-      this.openUnit(this.tracker.nextLearnedUnit().unit_id);
+      // this.started = true;
+      // this.openUnit(this.tracker.nextLearnedUnit().unit_id);
 
     }
   }
@@ -425,51 +442,51 @@ export class WordPage implements OnInit {
   //   await alert.present();
   // }
 
-  formatText(text: string): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(text.replace(/<br\/>/g, '<br/>'));
-  }
+  // formatText(text: string): SafeHtml {
+  //   return this.sanitizer.bypassSecurityTrustHtml(text.replace(/<br\/>/g, '<br/>'));
+  // }
 
-  wordSpells: string[] = [];
+  // wordSpells: string[] = [];
 
-  randSpell() {
-    this.spells = [[],[],[],[],[]];
-    let w1 = this.tracker.word.word;
-    this.wordSpells = w1.split('');
-    let w2 = this.getRandomLetters(w1);
-    let n = 0;
+  // randSpell() {
+  //   this.spells = [[],[],[],[],[]];
+  //   let w1 = this.tracker.word.word;
+  //   this.wordSpells = w1.split('');
+  //   let w2 = this.getRandomLetters(w1);
+  //   let n = 0;
+  //
+  //   for (let i = 0; i < w1.length; i++) {
+  //     n = Math.floor(Math.random() * 100);
+  //     if (n % 2 === 0) {
+  //       this.spells[0].push(w1[i]);
+  //       this.spells[1].push(w2[i]);
+  //     }else{
+  //       this.spells[0].push(w2[i]);
+  //       this.spells[1].push(w1[i]);
+  //     }
+  //
+  //   }
+  //
+  //
+  // }
 
-    for (let i = 0; i < w1.length; i++) {
-      n = Math.floor(Math.random() * 100);
-      if (n % 2 === 0) {
-        this.spells[0].push(w1[i]);
-        this.spells[1].push(w2[i]);
-      }else{
-        this.spells[0].push(w2[i]);
-        this.spells[1].push(w1[i]);
-      }
-
-    }
-
-
-  }
-
-  getRandomLetters(str: string): string {
-    const letters: string = 'abcdefghijklmnopqrstuvwxyz';
-    let result = '';
-    let c: string = '';
-    for (let i = 0; i < str.length; i++) {
-      const randomIndex = Math.floor(Math.random() * letters.length);
-      c = letters.charAt(randomIndex);
-      if (c === str[i]) {
-        c = letters.charAt(randomIndex - 3) || letters.charAt(randomIndex + 3);
-      }
-      if (str[i] === ' ') {
-        c = ' ';
-      }
-      result += c;
-    }
-    return result;
-  }
+  // getRandomLetters(str: string): string {
+  //   const letters: string = 'abcdefghijklmnopqrstuvwxyz';
+  //   let result = '';
+  //   let c: string = '';
+  //   for (let i = 0; i < str.length; i++) {
+  //     const randomIndex = Math.floor(Math.random() * letters.length);
+  //     c = letters.charAt(randomIndex);
+  //     if (c === str[i]) {
+  //       c = letters.charAt(randomIndex - 3) || letters.charAt(randomIndex + 3);
+  //     }
+  //     if (str[i] === ' ') {
+  //       c = ' ';
+  //     }
+  //     result += c;
+  //   }
+  //   return result;
+  // }
 
   // sp(i: number, row: number) {
   //   if (i === this.spells[2].length) {
@@ -521,11 +538,11 @@ export class WordPage implements OnInit {
   //   return r === this.spells[m].length;
   // }
 
-  updateSpell(i: number, row: number) {
-    if(this.spells[3][i] === 0 && this.spells[2][i] === row) {
-      this.spells[3][i] = 1;
-    }
-  }
+  // updateSpell(i: number, row: number) {
+  //   if(this.spells[3][i] === 0 && this.spells[2][i] === row) {
+  //     this.spells[3][i] = 1;
+  //   }
+  // }
 
 //   getLetterColor(t) {
 //   var e = t.status
@@ -544,43 +561,43 @@ export class WordPage implements OnInit {
 //   return i
 // }
 
-  getErrColor(i:number) {
-    if(this.spells[4][i] === 1 && this.spells[3][i] === 0){
-      return 'err0';
-    }else if (this.spells[3][i] === 0) {
-      return 'err2';
-    }
-    return 'err6';
-  }
+  // getErrColor(i:number) {
+  //   if(this.spells[4][i] === 1 && this.spells[3][i] === 0){
+  //     return 'err0';
+  //   }else if (this.spells[3][i] === 0) {
+  //     return 'err2';
+  //   }
+  //   return 'err6';
+  // }
 
-  isErrSpell(i: number, row: number) {
-    if(this.spells[4][i] === 0) {
-      if (this.spells[2][i] === 0) {
-        return row !== 0;
-      }else if (this.spells[2][i] === 1) {
-        return row !== 1;
-      }
-    }
-    return false;
-  }
+  // isErrSpell(i: number, row: number) {
+  //   if(this.spells[4][i] === 0) {
+  //     if (this.spells[2][i] === 0) {
+  //       return row !== 0;
+  //     }else if (this.spells[2][i] === 1) {
+  //       return row !== 1;
+  //     }
+  //   }
+  //   return false;
+  // }
 
-  onInputFocus() {
-    // 处理输入框焦点激活事件
-  }
+  // onInputFocus() {
+  //   // 处理输入框焦点激活事件
+  // }
 
-  onInputChange(event: any) {
-    // 处理输入框变化事件
-  }
+  // onInputChange(event: any) {
+  //   // 处理输入框变化事件
+  // }
 
-  onEnterPressed() {
-    // 处理回车键按下事件
-  }
+  // onEnterPressed() {
+  //   // 处理回车键按下事件
+  // }
 
-  delayedInteraction() {
-    setTimeout(() => {
-      // 在此处编写延迟交互的逻辑代码
-    }, 2000); // 2秒延迟
-  }
+  // delayedInteraction() {
+  //   setTimeout(() => {
+  //     // 在此处编写延迟交互的逻辑代码
+  //   }, 2000); // 2秒延迟
+  // }
 
   handleOverEvent() {
 

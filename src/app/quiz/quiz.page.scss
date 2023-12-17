@@ -1,4 +1,13 @@
+.quiz-content {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+
+}
+
 .quiz-card {
+  padding: 20px;
+  margin: 0 auto;
+  width: 65%;
   min-height: 200px;
   background-color: white;
 }
@@ -12,6 +21,13 @@
 }
 
 .quiz-item {
+  //--background: #fff;
+  --border-color: #2a2424;
   border-radius: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.custom-disabled {
+  opacity: 1; /* 设置透明度 */
+  pointer-events: none; /* 禁止用户交互 */
 }

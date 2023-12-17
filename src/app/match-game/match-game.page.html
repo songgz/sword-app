@@ -13,10 +13,14 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <ion-button *ngFor="let word of xCol" (click)="clickX(word)" [color]="x.id === word.id ? 'err6' : 'err2'" [class]="word.hedden" fill="outline" class="my-button1">{{word.word}}</ion-button>
+        <ion-button size="large" *ngFor="let word of xCol" (click)="clickX(word)" [color]="x.id === word.id ? 'err6' : 'dark'" [class]="word.hedden" fill="outline" class="my-button1">
+          <ion-text text-left>{{word.word}}</ion-text>
+        </ion-button>
       </ion-col>
       <ion-col>
-        <ion-button *ngFor="let word of yCol" (click)="clickY(word)" [color]="y.id === word.id ? 'err6' : 'err2'" [class]="word.hedden" fill="outline" class="my-button1">{{word.acceptation}}</ion-button>
+        <ion-button size="large" *ngFor="let word of yCol" (click)="clickY(word)" [color]="y.id === word.id ? 'err6' : 'dark'" [class]="word.hedden" fill="outline" class="my-button1">
+          <ion-text text-left>{{word.acceptation}}</ion-text>
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

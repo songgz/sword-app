@@ -11,6 +11,7 @@ export class AppCtxService {
   authenticated: boolean = false;
   userSubject: BehaviorSubject<User>;
   user: Observable<User>;
+  learnTypes: any = {read: '认读', listen: '辨音', spell: '拼写'};
 
   constructor(private storage: CtxStorageService) {
     this.userSubject = new BehaviorSubject(this.storage.getUser());

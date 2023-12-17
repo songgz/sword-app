@@ -6,6 +6,7 @@ import {ChangePasswordModalComponent} from "../change-password-modal/change-pass
 import {RechargeComponent} from "../recharge/recharge.component";
 import {HeaderComponent} from "../header/header.component";
 import {AppCtxService} from "../services/app-ctx.service";
+import {RouterLink} from "@angular/router";
 
 
 @Component({
@@ -13,7 +14,7 @@ import {AppCtxService} from "../services/app-ctx.service";
   templateUrl: './student.page.html',
   styleUrls: ['./student.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, HeaderComponent]
+  imports: [IonicModule, CommonModule, FormsModule, HeaderComponent, RouterLink]
 })
 export class StudentPage implements OnInit {
 

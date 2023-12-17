@@ -21,6 +21,22 @@ export const routes: Routes = [
         loadComponent: () => import('../quiz/quiz.page').then( m => m.QuizPage)
       },
       {
+        path: 'quiz-list',
+        loadComponent: () => import('../quiz-list/quiz-list.page').then( m => m.QuizListPage)
+      },
+      {
+        path: 'quiz-detail',
+        loadComponent: () => import('../quiz-detail/quiz-detail.page').then( m => m.QuizDetailPage)
+      },
+      {
+        path: 'quiz-listen',
+        loadComponent: () => import('../quiz-listen/quiz-listen.page').then( m => m.QuizListenPage)
+      },
+      {
+        path: 'quiz-spell',
+        loadComponent: () => import('../quiz-spell/quiz-spell.page').then( m => m.QuizSpellPage)
+      },
+      {
         path: 'book',
         loadComponent: () => import('../book/book.page').then( m => m.BookPage),
         canActivate: [authGuard]
@@ -30,6 +46,11 @@ export const routes: Routes = [
         loadComponent: () => import('../student/student.page').then( m => m.StudentPage),
         canActivate: [authGuard]
       },
+      {
+        path: 'match-game',
+        loadComponent: () => import('../match-game/match-game.page').then( m => m.MatchGamePage)
+      },
+
       {
         path: 'tab1',
         loadComponent: () => import('../tab1/tab1.page').then((m) => m.Tab1Page),

@@ -267,16 +267,7 @@ export class WordSpellComponent implements OnInit {
     }
 
     onEnterPressed() {
-        // this.spells[2] = [];
-        // for (let i = 0; i < this.spells[0].length; i++) {
-        //     for (let r = 0; r < 2; r++) {
-        //         if (this.spells[r][i] === this.wordInput[i]) {
-        //             this.spells[2].push(r);
-        //         } else if (this.wordInput[i] !== this.tracker.word.word[i]) {
-        //             this.spells[2].push(0);
-        //         }
-        //     }
-        // }
+
         console.log('write state:');
         console.log(this.currentState);
 

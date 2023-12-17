@@ -1,36 +1,49 @@
 <ion-grid>
-    <ion-row>
-        <ion-col><label>{{ctx.learnType}}: {{tracker.getCompletions()}}/{{tracker.total}} {{tracker.isReview}}</label>
-        </ion-col>
-    </ion-row>
-    <ion-row style="height:170px; background-color: #fff">
+  <ion-row>
+    <ion-col>
+      <ion-item lines="none">
+        <ion-label slot="start">{{tracker.isReview ? '智能复习' : '拼写'}}: {{tracker.getCompletions()}}/{{tracker.total}}</ion-label>
+        <ion-label slot="end">本组进度 ({{tracker.total}}-<ion-text color="success">{{tracker.getCompletions()}}</ion-text>) 生词 (<ion-text color="danger">{{tracker.wrongs}}</ion-text>)  课程总进度 ({{tracker.book?.book_total||0}} - <ion-text color="success">{{tracker.book?.book_complete || 0}}</ion-text>) 生词本 (<ion-text color="danger">{{tracker.book?.book_wrongs||0}}</ion-text>)</ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+    <ion-row style="height:250px; background-color: #fff">
         <ion-col style="flex: 0 0 180px;">
             <ion-img *ngIf="currentState !== State.Survey" style="height: 160px; width: 160px"
                      [src]="tracker.getWordImg(tracker.word.picture)"></ion-img>
         </ion-col>
         <ion-col style="flex: 1;">
-            <h3 style="margin-bottom: 20px"><ion-text [color]="tracker.getColor()">{{tracker.word.acceptation}}</ion-text></h3>
-
-            <div style="display: flex" [formGroup]="wordForm" >
-
-                <ion-input formControlName="wordInput" style="width: 200px;font-size: 22px" [pattern]="tracker.word.word" label="拼写" labelPlacement="stacked" fill="outline" [counter]="true" [maxlength]="tracker.word.word.length"
-                           (ionInput)="onInputChange($event)"
-                           (keyup.enter)="onEnterPressed()" helper-text="使用键盘输入"
-                           error-text="拼写错误！">
-                </ion-input>
-                <ion-label style="margin-left: 20px" *ngIf="currentState === State.Evaluate">
+            <ion-grid>
+              <ion-row>
+                <ion-col class="custom-center">
+                  <h3><ion-text [color]="tracker.getColor()">{{tracker.word.acceptation}}</ion-text></h3>
+                </ion-col>
+              </ion-row>
+              <ion-row style="height: 66px">
+                <ion-col class="custom-center">
+                  <ion-label style="margin-left: 20px" *ngIf="currentState === State.Evaluate">
                     <ion-text style="font-size: 42px;" *ngFor="let a of mySpell.word; let i = index"
-                                                                                                 [color]="getLetterColor(i)">{{a}}</ion-text>
-                </ion-label>
-
-            </div>
-
-
+                              [color]="getLetterColor(i)">{{a}}</ion-text>
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col class="custom-center">
+                  <div [formGroup]="wordForm" >
+                    <ion-input formControlName="wordInput" style="width: 400px;font-size: 22px;float:left" [pattern]="tracker.word.word" label="拼写" labelPlacement="stacked" fill="outline" [counter]="true" [maxlength]="tracker.word.word.length"
+                               (ionInput)="onInputChange($event)"
+                               (keyup.enter)="onEnterPressed()" helper-text="使用键盘输入"
+                               error-text="拼写错误！">
+                    </ion-input>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
         </ion-col>
     </ion-row>
     <ion-row style="height:100px; background-color: #fff">
         <ion-col style="flex: 0 0 180px;"></ion-col>
-        <ion-col style="flex: 1;">
+        <ion-col style="flex: 1;" class="custom-center">
             <table class="word-spell" >
                 <tr>
                     <td *ngFor="let w1 of mySpell.option1; let i = index" [class]="getCellColor('option1', i)"
@@ -44,19 +57,15 @@
 
         </ion-col>
     </ion-row>
-    <ion-row>
-        <ion-col>
 
-        </ion-col>
-    </ion-row>
     <ion-row *ngIf="currentState === State.Next">
         <ion-col size="6"></ion-col>
         <ion-col size="3"></ion-col>
         <ion-col size="3"><ion-button expand="full"  (click)="performAction('next')" size="large" color="success" class="custom-width-button">下一个
         </ion-button></ion-col>
     </ion-row>
-    <ion-row *ngIf="currentState !== State.Survey" style="background-color: #fff">
-        <ion-col>
+    <ion-row *ngIf="currentState !== State.Survey" style="background-color: #fff;margin-top: 20px">
+        <ion-col style="font-size: 20px;line-height: 40px">
             <p [innerHTML]="tracker.formatText(tracker.word.example || '')"></p>
             <p [innerHTML]="tracker.formatText(tracker.word.parse || '')"></p>
         </ion-col>

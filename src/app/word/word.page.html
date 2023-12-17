@@ -12,7 +12,7 @@
       <ion-item button="" [color]="tracker.learnedUnit.id === unit.id ? 'light' : ''" *ngFor="let unit of tracker.learnedUnits" (click)="openUnit(unit.unit_id)">
         <ion-label>
           <h2>{{unit.unit_name}}</h2>
-          <p style="text-align: right">条目:{{unit.words}} | 已学: {{unit.learns}} | 错误: {{unit.wrongs}}</p>
+          <p style="text-align: right">条目:{{unit.words}} | 已学: <ion-text color="success">{{unit.learns}}</ion-text> | 错误: <ion-text color="danger">{{unit.wrongs}}</ion-text></p>
         </ion-label>
       </ion-item>
     </ion-list>
@@ -20,11 +20,12 @@
 </ion-menu>
 <div class="ion-page word-content" id="main-content">
   <ion-header>
-    <ion-toolbar>
+    <ion-toolbar mode="ios">
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
-      <ion-title>{{tracker.book?.name}}</ion-title>
+      <ion-label slot="start">{{tracker.book?.name}}</ion-label>
+      <ion-title>{{ctx.learnTypes[ctx.learnType]}}</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content *ngIf="started">

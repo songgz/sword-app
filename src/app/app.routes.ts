@@ -20,18 +20,14 @@ export const routes: Routes = [
   {
     path: 'quiz-alert',
     loadComponent: () => import('./quiz-alert/quiz-alert.component').then( m => m.QuizAlertComponent)
-  },  {
+  },
+  {
     path: 'match-game',
     loadComponent: () => import('./match-game/match-game.page').then( m => m.MatchGamePage)
   },
-  {
-    path: 'quiz-list',
-    loadComponent: () => import('./quiz-list/quiz-list.page').then( m => m.QuizListPage)
-  },
-  {
-    path: 'quiz-detail',
-    loadComponent: () => import('./quiz-detail/quiz-detail.page').then( m => m.QuizDetailPage)
-  },
+
+
+
 
 
 
