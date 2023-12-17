@@ -1,17 +1,19 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>quiz-list</ion-title>
+  <ion-toolbar mode="ios">
+    <ion-title>测试成绩</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-text-center">
-  <ion-list>
-    <ion-item button="" [routerLink]="['/tabs/quiz-detail']" [queryParams]="{unitId: quiz.id}" *ngFor="let quiz of quizzes">
-      <ion-label>
-        <h2>{{quiz.create_at}} <ion-text color="err1">{{quiz.unit_name}} {{quiz.test_type}}</ion-text></h2>
-        <p>共{{quiz.questions.size}}题 对<ion-text color="success">{{quiz.corrects}}</ion-text>题 错<ion-text color="danger">{{quiz.wrongs}}</ion-text>题 用时：2分15秒</p>
-      </ion-label>
-      <ion-badge color="danger" slot="end">{{quiz.score}}</ion-badge>
-    </ion-item>
-  </ion-list>
+  <ion-grid>
+    <ion-row *ngFor="let quiz of quizzes; let i=index" class="row-with-underline">
+      <ion-text>{{i+1}}</ion-text>
+      <ion-col>{{quiz.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</ion-col>
+      <ion-col><ion-text [color]="quiz.test_type === 'beforeLearn' ? 'err1' : 'err0'">{{quiz.unit_name}}</ion-text></ion-col>
+      <ion-col>共{{quiz.questions.size}}题 对<ion-text color="success">{{quiz.corrects}}</ion-text>题 错<ion-text color="danger">{{quiz.wrongs}}</ion-text>题</ion-col>
+      <ion-col>用时：0分0秒</ion-col>
+      <ion-col>{{quiz.score}}</ion-col>
+      <ion-col><ion-button fill="clear" [routerLink]="['/tabs/quiz-detail']" [queryParams]="{quizId: quiz.id}">查看</ion-button></ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

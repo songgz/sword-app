@@ -2,7 +2,7 @@
 
 <ion-content [fullscreen]="true">
   <ion-item>
-    <ion-button size="small" *ngFor="let kind of kinds" (click)="changeCat(kind.code)" [color]="activeKind===kind.code ? 'secondary' : 'light'" >{{kind.name}}</ion-button>
+    <ion-button size="default" *ngFor="let kind of kinds" (click)="changeCat(kind.code)" [color]="activeKind===kind.code ? 'secondary' : 'light'" >{{kind.name}}</ion-button>
   </ion-item>
   <ion-accordion-group [multiple]="true" [value]="getCategoryCodes()">
 

@@ -38,8 +38,8 @@ export class WordPage implements OnInit {
   //answer: boolean = false;
   learnTypes: any[] = [
     {code: 'review', name: '复习'},
-    {code: 'beforeQuiz', name: '课前测试'},
-    {code: 'afterQuiz', name: '课后测试'},
+    {code: 'beforeLearn', name: '课前测试'},
+    {code: 'afterLearn', name: '课后测试'},
     {code: 'read', name: '认读'},
     {code: 'listen', name: '听读'},
     {code: 'spell', name: '拼写'},

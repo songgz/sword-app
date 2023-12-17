@@ -1,13 +1,13 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>quiz</ion-title>
+  <ion-toolbar mode="ios">
+    <ion-title>{{quiz?.unit_name}}－{{testTypes[quiz.test_type]}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="quiz-content">
   <ion-item lines="none" style="width: 90%;margin-bottom: 20px;margin-top:10px;margin: 0 auto;">
-    <ion-label slot="start" style="font-size: 18px">等级: {{quiz.unit_name}}(共{{quiz.questions?.length}}题)</ion-label>
-    <ion-label>进度: {{index - 1}}/{{quiz.questions?.length}}</ion-label>er
+    <ion-label slot="start" style="font-size: 18px">单元: {{quiz.unit_name}}(共{{quiz.questions?.length}}题)</ion-label>
+    <ion-label>进度: {{index - 1}}/{{quiz.questions?.length}}</ion-label>
     <ion-label color="success" slot="end">正确: {{quiz.corrects}}</ion-label><ion-label color="danger" slot="end">错误: {{quiz.wrongs}}</ion-label>
   </ion-item>
   <ion-card class="quiz-card">

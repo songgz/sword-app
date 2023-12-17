@@ -1,5 +1,5 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar mode="ios">
     <ion-title>quiz-detail</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -15,7 +15,7 @@
 
     </ion-list-header>
     <ion-item-group *ngFor="let question of quiz.questions; let n=index">
-      <ion-item-divider color="err0">
+      <ion-item-divider color="medium">
         <ion-label>{{n+1}}.　{{question.title}}</ion-label>
         <ion-badge color="danger" slot="end">a</ion-badge>
       </ion-item-divider>

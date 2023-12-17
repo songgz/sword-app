@@ -28,16 +28,16 @@ export class QuizModalComponent  implements OnInit {
   afterQuiz() {
 
     if(this.ctx.learnType === 'read') {
-      this.router.navigate(['tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterQuiz'}});
+      this.router.navigate(['tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
 
     }
     if(this.ctx.learnType === 'listen') {
-      this.router.navigate(['tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterQuiz'}});
+      this.router.navigate(['tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
 
     }
 
     if(this.ctx.learnType === 'spell') {
-      this.router.navigate(['tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterQuiz'}});
+      this.router.navigate(['tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
 
     }
 

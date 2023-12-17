@@ -28,6 +28,7 @@ export class QuizPage implements OnInit {
   count: Subscription | undefined;
   options: string[] = ['A','B','C','D'];
   private unitId: any;
+  testTypes: any = {afterLearn: '章节后测试', beforeLearn: '章节前测试'};
 
 
   constructor(private ctx: AppCtxService, private tracker: WordTrackerService, private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController) { }
@@ -35,8 +36,8 @@ export class QuizPage implements OnInit {
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
       this.unitId = params['unitId'];
-      //this.loadQuiz(this.ctx.getUserId(), params['unitId'], params['testType'], this.ctx.learnType);
-      this.loadQuiz('6573ea546eec2f4aa8c3ccb8', '65109f9c6eec2f38fc262392', 'afterQuiz', 'read');
+      this.loadQuiz(this.ctx.getUserId(), params['unitId'], params['testType'], this.ctx.learnType);
+      //this.loadQuiz('6573ea546eec2f4aa8c3ccb8', '65109f9c6eec2f38fc262392', 'afterQuiz', 'read');
     });
   }
 

@@ -1,9 +1,4 @@
-ion-item {
-  width: 70%;
-}
-
-@media (max-width: 767px) {
-  ion-item {
-    width: 100%;
-  }
+.row-with-underline {
+  font-size: 20px;
+  border-bottom: 1px solid #594e4e;
 }
