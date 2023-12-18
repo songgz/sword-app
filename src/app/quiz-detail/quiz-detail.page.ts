@@ -33,4 +33,9 @@ export class QuizDetailPage implements OnInit {
 
   }
 
+  getChoiceLetter(question: any) {
+    let i = question.choices.findIndex((c:any)=> c.id === question.user_answer);
+    return this.options[i];
+  }
+
 }

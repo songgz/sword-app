@@ -27,6 +27,8 @@ export class QuizPage implements OnInit {
   answered: boolean = false;
   count: Subscription | undefined;
   options: string[] = ['A','B','C','D'];
+  startTime: Date = new Date();
+  endTime: Date | undefined;
   private unitId: any;
   testTypes: any = {afterLearn: '章节后测试', beforeLearn: '章节前测试'};
 
@@ -44,18 +46,24 @@ export class QuizPage implements OnInit {
   loadQuiz(studentId: string, unitId: string, testType: string, learnType: string) {
     this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType, learn_type: learnType}).subscribe(res => {
       this.quiz = res.data;
+      this.quiz.corrects = 0;
+      this.quiz.wrongs = 0;
+      this.startTime = new Date();
       this.next();
     });
   }
 
   saveQuiz() {
-    this.rest.update("quizzes/" + this.quiz.id, this.quiz).subscribe(res => {
+    this.rest.update("quizzes/" + this.quiz.id, {quiz: this.quiz}).subscribe(res => {
 
     });
   }
 
   next() {
     if (this.index === this.quiz.questions.length) {
+      this.endTime = new Date();
+      this.quiz.duration = Math.floor(this.endTime.getTime() - this.startTime.getTime());
+      this.quiz.score = Math.round(100 * this.quiz.corrects / this.quiz.total);
       this.saveQuiz();
       this.quizOverModal();
     }else{
@@ -93,6 +101,7 @@ export class QuizPage implements OnInit {
       this.question.result = true;
       this.quiz.corrects = this.quiz.corrects + 1;
     } else {
+      this.question.result = false;
       this.quiz.wrongs = this.quiz.wrongs + 1;
     }
     this.answered = true;

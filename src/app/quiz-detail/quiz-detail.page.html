@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar mode="ios">
-    <ion-title>quiz-detail</ion-title>
+    <ion-title>测试详情</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -9,15 +9,15 @@
     <ion-list-header>
 
       <ion-label><p>{{quiz.unit_name}} 02认读学前测试 </p>
-      <h2>王梓豪 </h2>共 {{quiz.questions?.length}} 题 对 {{quiz.corrects}} 题 错 {{quiz.wrongs}} 题  用时：2分15秒
-      </ion-label><ion-badge >{{quiz.score}}</ion-badge>
-      <ion-note>学前测试  测试时间：2023-12-06 11:03:23</ion-note>
+      <h1>王梓豪 <ion-badge style="font-size: 16px" color="danger" >{{quiz.score}}分</ion-badge></h1>共 {{quiz.questions?.length}} 题 对 {{quiz.corrects}} 题 错 {{quiz.wrongs}} 题  用时：2分15秒
+      </ion-label>
+      <ion-note>测试时间：2023-12-06 11:03:23</ion-note>
 
     </ion-list-header>
     <ion-item-group *ngFor="let question of quiz.questions; let n=index">
       <ion-item-divider color="medium">
         <ion-label>{{n+1}}.　{{question.title}}</ion-label>
-        <ion-badge color="danger" slot="end">a</ion-badge>
+        <ion-badge [color]="question.result ? 'success' : 'danger'" slot="end">{{getChoiceLetter(question)}}</ion-badge>
       </ion-item-divider>
 
       <ion-item *ngFor="let choice of question.choices; let i=index">
