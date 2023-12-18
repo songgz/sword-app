@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>恭喜你完成本次测试</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="modalCtrl.dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-text-center">
+  <p style="font-size: 20px">题数:{{total}}，正确:{{rights}}，错误:{{wrongs}}，得分:{{score}}分</p>
+</ion-content>
+<ion-footer>
+  <ion-item>
+    <ion-button (click)="submit()" slot="end" size="Default">继续学习</ion-button>
+
+  </ion-item>
+</ion-footer>
