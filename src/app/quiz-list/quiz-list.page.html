@@ -6,9 +6,32 @@
 
 <ion-content [fullscreen]="true" class="ion-text-center">
   <ion-grid>
+    <ion-row>
+      <ion-col>
+        序号
+      </ion-col>
+      <ion-col>
+        测试时间
+      </ion-col>
+      <ion-col>
+        测试名称
+      </ion-col>
+      <ion-col>
+        测试题量
+      </ion-col>
+      <ion-col>
+        用时
+      </ion-col>
+      <ion-col>
+        测试分数
+      </ion-col>
+      <ion-col>
+        操作
+      </ion-col>
+    </ion-row>
     <ion-row *ngFor="let quiz of quizzes; let i=index" class="row-with-underline">
-      <ion-text>{{i+1}}</ion-text>
-      <ion-col>{{quiz.created_at | date:'yyyy-MM-dd HH:mm:ss'}}</ion-col>
+      <ion-col>{{i+1}}</ion-col>
+      <ion-col>{{quiz.updated_at | date:'yyyy-MM-dd HH:mm:ss'}}</ion-col>
       <ion-col><ion-text [color]="quiz.test_type === 'beforeLearn' ? 'err1' : 'err0'">{{quiz.title}}</ion-text></ion-col>
       <ion-col>共{{quiz.total}}题 对<ion-text color="success">{{quiz.corrects}}</ion-text>题 错<ion-text color="danger">{{quiz.wrongs}}</ion-text>题</ion-col>
       <ion-col>用时: {{quiz.duration | date: 'mm分ss秒' : 'UTC'}}</ion-col>

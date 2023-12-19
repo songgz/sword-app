@@ -7,11 +7,11 @@
 <ion-content [fullscreen]="true">
   <ion-list>
     <ion-list-header>
-
-      <ion-label><p>{{quiz.unit_name}} 02认读学前测试 </p>
-      <h1>王梓豪 <ion-badge style="font-size: 16px" color="danger" >{{quiz.score}}分</ion-badge></h1>共 {{quiz.questions?.length}} 题 对 {{quiz.corrects}} 题 错 {{quiz.wrongs}} 题  用时：2分15秒
+      <ion-label>
+        <p>{{quiz.title}}</p>
+        <h1>王梓豪 <ion-badge style="font-size: 16px" color="danger" >{{quiz.score}}分</ion-badge></h1>共 {{quiz.questions?.length}} 题 对 {{quiz.corrects}} 题 错 {{quiz.wrongs}} 题  用时： {{quiz.duration | date: 'mm分ss秒' : 'UTC'}}
       </ion-label>
-      <ion-note>测试时间：2023-12-06 11:03:23</ion-note>
+      <ion-note>测试时间：{{quiz.updated_at | date:'yyyy-MM-dd HH:mm:ss'}}</ion-note>
 
     </ion-list-header>
     <ion-item-group *ngFor="let question of quiz.questions; let n=index">

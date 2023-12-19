@@ -23,7 +23,7 @@ export class QuizListPage implements OnInit {
   }
 
   loadQuizzes(studentId: string) {
-    this.rest.index('quizzes', {studentId: studentId}).subscribe(res => {
+    this.rest.index('quizzes', {student_id: studentId}).subscribe(res => {
       this.quizzes = res.data;
     });
 
