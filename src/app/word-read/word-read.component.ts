@@ -65,6 +65,7 @@ export class WordReadComponent  implements OnInit {
         break;
       case 'next':
         this.tracker.updateWordState(this.answer);
+        this.tracker.saveWordState();
 
         if (this.tracker.isOver()) {
           //this.saveWordState();//保存

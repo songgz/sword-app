@@ -48,7 +48,7 @@ export class WordPage implements OnInit {
   //learnType: string = 'read';
   //book: any = {};
   //isReview: boolean = false;
-  spells: any[][] = [[],[],[],[]];
+  //spells: any[][] = [[],[],[],[]];
   started: boolean = false;
   //bookId: string = '';
   //lastUpdate: Date = new Date("2000-01-01T08:00:00");
@@ -57,23 +57,10 @@ export class WordPage implements OnInit {
   @ViewChild('wordSpellComponentRef') wordSpellComponentRef: WordSpellComponent | undefined;
 
   constructor(public ctx: AppCtxService, public tracker: WordTrackerService, private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private modalCtrl: ModalController) {
-    //this.learnType = this.ctx.learnType;
-    //this.tracker = new WordTracker();
-
     this.activatedRouter.queryParams.subscribe((params) => {
-      // this.learnType = params['learnType'];
-      // this.bookId = params['bookId'];
-      // this.loadLearnedBook(this.ctx.getUserId(), params['bookId'], this.ctx.learnType);
-      //this.loadUnits(params['bookId']);
       this.tracker.loadLearnedBook(this.ctx.getUserId(), params['bookId'], this.ctx.learnType).subscribe(res => {
-        // console.log('isreview=' + this.tracker.isReview);
-        // console.log('learntype=' + this.ctx.learnType);
-        // console.log('luid=');
-        // console.log(this.tracker.learnedUnit);
-        //console.log(this.learnType);
         if (this.tracker.isReview) {
           this.started = true;
-          //this.start();
           if(ctx.learnType === 'read'){
             this.wordReadComponentRef?.performAction('initial');
           }
@@ -83,11 +70,8 @@ export class WordPage implements OnInit {
           if(ctx.learnType === 'spell') {
             this.wordSpellComponentRef?.performAction('initial');
           }
-
-          // console.log('sss' + this.wordReadComponentRef?.currentState);
-          // console.log(this.tracker.lastUpdate);
-          // console.log(this.tracker.reviewedToursDiff(this.tracker.lastUpdate));
         }else{
+
 
           this.prevUnitModal().then(a=> {
             this.started = true;
@@ -110,6 +94,10 @@ export class WordPage implements OnInit {
     this.started = false;
     //this.presentAlert();
   }
+
+
+
+
 
 
   // loadLearnedBook(studentId: string, bookId: string, learnType: string) {
@@ -153,7 +141,8 @@ export class WordPage implements OnInit {
 
   openUnit(unitId: string) {
     this.started = false;
-    this.tracker.loadUnitWords(unitId).subscribe();
+    this.tracker.getLearnUnit(unitId);
+    this.tracker.loadUnitWords().subscribe();
     //this.loadWords(unitId);
     this.prevUnitModal();
   }
@@ -608,7 +597,7 @@ export class WordPage implements OnInit {
       this.openUnit(this.tracker.nextLearnedUnit().unit_id);
     }else{
       if (this.ctx.learnType === 'read') {
-        this.router.navigate(['/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.book.id}});
+        this.router.navigate(['/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.learned_book.book_id}});
 
       }
       if(this.ctx.learnType === 'listen') {

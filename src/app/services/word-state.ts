@@ -4,6 +4,4 @@ export interface WordState {
   repeats: number;
   learns: number;
   reviews: number;
-  is_wrong: boolean;
-  completed: boolean;
 }

@@ -22,7 +22,7 @@ export class LearnPage implements OnInit {
     {code: 'KNOWLEDGE', name: '知识速记'},
     {code: 'CHINESE_WORD', name: '汉字速记'}
   ];
-  books: any[] = [];
+  learnBooks: any[] = [];
 //<ion-icon name="eye-outline"></ion-icon>
  //<ion-icon name="headset-outline"></ion-icon>
   //<ion-icon name="create-outline"></ion-icon>
@@ -57,12 +57,12 @@ export class LearnPage implements OnInit {
 
   loadLearnedBooks(studentId: string, learnType: string) {
     this.rest.index('learned_books', {student_id: studentId, learn_type: learnType ,per: 999}).subscribe(res => {
-      this.books = res.data || [];
+      this.learnBooks = res.data || [];
     });
   }
 
   filterBook(category: string) :any[] {
-    return this.books.filter(b => b.book?.category === category);
+    return this.learnBooks.filter(b => b.book?.category === category);
   }
 
   getWordImg(file: string) :string {

@@ -19,18 +19,24 @@ export class WordTrackerService {
   total: number = 0;
   maxRepeats: number = 6;
   colors: string[] = ['err0', 'err1', 'err2', 'err3', 'err4', 'err5', 'err6'];
-  private unitId: string | undefined;
+  //private unitId: string | undefined;
+  //completions: number = 0;
   rights: number = 0;
   wrongs: number = 0;
   word: any = {};
-  learnedUnits: any[] = [];
-  lastUpdate: Date = new Date("2023-01-01T08:00:00");
-  book: any = {};
+  //learnedUnits: any[] = [];
+  //lastUpdate: Date = new Date("2023-01-01T08:00:00");
+  //book: any = {};
   isReview: boolean = false;
   learnedUnit: any = {};
-  lastWordIndex: number = 0;
+  //lastWordIndex: number = 0;
   audioState: StreamState | undefined;
   options: any[] = [];
+  //student_id: string = '';
+  //book_id: string = '';
+  //learn_type: string = '';
+  //learned_book_id: string = '';
+  learned_book: any = {};
 
   constructor(private rest: RestApiService, private audio: AudioService, private sanitizer: DomSanitizer) {
     this.audio.getState().subscribe(state => {
@@ -38,28 +44,27 @@ export class WordTrackerService {
     });
   }
 
-  init(bookId: string, studentId: string, learnType: string) {
-    this.words = [];
-    this.wordStates = {};
-    this.isReview = false;
-
+  initIndex() {
+    if (this.learnedUnit.last_word_index > 0) {
+      this.wrongs = this.learnedUnit.wrongs;
+      this.rights = this.learnedUnit.rights;
+      this.stepper.index = this.learnedUnit.last_word_index + 1;
+      this.stepper.lastWordIndex = this.stepper.index;
+      this.stepper.completions = this.learnedUnit.completions;
+    }
   }
 
   loadLearnedBook(studentId: string, bookId: string, learnType: string): Observable<any> {
     return this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId, learn_type: learnType}).pipe(
-        tap(d => {
-          this.book = d.data.book;
-          this.lastUpdate = new Date(d.data.updated_at);
-          this.learnedUnits = d.data.learned_units;
-          if (this.learnedUnits.length > 0) {
-            this.nextLearnedUnit();
-          }
-          if (d.data.error_words.length > 0 && this.reviewedToursDiff(this.lastUpdate) > 12) {
+        tap(res => {
+          this.learned_book = res.data
+          if (this.learned_book.error_words.length > 0 && this.reviewedToursDiff() > 12) {
             this.isReview = true;
-            this.loadErrWords(d.data.error_words);
+            this.loadErrWords();
           }else{
             this.isReview = false;
-            this.loadUnitWords(this.learnedUnit.unit_id).subscribe();
+            this.nextLearnedUnit();
+            this.loadUnitWords().subscribe();
           }
         })
     );
@@ -67,24 +72,25 @@ export class WordTrackerService {
   }
 
   nextLearnedUnit(): any {
-    return this.learnedUnit = this.learnedUnits.find(u => u.learns !== u.words);
+    return this.learnedUnit = this.learned_book.learned_units.find((u:any) => u.completions < u.total);
   }
 
-  loadUnitWords(unitId: string): Observable<any> {
-    this.isReview = false;
-    this.learnedUnit = this.learnedUnits.find(lu => lu.unit_id === unitId);
-    return this.rest.index('words', {unit_id: unitId, per: 999}).pipe(
+  getLearnUnit(unitId: string) {
+    return this.learnedUnit = this.learned_book.learned_units.find((lu:any)=> lu.unit_id === unitId);
+  }
+
+  loadUnitWords(): Observable<any> {
+    //this.learnedUnit = this.learned_book.learned_units.find((lu:any)=> lu.unit_id === unitId);
+    return this.rest.index('words', {unit_id: this.learnedUnit.unit_id, per: 999}).pipe(
         tap(d => {
-          this.loadWords(d.data, unitId);
+          this.loadWords(d.data);
         })
     );
   }
 
-  saveWordState(student_id: string, learnType: string) {
+  saveWordState() {
     let learnedBook: any = {
-      student_id: student_id,
-      book_id: this.book.id,
-      learn_type: learnType,
+      id: this.learned_book.id,
       error_words: [],
       learned_units: []
     };
@@ -96,89 +102,89 @@ export class WordTrackerService {
         word_id: ws.word_id,
         repeats: ws.repeats,
         learns: ws.learns,
-        reviews: ws.reviews,
-        is_wrong: ws.is_wrong
+        reviews: ws.reviews
       });
     }
 
-
-
     if (!this.isReview) {
-      this.learnedUnit.last_word_index = this.lastWordIndex;
+      this.learnedUnit.completions = this.rights + this.wrongs;
+      this.learnedUnit.wrongs = this.wrongs;
+      this.learnedUnit.rights = this.rights;
+      this.learnedUnit.last_word_index = this.stepper.lastWordIndex;
       learnedBook.learned_units.push(this.learnedUnit);
     }
-    this.rest.update('learned_books/0', learnedBook).subscribe();
+
+    this.rest.update('learned_books/'+this.learned_book.id, {learned_book: learnedBook}).subscribe();
   }
 
-  saveWordState2(student_id: string, learnType: string) {
-    let error_words: any[] = [];
-    //console.log(this.tracker.wordStates);
-    Object.keys(this.wordStates).forEach(key => {
-      let s = this.wordStates[key];
-      error_words.push({
-        unit_id: s.unit_id,
-        word_id: s.word_id,
-        repeats: s.repeats,
-        learns: s.learns,
-        reviews: s.reviews,
-        is_wrong: s.is_wrong
-      });
-    });
+  // saveWordState2(student_id: string, learnType: string) {
+  //   let error_words: any[] = [];
+  //   //console.log(this.tracker.wordStates);
+  //   Object.keys(this.wordStates).forEach(key => {
+  //     let s = this.wordStates[key];
+  //     error_words.push({
+  //       unit_id: s.unit_id,
+  //       word_id: s.word_id,
+  //       repeats: s.repeats,
+  //       learns: s.learns,
+  //       reviews: s.reviews,
+  //       is_wrong: s.is_wrong
+  //     });
+  //   });
+  //
+  //   let learnedBook: any = {
+  //     student_id: student_id,
+  //     book_id: this.book.id,
+  //     learn_type: learnType,
+  //     error_words: error_words,
+  //   };
+  //   if (!this.isReview) {
+  //     learnedBook.learned_units = this.learnedUnits;
+  //   }
+  //   this.rest.update('learned_books/0', learnedBook).subscribe();
+  // }
 
-    let learnedBook: any = {
-      student_id: student_id,
-      book_id: this.book.id,
-      learn_type: learnType,
-      error_words: error_words,
-    };
-    if (!this.isReview) {
-      learnedBook.learned_units = this.learnedUnits;
-    }
-    this.rest.update('learned_books/0', learnedBook).subscribe();
-  }
-
-  reviewedToursDiff(lastUpdate: Date) {
-    const timeDiff = Math.abs((new Date()).getTime() - lastUpdate.getTime());
+  reviewedToursDiff() {
+    const timeDiff = Math.abs((new Date()).getTime() - new Date(this.learned_book.updated_at).getTime());
     const hoursDiff = Math.ceil(timeDiff / (1000 * 60 * 60));
     return hoursDiff;
   }
 
-  loadErrWords(errWords: any[]) {
-    this.total = errWords.length;
-    this.stepper = new WordStepper(errWords.length);
+  loadErrWords() {
+    this.total = this.learned_book.error_words.length;
+    this.stepper = new WordStepper(this.total);
     this.words = [];
     this.wordStates = {};
 
-    errWords.forEach((ew,i) => {
+    this.learned_book.error_words.forEach((ew: any, i: number) => {
       let state: WordState = {
         unit_id: ew?.unit_id,
         word_id: ew?.word_id,
         repeats: ew?.repeats || this.maxRepeats,
         learns: ew?.learns || 0,
-        reviews: ew?.reviews || 0,
-        is_wrong: ew?.is_wrong || false,
-        completed: false
+        reviews: ew?.reviews || 0
       };
-      //console.log(this.wordStates);
 
       this.wordStates[i] = state;
       this.words.push(ew.word);
     });
 
+    console.log(this.wordStates);
     //this.learnType = '复习';
     this.getWord();
   }
 
-  loadWords(words :any[], unitId: string) {
-    this.unitId = unitId;
+  loadWords(words :any[]) {
     this.total = words.length;
     this.stepper = new WordStepper(words.length);
     this.words = [];
+    this.wordStates = {};
 
     words.forEach((w,i) => {
       this.words.push(w);
     });
 
+    this.initIndex();
     //this.learnType = '认读';
     this.getWord();
   }
@@ -195,15 +201,10 @@ export class WordTrackerService {
     return this.wordStates[this.stepper.getIndexValue()];
   }
 
-  updateLastWordIndex() {
-    if (this.lastWordIndex < this.stepper.getIndexValue()) {
-      this.lastWordIndex = this.stepper.getIndexValue();
-    }
-  }
+
 
   next(): any {
     this.stepper.next();
-    this.updateLastWordIndex();
     return this.word = this.getWord();
   }
 
@@ -219,13 +220,11 @@ export class WordTrackerService {
     if (!state) {
       this.wrongs++;
       state = {
-        unit_id: this.unitId,
+        unit_id: this.learnedUnit.unit_id,
         word_id: this.getWord().id,
         repeats: 0,
         learns: 0,
-        reviews: 0,
-        is_wrong: true,
-        completed: false};
+        reviews: 0};
     }
 
     console.log(state);
@@ -281,7 +280,7 @@ export class WordTrackerService {
   updateWordState(value: boolean) {
     if (value) {
       this.correctAnswer();
-    }else{
+    }else {
       this.wrongAnswer();
     }
   }

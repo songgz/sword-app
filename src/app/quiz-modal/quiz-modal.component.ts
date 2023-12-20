@@ -49,7 +49,7 @@ export class QuizModalComponent  implements OnInit {
   }
 
   nextUnit() {
-    this.router.navigate(['tabs/word'], {queryParams: {bookId: this.tracker.book.id}});
+    this.router.navigate(['tabs/word'], {queryParams: {bookId: this.tracker.learned_book.book_id}});
     this.modalCtrl.dismiss(null, 'ok');
 
   }

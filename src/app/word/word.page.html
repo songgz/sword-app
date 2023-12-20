@@ -7,12 +7,12 @@
   <ion-content class="ion-padding">
     <ion-list>
       <ion-list-header>
-        <ion-label>{{tracker.book?.name}}</ion-label>
+        <ion-label>{{tracker.learned_book.book?.name}}－{{tracker.learnedUnit.unit_name}}</ion-label>
       </ion-list-header>
-      <ion-item button="" [color]="tracker.learnedUnit.id === unit.id ? 'light' : ''" *ngFor="let unit of tracker.learnedUnits" (click)="openUnit(unit.unit_id)">
+      <ion-item button="" [color]="tracker.learnedUnit?.unit_id === unit.unit_id ? 'light' : ''" *ngFor="let unit of tracker.learned_book.learned_units" (click)="openUnit(unit.unit_id)">
         <ion-label>
           <h2>{{unit.unit_name}}</h2>
-          <p style="text-align: right">条目:{{unit.words}} | 已学: <ion-text color="success">{{unit.learns}}</ion-text> | 错误: <ion-text color="danger">{{unit.wrongs}}</ion-text></p>
+          <p style="text-align: right">条目:{{unit.total}} | 已学: <ion-text color="success">{{unit.completions}}</ion-text> | 错误: <ion-text color="danger">{{unit.wrongs}}</ion-text></p>
         </ion-label>
       </ion-item>
     </ion-list>
@@ -24,7 +24,7 @@
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
-      <ion-label slot="start">{{tracker.book?.name}}</ion-label>
+      <ion-label slot="start">{{tracker.learned_book.book?.name}}</ion-label>
       <ion-title>{{ctx.learnTypes[ctx.learnType]}}</ion-title>
     </ion-toolbar>
   </ion-header>

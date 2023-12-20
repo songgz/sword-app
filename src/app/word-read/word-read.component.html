@@ -3,7 +3,7 @@
     <ion-col>
     <ion-item lines="none">
       <ion-label slot="start">{{tracker.isReview ? '智能复习' : '认读'}}: {{tracker.getCompletions()}}/{{tracker.total}}</ion-label>
-      <ion-label slot="end">本组进度 ({{tracker.total}}-<ion-text color="success">{{tracker.getCompletions()}}</ion-text>) 生词 (<ion-text color="danger">{{tracker.wrongs}}</ion-text>)  课程总进度 ({{tracker.book?.book_total||0}} - <ion-text color="success">{{tracker.book?.book_complete || 0}}</ion-text>) 生词本 (<ion-text color="danger">{{tracker.book?.book_wrongs||0}}</ion-text>)</ion-label>
+      <ion-label slot="end">本组进度 ({{tracker.total}}-<ion-text color="success">{{tracker.getCompletions()}}</ion-text>) 生词 (<ion-text color="danger">{{tracker.wrongs}}</ion-text>)  课程总进度 ({{tracker.learned_book.total||0}} - <ion-text color="success">{{tracker.learned_book.completions || 0}}</ion-text>) 生词本 (<ion-text color="danger">{{tracker.learned_book?.wrongs||0}}</ion-text>)</ion-label>
     </ion-item>
     </ion-col>
   </ion-row>
