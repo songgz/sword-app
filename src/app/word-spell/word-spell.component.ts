@@ -70,15 +70,17 @@ export class WordSpellComponent implements OnInit {
                 //this.tracker.playWord();
                 if (this.isSpellOver()) {
                     if (this.check('answer')) {
+                      console.log('a');
                         this.answer = true;
                         this.currentState = this.State.Next;
                         if (option) {
                             this.performAction('next');
                         }
                     }else {
+                      console.log('b');
                         this.answer = false;
                         this.currentState = this.State.Evaluate;
-                        this.check('revise');
+                      this.check('revise');
                         if(option) {
                           //this.wordForm.controls['wordInput'].setValue('');
                             this.delayedInteraction();
@@ -101,13 +103,19 @@ export class WordSpellComponent implements OnInit {
                 // }
                 break;
             case 'evaluate': //改错
-
-                if(this.check('revise')) {
-                    this.currentState = this.State.Next;
-                        if (option) {
-                            this.performAction('next');
-                        }
+              if (this.isSpellOver()) {
+                if (this.check('answer')) {
+                  this.currentState = this.State.Next;
                 }
+                if(this.check('revise')) {
+                  this.currentState = this.State.Next;
+                  if (option) {
+                    this.performAction('next');
+                  }
+                }
+              }
+
+
                 // if (this.checkSpell(4)) {
                 //     this.currentState = this.State.Next;
                 //     if (option) {
@@ -116,7 +124,9 @@ export class WordSpellComponent implements OnInit {
                 // }
                 break;
             case 'next':
+              console.log('spell:'+this.answer);
                 this.tracker.updateWordState(this.answer);
+                this.tracker.saveWordState();
 
                 if (this.tracker.isOver()) {
                     //this.saveWordState();//保存
@@ -171,7 +181,18 @@ export class WordSpellComponent implements OnInit {
         } else if (col < this.mySpell.answer.length) {
             this.mySpell.answer[col] = this.mySpell[option][col];
         }
-        this.performAction('survey');
+
+        console.log('ss'+this.currentState);
+        if(this.currentState === this.State.Survey) {
+          this.performAction('survey');
+
+        }
+        if (this.currentState === this.State.Evaluate) {
+          this.check('answer');
+          console.log('ccc' + this.check('revise'));
+          this.performAction('evaluate');
+        }
+
     }
 
     isSpellOver() {

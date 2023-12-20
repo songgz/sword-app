@@ -64,6 +64,7 @@ export class WordListenComponent  implements OnInit {
         break;
       case 'next':
         this.tracker.updateWordState(this.answer);
+        this.tracker.saveWordState();
 
         if (this.tracker.isOver()) {
           //this.saveWordState();//保存

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {IonicModule, NavController} from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {AppCtxService} from "../services/app-ctx.service";
 import {RouterLink} from "@angular/router";
@@ -16,7 +16,7 @@ import {RouterLink} from "@angular/router";
 export class QuizListPage implements OnInit {
   quizzes: any[] = [];
 
-  constructor(private rest: RestApiService, private ctx: AppCtxService) { }
+  constructor(private rest: RestApiService, private ctx: AppCtxService, private navCtrl: NavController) { }
 
   ngOnInit() {
     this.loadQuizzes(this.ctx.getUserId());
@@ -27,6 +27,10 @@ export class QuizListPage implements OnInit {
       this.quizzes = res.data;
     });
 
+  }
+
+  goBack() {
+    this.navCtrl.back();
   }
 
 }

@@ -597,7 +597,7 @@ export class WordPage implements OnInit {
       this.openUnit(this.tracker.nextLearnedUnit().unit_id);
     }else{
       if (this.ctx.learnType === 'read') {
-        this.router.navigate(['/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.learned_book.book_id}});
+        this.router.navigate(['tabs/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.learned_book.book_id}});
 
       }
       if(this.ctx.learnType === 'listen') {
