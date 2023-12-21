@@ -139,10 +139,10 @@ export class QuizPage implements OnInit {
       component: OverModalComponent,
       cssClass: 'custom-modal',
       componentProps: {
-        total: this.quiz.questions?.length,
+        total: this.quiz.total,
         rights: this.quiz.corrects,
         wrongs: this.quiz.wrongs,
-        score: 0
+        score: this.quiz.score
       }
     });
     modal.present();
@@ -150,7 +150,6 @@ export class QuizPage implements OnInit {
     const { data, role } = await modal.onWillDismiss();
 
     if (role === 'confirm') {
-      //this.message = `Hello, ${data}!`;
       this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.ctx.getUserId()}});
 
     }

@@ -27,6 +27,8 @@ export class QuizListenPage implements OnInit {
   options: string[] = ['A','B','C','D'];
   private unitId: any;
   testTypes: any = {afterLearn: '章节后测试', beforeLearn: '章节前测试'};
+  startTime: Date = new Date();
+  endTime: Date | undefined;
 
   constructor(private ctx: AppCtxService, public tracker: WordTrackerService,  private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController) { }
 
@@ -41,12 +43,16 @@ export class QuizListenPage implements OnInit {
   loadQuiz(studentId: string, unitId: string, testType: string, learnType: string) {
     this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType, learn_type: learnType}).subscribe(res => {
       this.quiz = res.data;
+      this.quiz = res.data;
+      this.quiz.corrects = 0;
+      this.quiz.wrongs = 0;
+      this.startTime = new Date();
       this.next();
     });
   }
 
   saveQuiz() {
-    this.rest.update("quizzes/" + this.quiz.id, this.quiz).subscribe(res => {
+    this.rest.update("quizzes/" + this.quiz.id, {quiz: this.quiz}).subscribe(res => {
 
     });
   }
@@ -80,6 +86,9 @@ export class QuizListenPage implements OnInit {
 
   next() {
     if (this.index === this.quiz.questions.length) {
+      this.endTime = new Date();
+      this.quiz.duration = Math.floor(this.endTime.getTime() - this.startTime.getTime());
+      this.quiz.score = Math.round(100 * this.quiz.corrects / this.quiz.total);
       this.saveQuiz();
       this.quizOverModal();
     }else{
@@ -115,7 +124,7 @@ export class QuizListenPage implements OnInit {
         total: this.quiz.questions?.length,
         rights: this.quiz.corrects,
         wrongs: this.quiz.wrongs,
-        score: 0
+        score: this.quiz.score
       }
     });
     modal.present();

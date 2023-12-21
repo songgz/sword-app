@@ -30,7 +30,7 @@ export class WordReadComponent  implements OnInit {
     switch (action) {
       case 'initial':
 
-        this.currentState = MemoryState.Survey;
+        this.currentState = this.State.Survey;
         console.log(this.currentState);
         this.tracker.getWord();
         this.tracker.playWord();
@@ -44,10 +44,10 @@ export class WordReadComponent  implements OnInit {
       case 'survey':
         this.tracker.playWord();
         if (option) {
-          this.currentState = MemoryState.Evaluate;
+          this.currentState = this.State.Evaluate;
         } else {
           this.answer = false;
-          this.currentState = MemoryState.Repeater;
+          this.currentState = this.State.Repeater;
         }
         break;
       case 'evaluate':
@@ -56,12 +56,12 @@ export class WordReadComponent  implements OnInit {
           this.performAction('next');
         } else {
           this.answer = false;
-          this.currentState = MemoryState.Repeater;
+          this.currentState = this.State.Repeater;
         }
         break;
       case 'repeater':
         this.tracker.playWord();
-        this.currentState = MemoryState.Next;
+        this.currentState = this.State.Next;
         break;
       case 'next':
         this.tracker.updateWordState(this.answer);
