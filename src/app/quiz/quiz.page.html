@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar mode="ios">
     <ion-buttons slot="start">
-      <ion-back-button text="返回" color="secondary"></ion-back-button>
+      <ion-back-button defaultHref="/tabs/learn" text="返回" color="secondary"></ion-back-button>
     </ion-buttons>
     <ion-title>{{quiz?.unit_name}}－{{testTypes[quiz.test_type]}}</ion-title>
   </ion-toolbar>
@@ -27,5 +27,9 @@
       </ion-item>
     </ion-card-content>
   </ion-card>
+  <ion-item>
+    <ion-button size="default" slot="end" (click)="stop()" *ngIf="answered && !isPause">暂停</ion-button>
+    <ion-button size="default" slot="end" (click)="start()" *ngIf="answered && isPause">继续</ion-button>
+  </ion-item>
 
 </ion-content>

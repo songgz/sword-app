@@ -32,8 +32,8 @@
     </ion-toolbar>
   </ion-header>
   <ion-content *ngIf="started">
-    <app-word-read #wordReadComponentRef (learnOverEvent)="handleOverEvent()" *ngIf="ctx.learnType === 'read'"></app-word-read>
-    <app-word-listen #wordListenComponentRef (learnOverEvent)="handleOverEvent()" *ngIf="ctx.learnType === 'listen'"></app-word-listen>
-    <app-word-spell #wordSpellComponentRef (learnOverEvent)="handleOverEvent()" *ngIf="ctx.learnType === 'spell'"></app-word-spell>
+    <app-word-read #wordReadComponentRef (learnOverEvent)="handleOverEvent()" *ngIf="ctx.learnType === 'read' && !tracker.isReview"></app-word-read>
+    <app-word-listen #wordListenComponentRef (learnOverEvent)="handleOverEvent()" *ngIf="ctx.learnType === 'listen' && !tracker.isReview"></app-word-listen>
+    <app-word-spell #wordSpellComponentRef (learnOverEvent)="handleOverEvent()" *ngIf="ctx.learnType === 'spell' && !tracker.isReview"></app-word-spell>
   </ion-content>
 </div>

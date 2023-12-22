@@ -2,8 +2,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import {WordReadComponent} from "../word-read/word-read.component";
-import {delayWhen, exhaustMap, filter, interval, mapTo, scan, Subject, Subscription, switchMap, tap} from "rxjs";
-import {CountdownService} from "../services/countdown.service";
+
+import {TimerService} from "../services/timer-service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-tab1',
@@ -14,39 +15,41 @@ import {CountdownService} from "../services/countdown.service";
   imports: [IonicModule, ExploreContainerComponent, WordReadComponent],
 })
 export class Tab1Page {
-  countdownTime = 0;
-  paused = false;
-  private countdownSubscription: Subscription | undefined;
+  count = 0;
+  timerSubscription: Subscription | undefined;
 
-  constructor(private readonly countdownService: CountdownService) {}
+  constructor(public timerService: TimerService) {
 
+  }
 
-  start(): void {
-    this.countdownService.start(10);
-    this.countdownSubscription = this.countdownService.countdownDelayed.subscribe((delayed) => {
-      this.countdownTime = delayed;
+  start() {
+    this.timerSubscription = this.timerService.startTimer(1000).subscribe(timerCount => {
+      this.count = timerCount;
+      console.log('Timer count:', timerCount);
     });
   }
 
-  pause(): void {
-    this.countdownService.pause();
+  pause() {
+    this.timerService.pauseTimer();
   }
 
-  resume(): void {
-    this.countdownService.resume();
+  resume() {
+    this.timerService.resumeTimer();
   }
 
-  stop(): void {
-    this.countdownService.stop();
-    this.countdownSubscription?.unsubscribe();
-    this.countdownTime = 0;
+  cancel() {
+    this.timerSubscription?.unsubscribe();
+    this.timerService.cancelTimer();
   }
 
-  delay(): void {
-    this.countdownService.delay(5);
+  delay() {
+    //this.timerService.delayTimer(2000);
   }
 
-  ngOnDestroy(): void {
-    this.stop();
+  ngOnDestroy() {
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
   }
+
 }
