@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {IonicModule, ModalController} from '@ionic/angular';
+import {IonicModule, ModalController, ToastController} from '@ionic/angular';
 import {ActivatedRoute, Router} from "@angular/router";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {RestApiService} from "../services/rest-api.service";
@@ -39,24 +39,22 @@ export class WordPage implements OnInit {
   @ViewChild('wordListenComponentRef') wordListenComponentRef: WordListenComponent | undefined;
   @ViewChild('wordSpellComponentRef') wordSpellComponentRef: WordSpellComponent | undefined;
 
-  constructor(public ctx: AppCtxService, public tracker: WordTrackerService, private activatedRouter: ActivatedRoute, private router: Router, private rest: RestApiService, private sanitizer: DomSanitizer, private audio: AudioService, private modalCtrl: ModalController) {
+  constructor(public ctx: AppCtxService,
+              public tracker: WordTrackerService,
+              private activatedRouter: ActivatedRoute,
+              private router: Router,
+              private rest: RestApiService,
+              private sanitizer: DomSanitizer,
+              private audio: AudioService,
+              private modalCtrl: ModalController,
+              private toastCtl: ToastController) {
+
     this.activatedRouter.queryParams.subscribe((params) => {
       this.tracker.loadLearnedBook(this.ctx.getUserId(), params['bookId'], this.ctx.learnType).subscribe(res => {
         if (this.tracker.isReview) {
-          this.started = true;
-          if(ctx.learnType === 'read'){
-            this.wordReadComponentRef?.performAction('initial');
-          }
-          if(ctx.learnType === 'listem') {
-            this.wordListenComponentRef?.performAction('initial');
-          }
-          if(ctx.learnType === 'spell') {
-            this.wordSpellComponentRef?.performAction('initial');
-          }
+          this.addCom();
         }else{
-          this.prevUnitModal().then(a=> {
-            this.started = true;
-          });
+          this.openUnit(tracker.learnedUnit.unit_id);
         }
       });
     });
@@ -76,8 +74,47 @@ export class WordPage implements OnInit {
     this.started = false;
     this.tracker.getLearnUnit(unitId);
     this.tracker.loadUnitWords().subscribe();
-    //this.loadWords(unitId);
-    this.prevUnitModal();
+    console.log('ss');
+    console.log(this.tracker.learnedUnit);
+    if(this.tracker.learnedUnit.completions === this.tracker.learnedUnit.total) {
+      this.presentToast(this.tracker.learnedUnit.unit_name +"单元已学完!", "middle").then();
+    }else{
+      if (!this.tracker.learnedUnit.before_learn_quiz) {
+        this.prevUnitModal();
+      }else{
+        this.addCom();
+      }
+    }
+
+
+  }
+
+  addCom() {
+    this.started = true;
+    switch (this.ctx.learnType) {
+      case "read":
+        this.wordReadComponentRef?.performAction('initial');
+        break;
+      case "listen":
+        this.wordListenComponentRef?.performAction('initial');
+        break;
+      case "spell":
+        this.wordSpellComponentRef?.performAction('initial');
+        break;
+      default:
+        console.log("It's an unknown.");
+    }
+  }
+
+  async presentToast(msg: string, position: 'top' | 'middle' | 'bottom') {
+    const toast = await this.toastCtl.create({
+      message: msg,
+      duration: 2500,
+      position: position,
+      color: 'danger'
+    });
+
+    await toast.present();
   }
 
   async prevUnitModal() {
@@ -89,30 +126,28 @@ export class WordPage implements OnInit {
         message: '是否进行章节前测试？'
       }
     });
-    modal.present();
 
-    const { data, role } = await modal.onWillDismiss();
-
-    if (role === 'confirm') {
-
-      if(this.ctx.learnType === 'read') {
-        this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+    modal.onDidDismiss().then((result) => {
+      if (result.role === 'confirm') {
+        switch (this.ctx.learnType) {
+          case "read":
+            this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+            break;
+          case "listen":
+            this.router.navigate(['/tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+            break;
+          case "spell":
+            this.router.navigate(['/tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+            break;
+          default:
+            console.log("It's an unknown.");
+        }
+      } else {
+        this.addCom();
       }
-      if(this.ctx.learnType === 'listen') {
-        this.router.navigate(['/tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+    });
 
-      }
-      if(this.ctx.learnType === 'spell') {
-        this.router.navigate(['/tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
-
-      }
-
-    }
-
-    if (role === 'cancel') {
-      this.started = true;
-      this.wordReadComponentRef?.performAction('initial');
-    }
+    await modal.present();
   }
 
   async nextUnitModal() {
@@ -121,15 +156,10 @@ export class WordPage implements OnInit {
       cssClass: 'custom-modal'
     });
     modal.present();
-
     const { data, role } = await modal.onWillDismiss();
-
     if (role === 'confirm') {
-
     }
-
     if (role === 'cancel') {
-
     }
   }
 
@@ -137,6 +167,7 @@ export class WordPage implements OnInit {
   handleOverEvent() {
 
     if (this.tracker.isReview === true) {
+      this.tracker.isReview = false;
       this.openUnit(this.tracker.nextLearnedUnit().unit_id);
     }else{
       if (this.ctx.learnType === 'read') {

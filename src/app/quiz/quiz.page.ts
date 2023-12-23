@@ -173,12 +173,12 @@ export class QuizPage implements OnInit {
     this.next();
   }
 
-  // ionViewDidLeave(): void {
-  //   this.timerService.cancelTimer();
-  // }
-  ngOnDestroy() {
+  ionViewDidLeave(): void {
     this.timerService.cancelTimer();
   }
+  // ngOnDestroy() {
+  //   this.timerService.cancelTimer();
+  // }
 
   goBack(): void {
     this.navCtrl.back();

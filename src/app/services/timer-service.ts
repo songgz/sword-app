@@ -6,7 +6,7 @@ import {interval, Observable, Subject, Subscription, take, takeUntil} from "rxjs
 })
 export class TimerService {
   private timer$ = new Subject<number>();
-  private stop$ = new Subject<any>();
+  private destroy$ = new Subject<any>();
   timerSubscription: Subscription | undefined;
   // private isTimerActive = false;
   private isTimerPaused = false;
@@ -21,7 +21,7 @@ export class TimerService {
     this.isTimerRunning = true;
     this.isTimerPaused = false;
     this.timerSubscription = interval(intervalMs).pipe(
-      takeUntil(this.stop$)
+      takeUntil(this.destroy$)
       //take(10)
     ).subscribe(() => {
       console.log(this);
@@ -44,7 +44,8 @@ export class TimerService {
   }
 
   cancelTimer(): void {
-    this.stop$.next(null);
+    this.destroy$.next(null);
+    this.destroy$.complete();
     this.timerSubscription?.unsubscribe();
     //this.isTimerActive = false;
     this.isTimerRunning = false;
