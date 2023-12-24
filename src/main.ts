@@ -7,7 +7,7 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { provideHttpClient } from '@angular/common/http';
-import {QuizAlertComponent} from "./app/quiz-alert/quiz-alert.component";
+import {HotkeyModule } from 'angular2-hotkeys';
 
 if (environment.production) {
   enableProdMode();
@@ -18,9 +18,8 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy,
       useClass: IonicRouteStrategy
     },
-    importProvidersFrom(IonicModule.forRoot({ })),
+    importProvidersFrom(IonicModule.forRoot({ }),HotkeyModule.forRoot()),
     provideRouter(routes),
-    provideHttpClient(),
-      QuizAlertComponent
+    provideHttpClient()
   ],
 });

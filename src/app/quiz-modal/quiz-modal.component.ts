@@ -23,29 +23,22 @@ export class QuizModalComponent  implements OnInit {
 
   ngOnInit() {}
 
-
-
   afterQuiz() {
-
-    if(this.ctx.learnType === 'read') {
-      this.router.navigate(['tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
-
+    switch (this.ctx.learnType) {
+      case "read":
+        this.router.navigate(['tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
+        break;
+      case "listen":
+        this.router.navigate(['tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
+        break;
+      case "spell":
+        this.router.navigate(['tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
+        break;
+      default:
+        console.log("It's an unknown.");
     }
-    if(this.ctx.learnType === 'listen') {
-      this.router.navigate(['tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
-
-    }
-
-    if(this.ctx.learnType === 'spell') {
-      this.router.navigate(['tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,learnType: this.ctx.learnType, testType: 'afterLearn'}});
-
-    }
-
 
     this.modalCtrl.dismiss(null, 'ok');
-
-
-
   }
 
   nextUnit() {
@@ -59,7 +52,5 @@ export class QuizModalComponent  implements OnInit {
     this.modalCtrl.dismiss(null, 'ok');
 
   }
-
-
 
 }

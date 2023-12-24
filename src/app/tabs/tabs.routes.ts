@@ -14,27 +14,33 @@ export const routes: Routes = [
       },
       {
         path: 'word',
-        loadComponent: () => import('../word/word.page').then( m => m.WordPage)
+        loadComponent: () => import('../word/word.page').then( m => m.WordPage),
+        canActivate: [authGuard]
       },
       {
         path: 'quiz',
-        loadComponent: () => import('../quiz/quiz.page').then( m => m.QuizPage)
+        loadComponent: () => import('../quiz/quiz.page').then( m => m.QuizPage),
+        canActivate: [authGuard]
       },
       {
         path: 'quiz-list',
-        loadComponent: () => import('../quiz-list/quiz-list.page').then( m => m.QuizListPage)
+        loadComponent: () => import('../quiz-list/quiz-list.page').then( m => m.QuizListPage),
+        canActivate: [authGuard]
       },
       {
         path: 'quiz-detail',
-        loadComponent: () => import('../quiz-detail/quiz-detail.page').then( m => m.QuizDetailPage)
+        loadComponent: () => import('../quiz-detail/quiz-detail.page').then( m => m.QuizDetailPage),
+        canActivate: [authGuard]
       },
       {
         path: 'quiz-listen',
-        loadComponent: () => import('../quiz-listen/quiz-listen.page').then( m => m.QuizListenPage)
+        loadComponent: () => import('../quiz-listen/quiz-listen.page').then( m => m.QuizListenPage),
+        canActivate: [authGuard]
       },
       {
         path: 'quiz-spell',
-        loadComponent: () => import('../quiz-spell/quiz-spell.page').then( m => m.QuizSpellPage)
+        loadComponent: () => import('../quiz-spell/quiz-spell.page').then( m => m.QuizSpellPage),
+        canActivate: [authGuard]
       },
       {
         path: 'book',
@@ -48,20 +54,8 @@ export const routes: Routes = [
       },
       {
         path: 'match-game',
-        loadComponent: () => import('../match-game/match-game.page').then( m => m.MatchGamePage)
-      },
-
-      {
-        path: 'tab1',
-        loadComponent: () => import('../tab1/tab1.page').then((m) => m.Tab1Page),
-      },
-      {
-        path: 'tab2',
-        loadComponent: () => import('../tab2/tab2.page').then((m) => m.Tab2Page),
-      },
-      {
-        path: 'tab3',
-        loadComponent: () => import('../tab3/tab3.page').then((m) => m.Tab3Page),
+        loadComponent: () => import('../match-game/match-game.page').then( m => m.MatchGamePage),
+        canActivate: [authGuard]
       },
       {
         path: '',

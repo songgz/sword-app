@@ -129,8 +129,6 @@ export class WordPage implements OnInit {
     await toast.present();
   }
 
-
-
   async learnedModal() {
     const modal = await this.modalCtrl.create({
       component: LearnedModalComponent,
@@ -198,7 +196,6 @@ export class WordPage implements OnInit {
 
 
   handleOverEvent() {
-
     if (this.tracker.isReview === true) {
       this.tracker.isReview = false;
       this.openUnit(this.tracker.nextLearnedUnit().unit_id);
@@ -206,7 +203,11 @@ export class WordPage implements OnInit {
 
       switch (this.ctx.learnType) {
         case "read":
-          this.router.navigate(['tabs/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.learned_book.book_id}});
+          if (this.tracker.learned_book?.book?.kind === 'FREE') {
+            this.nextUnitModal();
+          }else{
+            this.router.navigate(['tabs/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.learned_book.book_id}});
+          }
           break;
         case "listen":
           this.nextUnitModal();

@@ -21,34 +21,40 @@
 
   <ion-row *ngIf="currentState === State.Survey && !tracker.testable()">
     <ion-col size="6"></ion-col>
-    <ion-col size="3"><ion-button expand="full"  (click)="performAction('survey',true)" size="large" color="success" class="custom-width-button">认识</ion-button>
+    <ion-col size="3"><ion-button expand="full"  (click)="performAction('survey',true)" size="large" color="success" class="custom-width-button">
+      认识<br>快捷键 1 Z</ion-button>
     </ion-col>
-    <ion-col size="3"><ion-button expand="full" (click)="performAction('survey',false)" size="large" color="danger" class="custom-width-button"> 不认识</ion-button>
+    <ion-col size="3"><ion-button expand="full" (click)="performAction('survey',false)" size="large" color="danger" class="custom-width-button">
+      不认识<br>快捷键 2 X </ion-button>
     </ion-col>
   </ion-row>
 
   <ion-row *ngIf="currentState === State.Evaluate">
     <ion-col size="6"></ion-col>
-    <ion-col size="3"><ion-button expand="full"   (click)="performAction('evaluate',true)" size="large" color="success" class="custom-width-button">
-      认对了
-    </ion-button>
+    <ion-col size="3">
+      <ion-button expand="full"   (click)="performAction('evaluate',true)" size="large" color="success" class="custom-width-button">
+        认对了<br>快捷键 1 Z
+      </ion-button>
     </ion-col>
-    <ion-col size="3"><ion-button expand="full"  (click)="performAction('evaluate',false)" size="large" color="danger" class="custom-width-button">
-      认错了
-    </ion-button></ion-col>
+    <ion-col size="3">
+      <ion-button expand="full"  (click)="performAction('evaluate',false)" size="large" color="danger" class="custom-width-button">
+        认错了<br>快捷键 2 X
+      </ion-button></ion-col>
   </ion-row>
 
   <ion-row *ngIf="currentState === State.Repeater">
     <ion-col size="6"></ion-col>
     <ion-col size="3"></ion-col>
-    <ion-col size="3"><ion-button expand="full"  (click)="performAction('repeater')" size="large" color="success" class="custom-width-button">跟读
+    <ion-col size="3"><ion-button expand="full"  (click)="performAction('repeater')" size="large" color="success" class="custom-width-button">
+      跟读<br>快捷键 2 X
     </ion-button></ion-col>
   </ion-row>
 
   <ion-row *ngIf="currentState === State.Next">
     <ion-col size="6"></ion-col>
     <ion-col size="3"></ion-col>
-    <ion-col size="3"><ion-button expand="full"  (click)="performAction('next')" size="large" color="success" class="custom-width-button">下一个
+    <ion-col size="3"><ion-button expand="full"  (click)="performAction('next')" size="large" color="success" class="custom-width-button">
+      下一个<br>快捷键 2 X
     </ion-button></ion-col>
   </ion-row>
 

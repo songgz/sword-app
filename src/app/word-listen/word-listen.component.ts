@@ -4,6 +4,7 @@ import {AppCtxService} from "../services/app-ctx.service";
 import {IonicModule} from "@ionic/angular";
 import {CommonModule} from "@angular/common";
 import {MemoryState} from "../models";
+import {Hotkey, HotkeysService} from "angular2-hotkeys";
 
 @Component({
   selector: 'app-word-listen',
@@ -19,10 +20,90 @@ export class WordListenComponent  implements OnInit {
   private answer: boolean = false;
   options: string[] = ['A','B','C','D'];
 
-  constructor(public tracker: WordTrackerService, public ctx: AppCtxService) { }
+  constructor(public tracker: WordTrackerService, public ctx: AppCtxService, private hotkeys: HotkeysService) {
+    this.setuphotkeys();
+  }
 
   ngOnInit() {
     this.performAction('initial');
+  }
+
+  setuphotkeys() {
+    this.hotkeys.add(new Hotkey('z', (event: KeyboardEvent): boolean => {
+      switch (this.currentState) {
+        case this.State.Survey:
+          this.performAction('survey',true);
+          break;
+        case this.State.Evaluate:
+          this.performAction('evaluate',true);
+          break;
+        default:
+          console.log('Invalid action');
+          break;
+      }
+
+      console.log('zz pressed');
+      return false;
+    }));
+    this.hotkeys.add(new Hotkey('x', (event: KeyboardEvent): boolean => {
+      switch (this.currentState) {
+        case this.State.Survey:
+          this.performAction('survey',false);
+          break;
+        case this.State.Evaluate:
+          this.performAction('evaluate',false);
+          break;
+        case this.State.Repeater:
+          this.performAction('repeater');
+          break;
+        case this.State.Next:
+          this.performAction('next');
+          break;
+        default:
+          console.log('Invalid action');
+          break;
+      }
+
+      return false;
+    }));
+
+    this.hotkeys.add(new Hotkey('1', (event: KeyboardEvent): boolean => {
+      switch (this.currentState) {
+        case this.State.Survey:
+          this.performAction('survey',true);
+          break;
+        case this.State.Evaluate:
+          this.performAction('evaluate',true);
+          break;
+        default:
+          console.log('Invalid action');
+          break;
+      }
+
+      console.log('zz pressed');
+      return false;
+    }));
+    this.hotkeys.add(new Hotkey('2', (event: KeyboardEvent): boolean => {
+      switch (this.currentState) {
+        case this.State.Survey:
+          this.performAction('survey',false);
+          break;
+        case this.State.Evaluate:
+          this.performAction('evaluate',false);
+          break;
+        case this.State.Repeater:
+          this.performAction('repeater');
+          break;
+        case this.State.Next:
+          this.performAction('next');
+          break;
+        default:
+          console.log('Invalid action');
+          break;
+      }
+
+      return false;
+    }));
   }
 
   performAction(action: string, option?: boolean) {

@@ -51,8 +51,9 @@ export class AudioService {
   private streamObservable(url: string) {
     return new Observable(observer => {
       // Play audio
-      this.audioObj.src = url;
+
       try {
+        this.audioObj.src = url;
         this.audioObj.load();
         this.audioObj.play();
       } catch (e) {
