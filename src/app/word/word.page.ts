@@ -203,12 +203,19 @@ export class WordPage implements OnInit {
       this.tracker.isReview = false;
       this.openUnit(this.tracker.nextLearnedUnit().unit_id);
     }else{
-      if (this.ctx.learnType === 'read') {
-        this.router.navigate(['tabs/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.learned_book.book_id}});
 
-      }
-      if(this.ctx.learnType === 'listen') {
-        this.nextUnitModal();
+      switch (this.ctx.learnType) {
+        case "read":
+          this.router.navigate(['tabs/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.learned_book.book_id}});
+          break;
+        case "listen":
+          this.nextUnitModal();
+          break;
+        case "spell":
+          this.nextUnitModal();
+          break;
+        default:
+          console.log("It's an unknown.");
       }
 
     }

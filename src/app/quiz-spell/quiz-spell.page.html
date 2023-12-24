@@ -9,8 +9,8 @@
 
 <ion-content class="quiz-content">
   <ion-item lines="none" style="width: 90%;margin-bottom: 20px;margin-top:10px;margin: 0 auto;">
-    <ion-label slot="start" style="font-size: 18px">单元: {{quiz.unit_name}}(共{{quiz.questions?.length}}题)</ion-label>
-    <ion-label>进度: {{index - 1}}/{{quiz.questions?.length}}</ion-label>
+    <ion-label slot="start" style="font-size: 18px">单元: {{quiz.unit_name}}(共{{quiz.total}}题)</ion-label>
+    <ion-label>进度: {{index }}/{{quiz.total}}</ion-label>
     <ion-label color="success" slot="end">正确: {{quiz.corrects}}</ion-label><ion-label color="danger" slot="end">错误: {{quiz.wrongs}}</ion-label>
   </ion-item>
   <ion-card class="quiz-card">
@@ -23,7 +23,6 @@
     </ion-card-header>
 
     <ion-card-content >
-
       <table class="word-spell" >
         <tr>
           <td *ngFor="let w1 of mySpell.option1; let i = index" [class]="getCellColor('option1', i)"
@@ -34,9 +33,11 @@
               (click)="spellOptionReply('option2',i)" >{{w2}}</td>
         </tr>
       </table>
-
-
     </ion-card-content>
   </ion-card>
+  <ion-item>
+    <ion-button size="default" slot="end" (click)="stop()" *ngIf="answered && !isPause">暂停</ion-button>
+    <ion-button size="default" slot="end" (click)="start()" *ngIf="answered && isPause">继续</ion-button>
+  </ion-item>
 
 </ion-content>

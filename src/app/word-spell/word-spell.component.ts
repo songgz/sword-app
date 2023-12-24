@@ -20,8 +20,6 @@ export class WordSpellComponent implements OnInit {
     protected readonly State = MemoryState;
     currentState: MemoryState = MemoryState.Initial;
     private answer: boolean = false;
-    //spells: any[][] = [[], [], [], []];
-    //wordSpells: string[] = [];
     mySpell: any = {
         word: [],
         option1: [],
@@ -31,9 +29,7 @@ export class WordSpellComponent implements OnInit {
         revise: [],
         reviseResult: []
     };
-    //wordInput: string = "";
     wordForm!: UntypedFormGroup;
-
 
     constructor(public tracker: WordTrackerService, public ctx: AppCtxService, private formBuilder: UntypedFormBuilder) {
 
@@ -51,56 +47,29 @@ export class WordSpellComponent implements OnInit {
             case 'initial':
                 this.wordForm.controls['wordInput'].setValue('');
                 this.currentState = this.State.Survey;
-                console.log(this.currentState);
                 this.tracker.getWord();
                 this.tracker.playWord();
-
-                //console.log(this.tracker.getWordState());
-                // if (this.tracker.testable()) {
-                //   //console.log('ee----gg')
-                //   this.tracker.getWordOptions(4);
-                // }
-               // console.log('spell');
-                //this.randSpell();
                 this.initSpell(this.tracker.word.word);
-
                 break;
             case 'survey': //拼写
-
-                //this.tracker.playWord();
                 if (this.isSpellOver()) {
                     if (this.check('answer')) {
-                      console.log('a');
                         this.answer = true;
                         this.currentState = this.State.Next;
                         if (option) {
                             this.performAction('next');
                         }
                     }else {
-                      console.log('b');
                         this.answer = false;
                         this.currentState = this.State.Evaluate;
-                      this.check('revise');
+                        this.check('revise');
                         if(option) {
                           //this.wordForm.controls['wordInput'].setValue('');
-                            this.delayedInteraction();
+                          this.delayedInteraction();
                         }
                     }
 
                 }
-
-                // if (this.checkSpell(3)) {
-                //   this.answer = true;
-                //   this.currentState = this.State.Next;
-                //   if (option) {
-                //     this.performAction('next');
-                //   }
-                //
-                // } else {
-                //   this.answer = false;
-                //   this.currentState = this.State.Evaluate;
-                //   this.checkSpell(4);
-                // }
                 break;
             case 'evaluate': //改错
               if (this.isSpellOver()) {
@@ -114,29 +83,15 @@ export class WordSpellComponent implements OnInit {
                   }
                 }
               }
-
-
-                // if (this.checkSpell(4)) {
-                //     this.currentState = this.State.Next;
-                //     if (option) {
-                //         this.performAction('next');
-                //     }
-                // }
-                break;
+              break;
             case 'next':
-              console.log('spell:'+this.answer);
                 this.tracker.updateWordState(this.answer);
                 this.tracker.saveWordState();
 
                 if (this.tracker.isOver()) {
-                    //this.saveWordState();//保存
                     this.learnOverEvent.emit();
                 } else {
                     this.tracker.next();
-                    if (!this.tracker.isReview && this.tracker.learnedUnit) {
-                        // this.learnedUnit.wrongs = this.tracker.wrongs;
-                        // this.learnedUnit.learns = this.tracker.getCompletions();
-                    }
                     this.performAction('initial');
                 }
                 break;
@@ -182,14 +137,12 @@ export class WordSpellComponent implements OnInit {
             this.mySpell.answer[col] = this.mySpell[option][col];
         }
 
-        console.log('ss'+this.currentState);
         if(this.currentState === this.State.Survey) {
           this.performAction('survey');
 
         }
         if (this.currentState === this.State.Evaluate) {
           this.check('answer');
-          console.log('ccc' + this.check('revise'));
           this.performAction('evaluate');
         }
 
@@ -211,7 +164,6 @@ export class WordSpellComponent implements OnInit {
     }
 
     isErrorLetter(typ: string, col: number): boolean {
-        //this.currentState === this.State.Survey
         return this.mySpell[typ + 'Result'][col] === 1;
     }
 
@@ -259,39 +211,17 @@ export class WordSpellComponent implements OnInit {
         return result;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     onInputFocus() {
         //this.wordInput = '';
     }
 
     onInputChange(event: CustomEvent) {
-        //this.wordInput = (event.target as HTMLInputElement).value;
       if (this.wordForm.controls['wordInput']) {
         this.wordForm.controls['wordInput'].markAllAsTouched();
       }
-
-
-        // console.log();
     }
 
     onEnterPressed() {
-
-        console.log('write state:');
-        console.log(this.currentState);
-
         if (this.currentState === this.State.Survey) {
             this.mySpell.answer = this.wordForm.get('wordInput')?.value.split('');
             this.performAction('survey', true);
@@ -300,11 +230,9 @@ export class WordSpellComponent implements OnInit {
             this.mySpell.revise = this.wordForm.get('wordInput')?.value.split('');
             this.performAction('evaluate', true);
         }
-
     }
 
     delayedInteraction() {
-
         setTimeout(() => {
           this.wordForm.controls['wordInput'].setValue('');
         }, 2000); // 2秒延迟

@@ -96,7 +96,6 @@ export class QuizListenPage implements OnInit {
             console.log('cc'+c);
             this.choice_answer();
           }
-
         }
       });
     }

@@ -26,18 +26,12 @@ export class WordListenComponent  implements OnInit {
   }
 
   performAction(action: string, option?: boolean) {
-    console.log('55555555555555555');
     switch (action) {
       case 'initial':
-
         this.currentState = MemoryState.Survey;
-        console.log(this.currentState);
         this.tracker.getWord();
         this.tracker.playWord();
-
-        //console.log(this.tracker.getWordState());
         if (this.tracker.testable()) {
-          //console.log('ee----gg')
           this.tracker.getWordOptions(4);
         }
         break;
@@ -68,14 +62,9 @@ export class WordListenComponent  implements OnInit {
         this.tracker.saveWordState();
 
         if (this.tracker.isOver()) {
-          //this.saveWordState();//保存
           this.learnOverEvent.emit();
         }else{
           this.tracker.next();
-          if (!this.tracker.isReview && this.tracker.learnedUnit) {
-            // this.learnedUnit.wrongs = this.tracker.wrongs;
-            // this.learnedUnit.learns = this.tracker.getCompletions();
-          }
           this.performAction('initial');
         }
         break;
