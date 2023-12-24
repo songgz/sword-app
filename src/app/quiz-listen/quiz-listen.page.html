@@ -29,7 +29,10 @@
         </ion-item>
       </ion-card-content>
     </ion-card>
-
+    <ion-item>
+      <ion-button size="default" slot="end" (click)="stop()" *ngIf="answered && !isPause">暂停</ion-button>
+      <ion-button size="default" slot="end" (click)="start()" *ngIf="answered && isPause">继续</ion-button>
+    </ion-item>
   </ion-content>
 
 

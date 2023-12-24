@@ -45,8 +45,8 @@ export class RestApiService {
   }
 
   // Delete
-  destroy(path: string): Observable<any> {
-    return this.http.delete(environment.apiUrl + path + '.json', {headers: HEADERS});
+  destroy(path: string, params?: any): Observable<any> {
+    return this.http.delete(environment.apiUrl + path + '.json', {params: params, headers: HEADERS});
   }
 
   login(credentails :any): Observable<any> {

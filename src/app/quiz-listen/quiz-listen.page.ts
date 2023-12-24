@@ -9,6 +9,7 @@ import {RestApiService} from "../services/rest-api.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {OverModalComponent} from "../over-modal/over-modal.component";
 import {AppCtxService} from "../services/app-ctx.service";
+import {TimerService} from "../services/timer-service";
 
 @Component({
   selector: 'app-quiz-listen',
@@ -23,18 +24,16 @@ export class QuizListenPage implements OnInit {
   question: any = {};
   progress: number = 1;
   answered: boolean = false;
-  count: Subscription | undefined;
   options: string[] = ['A','B','C','D'];
-  private unitId: any;
-  testTypes: any = {afterLearn: '章节后测试', beforeLearn: '章节前测试'};
   startTime: Date = new Date();
   endTime: Date | undefined;
+  testTypes: any = {afterLearn: '章节后测试', beforeLearn: '章节前测试'};
+  isPause: boolean = false;
 
-  constructor(private ctx: AppCtxService, public tracker: WordTrackerService,  private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController) { }
+  constructor(private ctx: AppCtxService, public tracker: WordTrackerService,  private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController,public timerService: TimerService) { }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.unitId = params['unitId'];
       this.loadQuiz(this.ctx.getUserId(), params['unitId'], params['testType'], this.ctx.learnType);
       //this.loadQuiz('6573ea546eec2f4aa8c3ccb8', '65109f9c6eec2f38fc262392', 'afterQuiz', 'listen');
     });
@@ -43,10 +42,10 @@ export class QuizListenPage implements OnInit {
   loadQuiz(studentId: string, unitId: string, testType: string, learnType: string) {
     this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType, learn_type: learnType}).subscribe(res => {
       this.quiz = res.data;
-      this.quiz = res.data;
       this.quiz.corrects = 0;
       this.quiz.wrongs = 0;
       this.startTime = new Date();
+      this.index = 0;
       this.next();
     });
   }
@@ -57,34 +56,26 @@ export class QuizListenPage implements OnInit {
     });
   }
 
-  async choice_answer(choiceId?: string) {
-    console.log(choiceId);
-    console.log(this.question.right_answer === choiceId);
-    this.count?.unsubscribe();
+  choice_answer(choiceId?: string) {
     this.question.user_answer = choiceId;
     if (this.question.right_answer === this.question.user_answer) {
       this.question.result = true;
-      this.quiz.corrects = this.quiz.corrects + 1;
+      this.quiz.corrects++;
     } else {
-      this.quiz.wrongs = this.quiz.wrongs + 1;
+      this.question.result = false;
+      this.quiz.wrongs++;
     }
+    //console.log(this.question);
     this.answered = true;
-    await this.sleep(2000);
-    this.next();
 
-    if (this.index === this.quiz.questions.length) {
-      this.count?.unsubscribe();
-
-    }
-
+    this.timerService.delayTimer(2000, ()=>{
+      if(!this.isPause){
+        this.next();
+      }
+    });
   }
 
-  sleep(ms: number) {
-    return new Promise(resolve=>setTimeout(resolve, ms))
-  }
-
-
-  next() {
+  next(){
     if (this.index === this.quiz.questions.length) {
       this.endTime = new Date();
       this.quiz.duration = Math.floor(this.endTime.getTime() - this.startTime.getTime());
@@ -94,26 +85,21 @@ export class QuizListenPage implements OnInit {
     }else{
       this.answered = false;
       this.question = this.quiz.questions[this.index];
-      console.log(this.tracker.findWord(this.question.word_id));
       this.tracker.playWord(this.tracker.findWord(this.question.word_id));
       this.index = this.index + 1;
-      this.count = this.countDown(10000).subscribe({
-        //next: step => {},
-        error: err => console.error(err),
-        complete: () => {
-          this.choice_answer();
+
+      this.timerService.cancelTimer();
+      this.timerService.startTimer(1000).subscribe({
+        next: c => {
+          this.progress = (10 - c) / 10;
+          if (c > 9 && !this.answered) {
+            console.log('cc'+c);
+            this.choice_answer();
+          }
+
         }
       });
     }
-  }
-
-  countDown(delay: number ) {
-    let step = delay / 100;
-    return interval(step).pipe(
-      take(100),
-      map(x => 100 - x - 1),
-      tap(n => this.progress = n / 100.0)
-    );
   }
 
   async quizOverModal() {
@@ -150,6 +136,21 @@ export class QuizListenPage implements OnInit {
       }
     }
     return '';
+  }
+
+  stop() {
+    this.isPause = true;
+    this.timerService.pauseTimer();
+  }
+
+
+  start() {
+    this.isPause = false;
+    this.next();
+  }
+
+  ionViewDidLeave(): void {
+    this.timerService.cancelTimer();
   }
 
 

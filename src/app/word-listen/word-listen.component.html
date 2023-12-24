@@ -60,16 +60,18 @@
       <p [innerHTML]="tracker.formatText(tracker.word.parse || '')"></p>
     </ion-col>
   </ion-row>
-  <ion-row *ngIf="tracker.testable()">
-    <ion-col>
-      <ion-list>
-        <ion-item button="" detail="false" *ngFor="let option of tracker.options" (click)="replyOption(option.id)"
+  <ion-row *ngIf="tracker.testable()"  style="margin-top: 20px; background-color: #fff">
+    <ion-col size="2"></ion-col>
+    <ion-col size="9" >
+      <ion-list style="background-color: #fff">
+        <ion-item button="" detail="false" *ngFor="let option of tracker.options; let i=index" (click)="replyOption(option.id)"
                   class="question-option">
-          <ion-label>
-            <h3>{{option.acceptation}}</h3>
+          <ion-label style="font-size: 18px;">
+            {{options[i]}}.  {{option.acceptation}}
           </ion-label>
         </ion-item>
       </ion-list>
     </ion-col>
+    <ion-col size="2"></ion-col>
   </ion-row>
 </ion-grid>

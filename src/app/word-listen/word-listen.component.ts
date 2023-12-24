@@ -17,6 +17,7 @@ export class WordListenComponent  implements OnInit {
   protected readonly State = MemoryState;
   currentState: MemoryState = MemoryState.Initial;
   private answer: boolean = false;
+  options: string[] = ['A','B','C','D'];
 
   constructor(public tracker: WordTrackerService, public ctx: AppCtxService) { }
 

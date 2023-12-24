@@ -17,7 +17,7 @@ export class WordTrackerService {
   //learnType: string = "";
 
   total: number = 0;
-  maxRepeats: number = 6;
+  maxRepeats: number = 5;
   colors: string[] = ['err0', 'err1', 'err2', 'err3', 'err4', 'err5', 'err6'];
   //private unitId: string | undefined;
   //completions: number = 0;
@@ -45,12 +45,13 @@ export class WordTrackerService {
   }
 
   initIndex() {
-    if (this.learnedUnit.last_word_index > 0) {
+    if(this.learnedUnit) {
       this.wrongs = this.learnedUnit.wrongs;
       this.rights = this.learnedUnit.rights;
+      this.stepper.completions = this.learnedUnit.last_word_index+1;
       this.stepper.index = this.learnedUnit.last_word_index + 1;
+
       this.stepper.lastWordIndex = this.stepper.index;
-      this.stepper.completions = this.learnedUnit.completions;
     }
   }
 
@@ -76,11 +77,16 @@ export class WordTrackerService {
   }
 
   getLearnUnit(unitId: string) {
-    return this.learnedUnit = this.learned_book.learned_units.find((lu:any)=> lu.unit_id === unitId);
+    this.initIndex();
+
+    this.learnedUnit = this.learned_book.learned_units.find((lu:any)=> lu.unit_id === unitId);
+
+    return this.learnedUnit;
   }
 
   loadUnitWords(): Observable<any> {
     //this.learnedUnit = this.learned_book.learned_units.find((lu:any)=> lu.unit_id === unitId);
+    //this.initIndex();
     return this.rest.index('words', {unit_id: this.learnedUnit.unit_id, per: 999}).pipe(
         tap(d => {
           this.loadWords(d.data);
@@ -115,6 +121,10 @@ export class WordTrackerService {
     }
 
     this.rest.update('learned_books/'+this.learned_book.id, {learned_book: learnedBook}).subscribe();
+  }
+
+  deleteErrorWord() {
+    return this.rest.destroy('learned_books/'+this.learned_book.id, {learned_unit_id: this.learnedUnit.id});
   }
 
   // saveWordState2(student_id: string, learnType: string) {
@@ -160,7 +170,7 @@ export class WordTrackerService {
       let state: WordState = {
         unit_id: ew?.unit_id,
         word_id: ew?.word_id,
-        repeats: ew?.repeats || this.maxRepeats,
+        repeats: 5,
         learns: ew?.learns || 0,
         reviews: ew?.reviews || 0
       };
@@ -184,7 +194,7 @@ export class WordTrackerService {
       this.words.push(w);
     });
 
-    this.initIndex();
+
     //this.learnType = '认读';
     this.getWord();
   }
@@ -261,7 +271,7 @@ export class WordTrackerService {
     if (state) {
       return this.colors[state.repeats];
     }
-    return this.colors[this.maxRepeats];
+    return this.colors[this.maxRepeats+1];
   }
 
   getIndexValue(): number {
@@ -317,7 +327,7 @@ export class WordTrackerService {
       n = this.words.length;
     }
     this.options.push(this.words[this.getIndexValue()]);
-    let randomIndex = -1;
+    let randomIndex = 0;
     let w: any = {};
     while (this.options.length < n) {
       randomIndex = Math.floor(Math.random() * this.words.length);
@@ -326,9 +336,13 @@ export class WordTrackerService {
         this.options.push(w);
       }
     }
-    let j = randomIndex % n;
-    [this.options[1], this.options[j]] = [this.options[j], this.options[1]];
+    this.options = this.shuffleArray(this.options);
     return this.options;
+  }
+
+  shuffleArray(array: any[]): any[] {
+    const newArray = [...array];
+    return newArray.sort(() => Math.random() - 0.5);
   }
 
   formatText(text: string): SafeHtml {

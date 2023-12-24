@@ -7,7 +7,7 @@ import {StreamState} from "./stream-state";
 })
 export class AudioService {
   private stop$ = new Subject();
-  private audioObj = new Audio();
+  private audioObj;
   audioEvents = [
     "ended",
     "error",
@@ -32,7 +32,9 @@ export class AudioService {
 
   private stateChange: BehaviorSubject<StreamState> = new BehaviorSubject(this.state);
 
-  constructor() { }
+  constructor() {
+    this.audioObj = new Audio();
+  }
 
   private addEvents(obj: any, events: any[], handler: any) {
     events.forEach(event => {
@@ -50,8 +52,12 @@ export class AudioService {
     return new Observable(observer => {
       // Play audio
       this.audioObj.src = url;
-      this.audioObj.load();
-      this.audioObj.play().then();
+      try {
+        this.audioObj.load();
+        this.audioObj.play();
+      } catch (e) {
+        // 处理异常
+      }
 
       const handler = (event: Event) => {
         this.updateStateEvents(event);
@@ -61,7 +67,7 @@ export class AudioService {
       this.addEvents(this.audioObj, this.audioEvents, handler);
       return () => {
         // Stop Playing
-        this.audioObj.pause();
+        //this.audioObj.pause();
         this.audioObj.currentTime = 0;
         // remove event listeners
         this.removeEvents(this.audioObj, this.audioEvents, handler);

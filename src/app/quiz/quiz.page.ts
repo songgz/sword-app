@@ -20,24 +20,18 @@ export class QuizPage implements OnInit {
   quiz: any = {};
   index: number = 0;
   question: any = {};
-  //corrects: number = 0;
-  //errors: number = 0;
   progress: number = 1;
   answered: boolean = false;
-  //count: Subscription | undefined;
   options: string[] = ['A','B','C','D'];
   startTime: Date = new Date();
   endTime: Date | undefined;
-  //private unitId: any;
   testTypes: any = {afterLearn: '章节后测试', beforeLearn: '章节前测试'};
   isPause: boolean = false;
 
-
-  constructor(private ctx: AppCtxService, private tracker: WordTrackerService, private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController,public timerService: TimerService, private navCtrl: NavController) { }
+  constructor(private ctx: AppCtxService, private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController,public timerService: TimerService) { }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
-      //this.unitId = params['unitId'];
       this.loadQuiz(this.ctx.getUserId(), params['unitId'], params['testType'], this.ctx.learnType);
       //this.loadQuiz('6573ea546eec2f4aa8c3ccb8', '65109f9c6eec2f38fc262392', 'afterQuiz', 'read');
     });
@@ -62,23 +56,16 @@ export class QuizPage implements OnInit {
   }
 
   next() {
-
     if (this.index === this.quiz.questions.length) {
-      //this.timerService.pauseTimer();
-
       this.endTime = new Date();
       this.quiz.duration = Math.floor(this.endTime.getTime() - this.startTime.getTime());
       this.quiz.score = Math.round(100 * this.quiz.corrects / this.quiz.total);
       this.saveQuiz();
       this.quizOverModal();
     }else{
-      console.log(this.index);
-      console.log(this.quiz);
-
       this.answered = false;
       this.question = this.quiz.questions[this.index];
       this.index = this.index + 1;
-      //this.isPause = false;
 
       this.timerService.cancelTimer();
       this.timerService.startTimer(1000).subscribe({
@@ -92,7 +79,6 @@ export class QuizPage implements OnInit {
         }
       });
     }
-
   }
 
 
@@ -108,18 +94,14 @@ export class QuizPage implements OnInit {
       this.question.result = false;
       this.quiz.wrongs++;
     }
-    console.log(this.question);
+    //console.log(this.question);
     this.answered = true;
-
 
       this.timerService.delayTimer(2000, ()=>{
         if(!this.isPause){
           this.next();
         }
-
       });
-
-
   }
 
 
@@ -176,13 +158,5 @@ export class QuizPage implements OnInit {
   ionViewDidLeave(): void {
     this.timerService.cancelTimer();
   }
-  // ngOnDestroy() {
-  //   this.timerService.cancelTimer();
-  // }
-
-  goBack(): void {
-    this.navCtrl.back();
-  }
-
 
 }

@@ -14,6 +14,7 @@ import {WordReadComponent} from "../word-read/word-read.component";
 import {WordListenComponent} from "../word-listen/word-listen.component";
 import {WordSpellComponent} from "../word-spell/word-spell.component";
 import {QuizModalComponent} from "../quiz-modal/quiz-modal.component";
+import {LearnedModalComponent} from "../learned-modal/learned-modal.component";
 
 @Component({
   selector: 'app-word',
@@ -43,26 +44,35 @@ export class WordPage implements OnInit {
               public tracker: WordTrackerService,
               private activatedRouter: ActivatedRoute,
               private router: Router,
-              private rest: RestApiService,
-              private sanitizer: DomSanitizer,
-              private audio: AudioService,
+              //private rest: RestApiService,
+              //private sanitizer: DomSanitizer,
+              //private audio: AudioService,
               private modalCtrl: ModalController,
               private toastCtl: ToastController) {
 
-    this.activatedRouter.queryParams.subscribe((params) => {
-      this.tracker.loadLearnedBook(this.ctx.getUserId(), params['bookId'], this.ctx.learnType).subscribe(res => {
-        if (this.tracker.isReview) {
-          this.addCom();
-        }else{
-          this.openUnit(tracker.learnedUnit.unit_id);
-        }
-      });
-    });
+
 
   }
 
   ngOnInit() {
 
+    this.activatedRouter.queryParams.subscribe((params) => {
+
+      this.load(this.ctx.getUserId(), params['bookId'] || this.tracker.learned_book.book_id, this.ctx.learnType);
+
+
+    });
+
+  }
+
+  load(studentId: string, bookId: string, learnType: string) {
+    this.tracker.loadLearnedBook(studentId, bookId, learnType).subscribe(res => {
+      if (this.tracker.isReview) {
+        this.addCom();
+      }else{
+        this.openUnit(this.tracker.learnedUnit.unit_id);
+      }
+    });
   }
 
   ionViewDidEnter() {
@@ -73,20 +83,22 @@ export class WordPage implements OnInit {
   openUnit(unitId: string) {
     this.started = false;
     this.tracker.getLearnUnit(unitId);
-    this.tracker.loadUnitWords().subscribe();
     console.log('ss');
     console.log(this.tracker.learnedUnit);
-    if(this.tracker.learnedUnit.completions === this.tracker.learnedUnit.total) {
-      this.presentToast(this.tracker.learnedUnit.unit_name +"单元已学完!", "middle").then();
-    }else{
-      if (!this.tracker.learnedUnit.before_learn_quiz) {
+    if(this.tracker.isReview) {
+      this.presentToast("请先完成复习内容!", "middle");
+    }else if(this.tracker.learnedUnit.completions === this.tracker.learnedUnit.total) {
+      //this.presentToast(this.tracker.learnedUnit.unit_name +"单元已学完!", "middle").then();
+      this.learnedModal().then(() => {
+        this.started = true;
+      });
+    }else if (!this.tracker.learnedUnit.before_learn_quiz) {
         this.prevUnitModal();
-      }else{
-        this.addCom();
-      }
+    }else{
+        this.tracker.loadUnitWords().subscribe(res => {
+          this.addCom();
+        });
     }
-
-
   }
 
   addCom() {
@@ -117,6 +129,25 @@ export class WordPage implements OnInit {
     await toast.present();
   }
 
+
+
+  async learnedModal() {
+    const modal = await this.modalCtrl.create({
+      component: LearnedModalComponent,
+      cssClass: 'custom-modal'
+    });
+
+    modal.onDidDismiss().then((result) => {
+      if (result.role === 'confirm') {
+        this.tracker.deleteErrorWord().subscribe(res =>{
+          this.load(this.tracker.learned_book.student_id, this.tracker.learned_book.book_id, this.tracker.learned_book.learn_type);
+        });
+      }
+    });
+
+    await modal.present();
+  }
+
   async prevUnitModal() {
     const modal = await this.modalCtrl.create({
       component: AlertModalComponent,
@@ -143,7 +174,9 @@ export class WordPage implements OnInit {
             console.log("It's an unknown.");
         }
       } else {
-        this.addCom();
+        this.tracker.loadUnitWords().subscribe(res => {
+          this.addCom();
+        });
       }
     });
 
