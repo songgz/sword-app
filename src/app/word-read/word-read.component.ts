@@ -5,6 +5,9 @@ import {IonicModule} from "@ionic/angular";
 import {CommonModule} from "@angular/common";
 import {MemoryState} from "../models";
 import {Hotkey, HotkeyModule, HotkeysService} from "angular2-hotkeys";
+import {concatMap, from} from "rxjs";
+import {MinAudioService} from "../services/min-audio.service";
+import {AudioService} from "../services/audio.service";
 
 
 @Component({
@@ -118,19 +121,25 @@ export class WordReadComponent  implements OnInit {
         }
         break;
       case 'survey':
-        this.tracker.playWord();
+        //const audioUrls = ['http://' + window.location.host + '/assets/audio/a.mp3', 'http://114.55.39.31:8790/quick/v/m/morning.mp3'];
         if (option) {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/a.mp3');
+          this.tracker.playWord();
           this.currentState = this.State.Evaluate;
         } else {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3')
+          this.tracker.playWord();
           this.answer = false;
           this.currentState = this.State.Repeater;
         }
         break;
       case 'evaluate':
         if (option) {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/e2.mp3')
           this.answer = true;
           this.performAction('next');
         } else {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3')
           this.answer = false;
           this.currentState = this.State.Repeater;
         }
@@ -140,12 +149,13 @@ export class WordReadComponent  implements OnInit {
         this.currentState = this.State.Next;
         break;
       case 'next':
+        this.tracker.play('http://' + window.location.host + '/assets/audio/n.mp3')
         this.tracker.updateWordState(this.answer);
         this.tracker.saveWordState();
 
         if (this.tracker.isOver()) {
           this.learnOverEvent.emit();
-        }else{
+        } else {
           this.tracker.next();
           this.performAction('initial');
         }

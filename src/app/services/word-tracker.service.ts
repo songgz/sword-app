@@ -6,6 +6,7 @@ import {Observable, tap} from "rxjs";
 import {AudioService} from "./audio.service";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {StreamState} from "./stream-state";
+import {MinAudioService} from "./min-audio.service";
 
 @Injectable({
   providedIn: 'root'
@@ -23,12 +24,13 @@ export class WordTrackerService {
   isReview: boolean = false;
   learnedUnit: any = {};
   audioState: StreamState | undefined;
+  playing: boolean | undefined
   options: any[] = [];
   learned_book: any = {};
 
-  constructor(private rest: RestApiService, private audio: AudioService, private sanitizer: DomSanitizer) {
-    this.audio.getState().subscribe(state => {
-      this.audioState = state;
+  constructor(private rest: RestApiService, public audio: AudioService, private sanitizer: DomSanitizer) {
+    this.audio.playing.subscribe(playing => {
+      this.playing = playing;
     });
   }
 
@@ -234,10 +236,12 @@ export class WordTrackerService {
   }
 
   updateWordState(value: boolean) {
-    if (value) {
-      this.correctAnswer();
-    }else {
-      this.wrongAnswer();
+    if (this.stepper.index < this.stepper.indexValues.length) {
+      if (value) {
+        this.correctAnswer();
+      }else {
+        this.wrongAnswer();
+      }
     }
   }
 
@@ -261,10 +265,14 @@ export class WordTrackerService {
 
   playWord(word?: any) {
     if(word) {
-      this.audio.playStream(this.getWordAudio(word.pronunciation)).subscribe();
+      this.audio.play(this.getWordAudio(word.pronunciation));
     }else{
-      this.audio.playStream(this.getWordAudio(this.word.pronunciation)).subscribe();
+      this.audio.play(this.getWordAudio(this.word.pronunciation));
     }
+  }
+
+  play(url: string) {
+    return this.audio.play(url);
   }
 
   getWordOptions(n: number): any[] {

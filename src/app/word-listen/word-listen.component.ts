@@ -117,19 +117,25 @@ export class WordListenComponent  implements OnInit {
         }
         break;
       case 'survey':
-        this.tracker.playWord();
+        //this.tracker.playWord();
         if (option) {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/a.mp3');
+          this.tracker.playWord();
           this.currentState = MemoryState.Evaluate;
         } else {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3')
+          this.tracker.playWord();
           this.answer = false;
           this.currentState = MemoryState.Repeater;
         }
         break;
       case 'evaluate':
         if (option) {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/e2.mp3')
           this.answer = true;
           this.performAction('next');
         } else {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3')
           this.answer = false;
           this.currentState = MemoryState.Repeater;
         }
@@ -139,6 +145,7 @@ export class WordListenComponent  implements OnInit {
         this.currentState = MemoryState.Next;
         break;
       case 'next':
+        this.tracker.play('http://' + window.location.host + '/assets/audio/n.mp3')
         this.tracker.updateWordState(this.answer);
         this.tracker.saveWordState();
 

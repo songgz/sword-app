@@ -1,0 +1,6 @@
+{
+  "/quick": {
+    "target": "http://114.55.39.31:8790",
+    "secure": false
+  }
+}
