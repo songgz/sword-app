@@ -28,10 +28,8 @@ export const routes: Routes = [
   {
     path: 'tab3',
     loadComponent: () => import('./tab3/tab3.page').then((m) => m.Tab3Page),
-  },  {
-    path: 'statistics',
-    loadComponent: () => import('./statistics/statistics.page').then( m => m.StatisticsPage)
   },
+
 
 
 

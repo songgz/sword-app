@@ -58,6 +58,10 @@ export const routes: Routes = [
         canActivate: [authGuard]
       },
       {
+        path: 'statistics',
+        loadComponent: () => import('../statistics/statistics.page').then( m => m.StatisticsPage)
+      },
+      {
         path: '',
         redirectTo: '/tabs/learn',
         pathMatch: 'full',
@@ -68,9 +72,6 @@ export const routes: Routes = [
     path: '',
     redirectTo: '/tabs/learn',
     pathMatch: 'full',
-  },
-  {
-    path: 'statistics',
-    loadComponent: () => import('../statistics/statistics.page').then( m => m.StatisticsPage)
-  },
+  }
+
 ];
