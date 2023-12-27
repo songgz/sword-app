@@ -145,7 +145,10 @@ export class WordListenComponent  implements OnInit {
         this.currentState = MemoryState.Next;
         break;
       case 'next':
-        this.tracker.play('http://' + window.location.host + '/assets/audio/n.mp3')
+        if(option) {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/n.mp3')
+        }
+
         this.tracker.updateWordState(this.answer);
         this.tracker.saveWordState();
 

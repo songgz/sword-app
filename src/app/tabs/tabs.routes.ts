@@ -69,4 +69,8 @@ export const routes: Routes = [
     redirectTo: '/tabs/learn',
     pathMatch: 'full',
   },
+  {
+    path: 'statistics',
+    loadComponent: () => import('../statistics/statistics.page').then( m => m.StatisticsPage)
+  },
 ];

@@ -5,10 +5,6 @@ import {IonicModule} from "@ionic/angular";
 import {CommonModule} from "@angular/common";
 import {MemoryState} from "../models";
 import {Hotkey, HotkeyModule, HotkeysService} from "angular2-hotkeys";
-import {concatMap, from} from "rxjs";
-import {MinAudioService} from "../services/min-audio.service";
-import {AudioService} from "../services/audio.service";
-
 
 @Component({
   selector: 'app-word-read',
@@ -121,6 +117,7 @@ export class WordReadComponent  implements OnInit {
         }
         break;
       case 'survey':
+        this.tracker.audio.stop();
         //const audioUrls = ['http://' + window.location.host + '/assets/audio/a.mp3', 'http://114.55.39.31:8790/quick/v/m/morning.mp3'];
         if (option) {
           this.tracker.play('http://' + window.location.host + '/assets/audio/a.mp3');
@@ -149,7 +146,10 @@ export class WordReadComponent  implements OnInit {
         this.currentState = this.State.Next;
         break;
       case 'next':
-        this.tracker.play('http://' + window.location.host + '/assets/audio/n.mp3')
+        if(option) {
+          this.tracker.play('http://' + window.location.host + '/assets/audio/n.mp3')
+        }
+
         this.tracker.updateWordState(this.answer);
         this.tracker.saveWordState();
 

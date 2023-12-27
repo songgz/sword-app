@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://114.55.39.31:3200/v1/',
+  apiUrl: 'http://danci.edu8848.cn/v1/',
   wordUrl: '',
-  assetUrl: 'http://114.55.39.31:8790/'
+  assetUrl: 'http://danci.edu8848.cn'
 };

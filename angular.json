@@ -38,7 +38,7 @@
             ],
             "styles": ["src/theme/variables.scss", "src/global.scss"],
             "scripts": [],
-            "allowedCommonJsDependencies": []
+            "allowedCommonJsDependencies": ["mousetrap"]
           },
           "configurations": {
             "production": {
