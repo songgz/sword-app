@@ -109,6 +109,7 @@ export class WordReadComponent  implements OnInit {
   performAction(action: string, option?: boolean) {
     switch (action) {
       case 'initial':
+        this.tracker.startTime = Date.now();
         this.currentState = this.State.Survey;
         this.tracker.getWord();
         this.tracker.playWord();
@@ -146,6 +147,7 @@ export class WordReadComponent  implements OnInit {
         this.currentState = this.State.Next;
         break;
       case 'next':
+        this.tracker.endTime = Date.now();
         if(option) {
           this.tracker.play('http://' + window.location.host + '/assets/audio/n.mp3')
         }

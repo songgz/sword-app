@@ -8,6 +8,7 @@ export class User {
   vip_days?: number;
   grade?: string;
   birthday?: string;
+  password?: string;
 
   getId() {
     return this.id || '';

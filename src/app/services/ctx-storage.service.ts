@@ -3,6 +3,7 @@ import {User} from "../models";
 
 const TOKENS_KEY = 'auth-token';
 const USER_KEY = 'currentUser';
+const USERS_KEY = 'users';
 @Injectable({
   providedIn: 'root'
 })
@@ -40,6 +41,37 @@ export class CtxStorageService {
 
     return new User();
   }
+
+  getUsers() {
+    let users = [];
+    const v = window.localStorage.getItem(USERS_KEY);
+    if (v) {
+      users = JSON.parse(v);
+    }
+    return users;
+  }
+
+  addUser(userId: string, userName: string, userAcctNo: string, password: string, avatar: string) {
+    let users = this.getUsers();
+    if (!users.find((u:any) => u.id === userId)){
+      users.push({id: userId, name: userName, acct_no: userAcctNo, password: password, avatar: avatar});
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+  }
+
+  removeUser(index: number) {
+    let users = this.getUsers();
+    if (users.length > 0) {
+      users.splice(index, 1);
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+  }
+
+  saveUsers(users: any) {
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }
+
+
 
 
 }

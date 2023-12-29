@@ -51,5 +51,9 @@ export class AppCtxService {
 
   }
 
+  addUser(userId: string, userName: string, userAcctNo: string, password: string, avatar: string) {
+    this.storage.addUser(userId, userName, userAcctNo, password, avatar);
+  }
+
 
 }

@@ -7,6 +7,7 @@ import {AudioService} from "./audio.service";
 import {DomSanitizer, SafeHtml} from "@angular/platform-browser";
 import {StreamState} from "./stream-state";
 import {MinAudioService} from "./min-audio.service";
+import {Datetime} from "@ionic/core/dist/types/components/datetime/datetime";
 
 @Injectable({
   providedIn: 'root'
@@ -23,10 +24,14 @@ export class WordTrackerService {
   word: any = {};
   isReview: boolean = false;
   learnedUnit: any = {};
-  audioState: StreamState | undefined;
+  //audioState: StreamState | undefined;
   playing: boolean | undefined
   options: any[] = [];
   learned_book: any = {};
+  erred: Boolean = false;
+  learnedWords: any[] = [];
+  startTime: number = 0;
+  endTime: number = 0;
 
   constructor(private rest: RestApiService, public audio: AudioService, private sanitizer: DomSanitizer) {
     this.audio.playing.subscribe(playing => {
@@ -85,10 +90,22 @@ export class WordTrackerService {
   }
 
   saveWordState() {
+    let du = Math.floor((this.endTime - this.startTime)/1000);
+    let learnedWord: any = {
+      student_id: this.learned_book.student_id,
+      book_id: this.learned_book.book_id,
+      unit_id: this.learnedUnit.unit_id,
+      word_id: this.getWord().id,
+      duration: du < 15 ? du : 15
+    }
+    console.log(this.startTime);
+    console.log(this.endTime);
+
     let learnedBook: any = {
       id: this.learned_book.id,
       error_words: [],
-      learned_units: []
+      learned_units: [],
+      learned_words: [learnedWord]
     };
 
     let ws = this.getWordState();
@@ -145,7 +162,6 @@ export class WordTrackerService {
     });
 
     console.log(this.wordStates);
-    //this.learnType = '复习';
     this.getWord();
   }
 
@@ -156,7 +172,7 @@ export class WordTrackerService {
     this.wordStates = {};
 
     words.forEach((w,i) => {
-      this.words.push(w);
+      this.words.push(w.dictionary);
     });
 
     this.initIndex();
@@ -168,6 +184,7 @@ export class WordTrackerService {
   }
 
   getWord(): any {
+    //this.startTime = Date.now();
     return this.word = this.words[this.stepper.getIndexValue()] || {};
   }
 
@@ -185,6 +202,7 @@ export class WordTrackerService {
   wrongAnswer() {
     let state = this.wordStates[this.stepper.getIndexValue()];
     if (!state) {
+      this.erred = true;
       this.wrongs++;
       state = {
         unit_id: this.learnedUnit.unit_id,

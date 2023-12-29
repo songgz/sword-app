@@ -1,0 +1,45 @@
+<ion-content padding class="custom-background">
+  <div class="container">
+    <div class="avatar-list" *ngIf="loggedIn">
+      <ion-button color="danger" *ngIf="!edited" (click)="toggleEdit()" fill="clear" style="position:absolute; top:10px; right:10px; font-size: 24px"><ion-icon name="create-outline"></ion-icon></ion-button>
+      <ion-button color="danger" *ngIf="edited" (click)="toggleEdit()" fill="clear" style="position:absolute; top:10px; right:10px; font-size: 24px"><ion-icon name="exit-outline"></ion-icon></ion-button>
+
+      <div class="avatar-item" *ngFor="let user of users; let i=index">
+        <ion-icon *ngIf="edited" (click)="delUser(i)" color="danger" size="large" style="position:absolute; top:-10px; right:-10px;" name="close-outline"></ion-icon>
+        <img (click)="fastLogin(i)" alt="" [src]="user.avatar || '/assets/images/default.png'" >
+        <div class="ion-text-center avatar-label">
+          {{user.name}}
+        </div>
+      </div>
+      <div class="avatar-item" (click)="toggleLongedIn()">
+        <ion-icon style="font-size: 110px;color: #1a84b3 " name="add-circle-outline"></ion-icon>
+        <div class="ion-text-center avatar-label">
+          添加用户
+        </div>
+      </div>
+    </div>
+
+    <div class="avatar-list" *ngIf="!loggedIn">
+      <ion-button (click)="toggleLongedIn()" fill="clear" style="position:absolute; top:10px; left:10px; font-size: 24px"><ion-icon name="arrow-back-outline"></ion-icon></ion-button>
+     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <ion-list  lines="full" class="ion-margin-top">
+          <ion-item lines="none">
+            <ion-input type="text" label="用户:" formControlName="username" errorText="用户为必填项。" required></ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-input type="password" label="密码:" formControlName="password" errorText="密码为必填项。" required></ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-button slot="end" size="default" expand="block" type="submit" >登录</ion-button>
+          </ion-item>
+        </ion-list>
+
+        <div class="ion-padding">
+           </div>
+      </form>
+
+
+    </div>
+
+  </div>
+</ion-content>

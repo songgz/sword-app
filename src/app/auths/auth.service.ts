@@ -12,9 +12,10 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return this.rest.post('auths/sign_in', {username: username, password: password}).pipe(map(res => {
+      let user = res.data;
       this.ctx.saveToken(res.tokens);
-      this.ctx.saveUser(res.data);
-
+      this.ctx.saveUser(user);
+      this.ctx.addUser(user.id, user.name, user.acct_no, password, user.avatar);
       return res;
     }));
   }
