@@ -1,8 +1,8 @@
 <ion-content padding class="custom-background">
   <div class="container">
     <div class="avatar-list" *ngIf="loggedIn">
-      <ion-button color="danger" *ngIf="!edited" (click)="toggleEdit()" fill="clear" style="position:absolute; top:10px; right:10px; font-size: 24px"><ion-icon name="create-outline"></ion-icon></ion-button>
-      <ion-button color="danger" *ngIf="edited" (click)="toggleEdit()" fill="clear" style="position:absolute; top:10px; right:10px; font-size: 24px"><ion-icon name="exit-outline"></ion-icon></ion-button>
+      <ion-button color="danger" title="编辑" *ngIf="!edited" (click)="toggleEdit()" fill="clear" style="position:absolute; top:10px; right:10px; font-size: 24px"><ion-icon name="create-outline"></ion-icon></ion-button>
+      <ion-button color="danger" title="完成" *ngIf="edited" (click)="toggleEdit()" fill="clear" style="position:absolute; top:10px; right:10px; font-size: 24px"><ion-icon name="exit-outline"></ion-icon></ion-button>
 
       <div class="avatar-item" *ngFor="let user of users; let i=index">
         <ion-icon *ngIf="edited" (click)="delUser(i)" color="danger" size="large" style="position:absolute; top:-10px; right:-10px;" name="close-outline"></ion-icon>
@@ -20,8 +20,8 @@
     </div>
 
     <div class="avatar-list" *ngIf="!loggedIn">
-      <ion-button (click)="toggleLongedIn()" fill="clear" style="position:absolute; top:10px; left:10px; font-size: 24px"><ion-icon name="arrow-back-outline"></ion-icon></ion-button>
-     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <ion-button title="返回" (click)="toggleLongedIn()" fill="clear" style="position:absolute; top:10px; left:10px; font-size: 24px"><ion-icon name="arrow-back-outline"></ion-icon></ion-button>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <ion-list  lines="full" class="ion-margin-top">
           <ion-item lines="none">
             <ion-input type="text" label="用户:" formControlName="username" errorText="用户为必填项。" required></ion-input>

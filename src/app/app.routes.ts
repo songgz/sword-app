@@ -7,7 +7,7 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./login/login.page').then( m => m.LoginPage)
+    loadComponent: () => import('./login2/login2.page').then( m => m.Login2Page)
   },
   {
     path: 'forgot-password',
@@ -28,9 +28,10 @@ export const routes: Routes = [
   {
     path: 'tab3',
     loadComponent: () => import('./tab3/tab3.page').then((m) => m.Tab3Page),
-  },  {
+  },
+  {
     path: 'login2',
-    loadComponent: () => import('./login2/login2.page').then( m => m.Login2Page)
+    loadComponent: () => import('./login/login.page').then( m => m.LoginPage)
   },
 
 

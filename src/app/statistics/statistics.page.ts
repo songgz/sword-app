@@ -1,9 +1,11 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import {ChartConfiguration, ChartData, ChartType} from 'chart.js/auto';
 import {BaseChartDirective, NgChartsModule} from "ng2-charts";
+import {RestApiService} from "../services/rest-api.service";
+import {AppCtxService} from "../services/app-ctx.service";
+import {ChartOptions} from "chart.js";
 
 @Component({
   selector: 'app-statistics',
@@ -14,43 +16,59 @@ import {BaseChartDirective, NgChartsModule} from "ng2-charts";
 })
 export class StatisticsPage implements OnInit {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+  week_data: any = {};
 
-  constructor() { }
+  constructor(private rest: RestApiService, private ctx: AppCtxService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
+
   }
 
-  public barChartOptions: ChartConfiguration['options'] = {
-    // We use these empty structures as placeholders for dynamic theming.
-    scales: {
-      x: {},
-      y: {
-        min: 10,
-      },
-    },
-    // plugins: {
-    //   legend: {
-    //     display: true,
-    //   },
-    //   // datalabels: {
-    //   //   anchor: 'end',
-    //   //   align: 'end',
-    //   // },
-    // },
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    // 其他选项设置
   };
-  public barChartType: ChartType = 'bar';
+  // public barChartOptions: ChartConfiguration['options'] = {
+  //   // We use these empty structures as placeholders for dynamic theming.
+  //   scales: {
+  //     x: {},
+  //     y: {
+  //       // min: 10,
+  //     },
+  //   },
+  //   // plugins: {
+  //   //   legend: {
+  //   //     display: true,
+  //   //   },
+  //   //   // datalabels: {
+  //   //   //   anchor: 'end',
+  //   //   //   align: 'end',
+  //   //   // },
+  //   // },
+  // };
+  //public barChartType: ChartType = 'bar';
   //public barChartPlugins = [DataLabelsPlugin];
 
-  public barChartData: ChartData<'bar'> = {
-    labels: ['12月25日', '12月26日', '12月27日', '12月28日', '12月27日', '12月28日'],
+  public barChartData: any = {
+    labels: [],
     datasets: [
-      { data: [65, 59, 80, 81, 56, 55, 40], label: '学习时间' },
-      { data: [28, 48, 40, 19, 86, 27, 90], label: '学习单词数量' },
+      { data: [], label: '学习时间' },
+      { data: [], label: '学习单词数量' },
     ],
   };
 
   ionViewDidEnter() {
-
+    this.rest.get("statistics/week", {student_id: this.ctx.getUserId()}).subscribe(res => {
+      this.barChartData = {
+        labels: res.data.days,
+        datasets: [
+          {data: res.data.durations, label: '学习时间'},
+          {data: res.data.words, label: '学习单词数量'},
+        ]
+      };
+      //this.cdr.detectChanges(); // 手动触发变更检测
+      console.log(this.barChartData);
+    });
   }
 
 

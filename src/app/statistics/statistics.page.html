@@ -7,19 +7,20 @@
 <ion-content [fullscreen]="true">
   <ion-segment value="default">
     <ion-segment-button value="default">
-      <ion-label>Default</ion-label>
+      <ion-label>按周</ion-label>
     </ion-segment-button>
     <ion-segment-button value="segment">
-      <ion-label>Segment</ion-label>
+      <ion-label>按月</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="segment">
+      <ion-label>按年</ion-label>
     </ion-segment-button>
   </ion-segment>
   <canvas
     baseChart
     class="chart"
-    [data]="barChartData"
-    [options]="barChartOptions"
-    [type]="barChartType"
-
+    [data] = "barChartData"
+    [type]="'bar'"
   >
   </canvas>
 </ion-content>
