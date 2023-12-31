@@ -1,0 +1,37 @@
+.my-book-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  //justify-content: space-around;
+}
+
+.my-book-card {
+  width: 350px;
+  height: 138px;
+  background-color: white;
+}
+
+.my-book-card-content {
+  display: flex;
+  align-items: center;
+}
+
+.my-book-card-content ion-img {
+  width: 130px;
+  height: 130px;
+}
+
+
+.my-book-card-text {
+  position: relative;
+  flex-grow: 1;
+  width: 220px;
+  height: 134px;;
+}
+
+.my-book-card-buttons {
+  display: flex;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+
+}

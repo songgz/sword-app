@@ -59,7 +59,13 @@ export const routes: Routes = [
       },
       {
         path: 'statistics',
-        loadComponent: () => import('../statistics/statistics.page').then( m => m.StatisticsPage)
+        loadComponent: () => import('../statistics/statistics.page').then( m => m.StatisticsPage),
+        canActivate: [authGuard]
+      },
+      {
+        path: 'notebook',
+        loadComponent: () => import('../notebook/notebook.page').then( m => m.NotebookPage),
+        canActivate: [authGuard]
       },
       {
         path: '',

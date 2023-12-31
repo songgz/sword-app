@@ -95,7 +95,7 @@ export class WordTrackerService {
       student_id: this.learned_book.student_id,
       book_id: this.learned_book.book_id,
       unit_id: this.learnedUnit.unit_id,
-      word_id: this.getWord().id,
+      dictionary_id: this.getWord().id,
       duration: du < 15 ? du : 15
     }
     console.log(this.startTime);
@@ -112,7 +112,7 @@ export class WordTrackerService {
     if (ws) {
       learnedBook.error_words.push({
         unit_id: ws.unit_id,
-        word_id: ws.word_id,
+        dictionary_id: ws.dictionary_id,
         repeats: ws.repeats,
         learns: ws.learns,
         reviews: ws.reviews
@@ -151,14 +151,14 @@ export class WordTrackerService {
     this.learned_book.error_words.forEach((ew: any, i: number) => {
       let state: WordState = {
         unit_id: ew?.unit_id,
-        word_id: ew?.word_id,
+        dictionary_id: ew?.dictionary_id,
         repeats: 5,
         learns: ew?.learns || 0,
         reviews: ew?.reviews || 0
       };
 
       this.wordStates[i] = state;
-      this.words.push(ew.word);
+      this.words.push(ew.dictionary);
     });
 
     console.log(this.wordStates);
@@ -206,7 +206,7 @@ export class WordTrackerService {
       this.wrongs++;
       state = {
         unit_id: this.learnedUnit.unit_id,
-        word_id: this.getWord().id,
+        dictionary_id: this.getWord().id,
         repeats: 0,
         learns: 0,
         reviews: 0};

@@ -1,0 +1,26 @@
+<ion-header [translucent]="true">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button text="返回" color="secondary"></ion-back-button>
+    </ion-buttons>
+    <ion-title>生词本</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" [fullscreen]="true">
+  <div class="my-book-card-container">
+    <ion-card *ngFor="let note of notebooks" class="my-book-card">
+      <div class="my-book-card-content">
+        <ion-img style="margin-left: 2px" slot="start" [src]="getWordImg(note.book_cover)"></ion-img>
+        <div class="my-book-card-text">
+          <ion-card-header>
+            <ion-card-title>{{ note.book_name }}</ion-card-title>
+          </ion-card-header>
+          <div class="my-book-card-buttons">
+            <ion-button *ngFor="let w of note.words" size="small" color="light" (click)="openNote(note.book_id, w.learn_type)">{{ctx.learnTypes[w.learn_type]}}<br>{{w.wrongs}}</ion-button>
+          </div>
+        </div>
+      </div>
+    </ion-card>
+  </div>
+</ion-content>

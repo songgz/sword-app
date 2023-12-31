@@ -1,18 +1,21 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>statistics</ion-title>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/student" text="返回" color="secondary"></ion-back-button>
+    </ion-buttons>
+    <ion-title>学习统计</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-segment value="default">
-    <ion-segment-button value="default">
+  <ion-segment value="week" (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="week">
       <ion-label>按周</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="segment">
+    <ion-segment-button value="month">
       <ion-label>按月</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="segment">
+    <ion-segment-button value="year">
       <ion-label>按年</ion-label>
     </ion-segment-button>
   </ion-segment>

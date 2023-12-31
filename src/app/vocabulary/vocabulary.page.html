@@ -1,0 +1,23 @@
+<ion-header [translucent]="true">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button text="返回" color="secondary"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{learnedBook.book?.name}}-{{ctx.learnTypes[learnedBook.learn_type]}} 共{{learnedBook.error_words?.length}}个生词</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list>
+    <ion-list-header>
+      <ion-label></ion-label>
+    </ion-list-header>
+    <ion-item button style="--background: #fff;margin-bottom: 10px" *ngFor="let w of learnedBook.error_words">
+      <ion-label>
+        <h1><ion-text color="primary">{{w.dictionary.word}}</ion-text></h1>
+        <p style="font-size: 16px">{{w.dictionary.acceptation}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

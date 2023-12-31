@@ -58,6 +58,10 @@ export class StatisticsPage implements OnInit {
   };
 
   ionViewDidEnter() {
+    this.loadWeek();
+  }
+
+  loadWeek() {
     this.rest.get("statistics/week", {student_id: this.ctx.getUserId()}).subscribe(res => {
       this.barChartData = {
         labels: res.data.days,
@@ -71,5 +75,46 @@ export class StatisticsPage implements OnInit {
     });
   }
 
+  loadMonth() {
+    this.rest.get("statistics/month", {student_id: this.ctx.getUserId()}).subscribe(res => {
+      this.barChartData = {
+        labels: res.data.days,
+        datasets: [
+          {data: res.data.durations, label: '学习时间'},
+          {data: res.data.words, label: '学习单词数量'},
+        ]
+      };
+      console.log(this.barChartData);
+    });
+  }
 
+  loadYear() {
+    this.rest.get("statistics/year", {student_id: this.ctx.getUserId()}).subscribe(res => {
+      this.barChartData = {
+        labels: res.data.days,
+        datasets: [
+          {data: res.data.durations, label: '学习时间'},
+          {data: res.data.words, label: '学习单词数量'},
+        ]
+      };
+      console.log(this.barChartData);
+    });
+  }
+
+  segmentChanged(event: CustomEvent) {
+    const selectedValue = event.detail.value;
+    switch (selectedValue) {
+      case "week":
+        this.loadWeek();
+        break;
+      case "month":
+        this.loadMonth();
+        break;
+      case "year":
+        this.loadYear();
+        break;
+
+    }
+
+  }
 }
