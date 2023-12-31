@@ -270,12 +270,7 @@ export class WordTrackerService {
     return '';
   }
 
-  getWordAudio(file: string): string {
-    if (file) {
-      return this.rest.getAssetUrl() + 'quick/v' + file;
-    }
-    return '';
-  }
+
 
   findWord(wordId: string) {
     return this.words.find(w => w.id === wordId);
@@ -283,9 +278,9 @@ export class WordTrackerService {
 
   playWord(word?: any) {
     if(word) {
-      this.audio.play(this.getWordAudio(word.pronunciation));
+      this.audio.play(this.rest.getWordAudio(word.pronunciation));
     }else{
-      this.audio.play(this.getWordAudio(this.word.pronunciation));
+      this.audio.play(this.rest.getWordAudio(this.word.pronunciation));
     }
   }
 

@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {ActivatedRoute} from "@angular/router";
 import {AppCtxService} from "../services/app-ctx.service";
+import {AudioService} from "../services/audio.service";
 
 @Component({
   selector: 'app-vocabulary',
@@ -16,7 +17,7 @@ import {AppCtxService} from "../services/app-ctx.service";
 export class VocabularyPage implements OnInit {
   learnedBook: any = {};
 
-  constructor(private rest: RestApiService, private activatedRouter: ActivatedRoute, public ctx: AppCtxService) { }
+  constructor(private rest: RestApiService, private activatedRouter: ActivatedRoute, public ctx: AppCtxService, private  audio: AudioService) { }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
@@ -31,4 +32,7 @@ export class VocabularyPage implements OnInit {
 
   }
 
+  playWord(pronunciation: string) {
+    this.audio.play(this.rest.getWordAudio(pronunciation));
+  }
 }

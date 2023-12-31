@@ -12,7 +12,7 @@
     <ion-list-header>
       <ion-label></ion-label>
     </ion-list-header>
-    <ion-item button style="--background: #fff;margin-bottom: 10px" *ngFor="let w of learnedBook.error_words">
+    <ion-item button style="--background: #fff;margin-bottom: 10px" *ngFor="let w of learnedBook.error_words" (click)="playWord(w.dictionary.pronunciation)">
       <ion-label>
         <h1><ion-text color="primary">{{w.dictionary.word}}</ion-text></h1>
         <p style="font-size: 16px">{{w.dictionary.acceptation}}</p>

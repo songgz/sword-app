@@ -64,4 +64,11 @@ export class RestApiService {
   getAssetUrl() :string {
     return environment.assetUrl;
   }
+
+  getWordAudio(file: string): string {
+    if (file) {
+      return this.getAssetUrl() + 'quick/v' + file;
+    }
+    return '';
+  }
 }
