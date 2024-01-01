@@ -14,10 +14,10 @@
       <ion-label>{{title}}</ion-label>
     </ion-list-header>
     <ion-item>
-      <ion-checkbox  aria-label="">删除学习记录</ion-checkbox>
+      <ion-checkbox [(ngModel)]="isRecord"  aria-label="">删除学习记录</ion-checkbox>
     </ion-item>
     <ion-item>
-      <ion-checkbox  aria-label="">删除课本</ion-checkbox>
+      <ion-checkbox [(ngModel)]="isBook"  aria-label="">删除课本</ion-checkbox>
     </ion-item>
   </ion-list>
   <ion-grid>

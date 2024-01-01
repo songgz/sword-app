@@ -77,22 +77,28 @@ export class LearnPage implements OnInit {
 
   }
 
-  async removeBookModal(book: any) {
-    console.log(book);
+  async removeBookModal(learnedBook: any) {
+    console.log(learnedBook);
     const modal = await this.modalCtrl.create({
       component: RemoveBookModalComponent,
       componentProps: {
-        title: book.book.name,
+        title: learnedBook.book.name,
         message: ''
       }
     });
-    modal.present();
 
-    const { data, role } = await modal.onWillDismiss();
+    modal.onDidDismiss().then((result) => {
+      if (result.role === 'ok') {
+        if (result.data.del.length > 0) {
+          this.rest.destroy('learned_books/' + learnedBook.id, {del: result.data.del}).subscribe();
+          this.loadLearnedBooks(this.ctx.getUserId(), this.ctx.learnType);
+        }
+      }
+    });
 
-    if (role === 'confirm') {
-      //this.message = `Hello, ${data}!`;
-    }
+
+
+    await modal.present();
   }
 
 

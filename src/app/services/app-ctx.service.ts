@@ -55,5 +55,10 @@ export class AppCtxService {
     this.storage.addUser(userId, userName, userAcctNo, password, avatar);
   }
 
+  logout() {
+    this.storage.signOut();
+    this.userSubject.next(new User());
+  }
+
 
 }

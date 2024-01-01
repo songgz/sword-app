@@ -13,15 +13,22 @@ import {FormsModule} from "@angular/forms";
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class RemoveBookModalComponent  implements OnInit {
-  removeForm: any = {user_id: '', old_password: '', new_password: '', confirm_password: ''};
+  isRecord: boolean = false;
+  isBook: boolean = false;
   @Input() title: string | undefined;
   @Input() message: string | undefined;
-  constructor(public modalCtrl: ModalController, private rest: RestApiService, private ctx: AppCtxService) { }
+  constructor(public modalCtrl: ModalController) { }
 
   ngOnInit() {}
 
   submit() {
-
+    let data = {del: ''};
+    if (this.isBook) {
+      data.del = 'book';
+    }else if (this.isRecord) {
+      data.del = 'record';
+    }
+    this.modalCtrl.dismiss(data, 'ok');
   }
 
 }

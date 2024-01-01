@@ -1,6 +1,5 @@
 <app-header [title]="'学习中心'"></app-header>
-
-<ion-content [fullscreen]="true">
+<ion-content>
   <ion-accordion-group [multiple]="true" [value]="getBookCategoryCodes()">
     <ion-accordion *ngFor="let category of bookCategories"  [value]="category.code">
       <ion-item slot="header" color="light">

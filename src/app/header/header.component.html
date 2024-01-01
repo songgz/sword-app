@@ -4,18 +4,14 @@
       <ion-back-button color="primary"></ion-back-button>
     </ion-buttons>
     <ion-title>{{title}}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button class="avatar-button">
-        <div class="avatar-container">
-          <ion-avatar>
-            <ion-img style="width: 50px; height: 50px;" src="assets/icon/favicon.png"></ion-img>
-          </ion-avatar>
-          <ion-label class="text-container">
-            <div>{{ctx.getUser().name}}</div>
-            <div>VIP有效期:{{ctx.getUser().vip_days}}天</div>
-          </ion-label>
-        </div>
+    <ion-buttons slot="end">
+      <ion-button (click)="openPopover($event)">
+        <ion-label><h2 style="color: #EDF79DFF">{{ctx.getUser().name}}</h2><p style="color: #fff">VIP有效期:{{ctx.getUser().vip_days}}天</p></ion-label>
+        <ion-avatar>
+          <img src="assets/images/default.png" alt="Avatar" />
+        </ion-avatar>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+

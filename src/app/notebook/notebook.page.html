@@ -1,12 +1,4 @@
-<ion-header [translucent]="true">
-  <ion-toolbar mode="ios">
-    <ion-buttons slot="start">
-      <ion-back-button text="返回" color="secondary"></ion-back-button>
-    </ion-buttons>
-    <ion-title>生词本</ion-title>
-  </ion-toolbar>
-</ion-header>
-
+<app-header [title]="'生词本'"></app-header>
 <ion-content class="ion-padding" [fullscreen]="true">
   <div class="my-book-card-container">
     <ion-card *ngFor="let note of notebooks" class="my-book-card">

@@ -5,13 +5,14 @@ import { IonicModule } from '@ionic/angular';
 import {AppCtxService} from "../services/app-ctx.service";
 import {RestApiService} from "../services/rest-api.service";
 import {Router} from "@angular/router";
+import {HeaderComponent} from "../header/header.component";
 
 @Component({
   selector: 'app-notebook',
   templateUrl: './notebook.page.html',
   styleUrls: ['./notebook.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+    imports: [IonicModule, CommonModule, FormsModule, HeaderComponent]
 })
 export class NotebookPage implements OnInit {
   notebooks: any[] = [];
