@@ -86,6 +86,7 @@ export class QuizListenPage implements OnInit {
   }
 
   next(){
+    this.tracker.audio.stop();
     if (this.index === this.quiz.questions.length) {
       this.endTime = new Date();
       this.quiz.duration = Math.floor(this.endTime.getTime() - this.startTime.getTime());
@@ -95,6 +96,7 @@ export class QuizListenPage implements OnInit {
     }else{
       this.answered = false;
       this.question = this.quiz.questions[this.index];
+
       this.tracker.playWord(this.tracker.findWord(this.question.word_id));
       this.index = this.index + 1;
 
