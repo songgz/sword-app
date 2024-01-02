@@ -16,18 +16,22 @@ import {AudioService} from "../services/audio.service";
 })
 export class VocabularyPage implements OnInit {
   learnedBook: any = {};
+  private pagination: any = {page_no: 0};
+  private query: any = {};
 
   constructor(private rest: RestApiService, private activatedRouter: ActivatedRoute, public ctx: AppCtxService, private  audio: AudioService) { }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
-      this.loadErrorWord(params["studentId"],params["bookId"],params["learnType"]);
+      this.query = {student_id: params["studentId"], book_id: params["bookId"], learn_type: params["learnType"]};
+      this.loadErrorWord();
     });
   }
 
-  loadErrorWord(studentId: string, bookId: string, learnType: string) {
-    this.rest.show('learned_books/0', {student_id: studentId, book_id: bookId, learn_type: learnType}).subscribe(res => {
+  loadErrorWord() {
+    this.rest.show('learned_books/0', this.query).subscribe(res => {
       this.learnedBook = res.data;
+      this.pagination = res.pagination;
     });
 
   }
@@ -35,4 +39,6 @@ export class VocabularyPage implements OnInit {
   playWord(pronunciation: string) {
     this.audio.play(this.rest.getWordAudio(pronunciation));
   }
+
+
 }

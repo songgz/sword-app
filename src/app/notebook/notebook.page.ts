@@ -20,6 +20,10 @@ export class NotebookPage implements OnInit {
   constructor(public ctx: AppCtxService, private rest: RestApiService, private router: Router) { }
 
   ngOnInit() {
+
+  }
+
+  ionViewDidEnter(): void {
     this.loadLearnedBook(this.ctx.getUserId());
   }
 

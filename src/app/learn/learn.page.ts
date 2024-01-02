@@ -73,10 +73,6 @@ export class LearnPage implements OnInit {
     return this.bookCategories.map(b => b.code);
   }
 
-  deleteBook() {
-
-  }
-
   async removeBookModal(learnedBook: any) {
     console.log(learnedBook);
     const modal = await this.modalCtrl.create({
@@ -95,8 +91,6 @@ export class LearnPage implements OnInit {
         }
       }
     });
-
-
 
     await modal.present();
   }

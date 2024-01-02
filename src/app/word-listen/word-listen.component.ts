@@ -109,6 +109,7 @@ export class WordListenComponent  implements OnInit {
   performAction(action: string, option?: boolean) {
     switch (action) {
       case 'initial':
+        this.tracker.audio.stop();
         this.currentState = MemoryState.Survey;
         this.tracker.getWord();
         this.tracker.playWord();
@@ -131,7 +132,7 @@ export class WordListenComponent  implements OnInit {
         break;
       case 'evaluate':
         if (option) {
-          this.tracker.play('http://' + window.location.host + '/assets/audio/e2.mp3')
+          this.tracker.play('http://' + window.location.host + '/assets/audio/s.mp3')
           this.answer = true;
           this.performAction('next');
         } else {

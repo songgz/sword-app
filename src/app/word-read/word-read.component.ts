@@ -109,6 +109,7 @@ export class WordReadComponent  implements OnInit {
   performAction(action: string, option?: boolean) {
     switch (action) {
       case 'initial':
+        this.tracker.audio.stop();
         this.tracker.startTime = Date.now();
         this.currentState = this.State.Survey;
         this.tracker.getWord();
@@ -118,7 +119,6 @@ export class WordReadComponent  implements OnInit {
         }
         break;
       case 'survey':
-        this.tracker.audio.stop();
         //const audioUrls = ['http://' + window.location.host + '/assets/audio/a.mp3', 'http://114.55.39.31:8790/quick/v/m/morning.mp3'];
         if (option) {
           this.tracker.play('http://' + window.location.host + '/assets/audio/a.mp3');
@@ -133,7 +133,7 @@ export class WordReadComponent  implements OnInit {
         break;
       case 'evaluate':
         if (option) {
-          this.tracker.play('http://' + window.location.host + '/assets/audio/e2.mp3')
+          this.tracker.play('http://' + window.location.host + '/assets/audio/s.mp3')
           this.answer = true;
           this.performAction('next');
         } else {
