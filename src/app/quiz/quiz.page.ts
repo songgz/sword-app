@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import {IonicModule, ModalController, NavController} from '@ionic/angular';
 import {RestApiService} from "../services/rest-api.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -8,6 +8,7 @@ import {AppCtxService} from "../services/app-ctx.service";
 import {WordTrackerService} from "../services/word-tracker.service";
 import {OverModalComponent} from "../over-modal/over-modal.component";
 import {TimerService} from "../services/timer-service";
+import {AudioService} from "../services/audio.service";
 
 @Component({
   selector: 'app-quiz',
@@ -22,13 +23,14 @@ export class QuizPage implements OnInit {
   question: any = {};
   progress: number = 1;
   answered: boolean = false;
-  options: string[] = ['A','B','C','D'];
+  options: string[] = ['A', 'B', 'C', 'D'];
   startTime: Date = new Date();
   endTime: Date | undefined;
   testTypes: any = {afterLearn: '章节后测试', beforeLearn: '章节前测试'};
   isPause: boolean = false;
 
-  constructor(private ctx: AppCtxService, private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController,public timerService: TimerService) { }
+  constructor(private ctx: AppCtxService, private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router, private modalCtrl: ModalController, public timerService: TimerService, private audio: AudioService) {
+  }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
@@ -38,7 +40,12 @@ export class QuizPage implements OnInit {
   }
 
   loadQuiz(studentId: string, unitId: string, testType: string, learnType: string) {
-    this.rest.create('quizzes',{student_id: studentId, unit_id: unitId, test_type: testType, learn_type: learnType}).subscribe(res => {
+    this.rest.create('quizzes', {
+      student_id: studentId,
+      unit_id: unitId,
+      test_type: testType,
+      learn_type: learnType
+    }).subscribe(res => {
       this.quiz = res.data;
       this.quiz.corrects = 0;
       this.quiz.wrongs = 0;
@@ -62,7 +69,7 @@ export class QuizPage implements OnInit {
       this.quiz.score = Math.round(100 * this.quiz.corrects / this.quiz.total);
       this.saveQuiz();
       this.quizOverModal();
-    }else{
+    } else {
       this.answered = false;
       this.question = this.quiz.questions[this.index];
       this.index = this.index + 1;
@@ -72,7 +79,7 @@ export class QuizPage implements OnInit {
         next: c => {
           this.progress = (10 - c) / 10;
           if (c > 9 && !this.answered) {
-            console.log('cc'+c);
+            console.log('cc' + c);
             this.choice_answer();
           }
 
@@ -82,28 +89,26 @@ export class QuizPage implements OnInit {
   }
 
 
-
-
-
   choice_answer(choiceId?: string) {
+    this.audio.stop();
     this.question.user_answer = choiceId;
     if (this.question.right_answer === this.question.user_answer) {
       this.question.result = true;
       this.quiz.corrects++;
+      this.audio.play('http://' + window.location.host + '/assets/audio/s.mp3');
     } else {
       this.question.result = false;
       this.quiz.wrongs++;
+      this.audio.play('http://' + window.location.host + '/assets/audio/e.mp3');
     }
-    //console.log(this.question);
+
     this.answered = true;
-
-      this.timerService.delayTimer(2000, ()=>{
-        if(!this.isPause){
-          this.next();
-        }
-      });
+    this.timerService.delayTimer(2000, () => {
+      if (!this.isPause) {
+        this.next();
+      }
+    });
   }
-
 
 
   showAnswer(choiceId: string) {
@@ -120,7 +125,6 @@ export class QuizPage implements OnInit {
   }
 
 
-
   async quizOverModal() {
     const modal = await this.modalCtrl.create({
       component: OverModalComponent,
@@ -134,7 +138,7 @@ export class QuizPage implements OnInit {
     });
     modal.present();
 
-    const { data, role } = await modal.onWillDismiss();
+    const {data, role} = await modal.onWillDismiss();
 
     if (role === 'confirm') {
       this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.ctx.getUserId()}});

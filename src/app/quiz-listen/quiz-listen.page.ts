@@ -10,6 +10,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {OverModalComponent} from "../over-modal/over-modal.component";
 import {AppCtxService} from "../services/app-ctx.service";
 import {TimerService} from "../services/timer-service";
+import {AudioService} from "../services/audio.service";
 
 @Component({
   selector: 'app-quiz-listen',
@@ -30,7 +31,14 @@ export class QuizListenPage implements OnInit {
   testTypes: any = {afterLearn: '章节后测试', beforeLearn: '章节前测试'};
   isPause: boolean = false;
 
-  constructor(private ctx: AppCtxService, public tracker: WordTrackerService,  private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router,private modalCtrl: ModalController,public timerService: TimerService) { }
+  constructor(private ctx: AppCtxService,
+              public tracker: WordTrackerService,
+              private rest: RestApiService,
+              private activatedRouter: ActivatedRoute,
+              private router: Router,
+              private modalCtrl: ModalController,
+              public timerService: TimerService,
+              private audio: AudioService) { }
 
   ngOnInit() {
     this.activatedRouter.queryParams.subscribe((params) => {
@@ -61,9 +69,11 @@ export class QuizListenPage implements OnInit {
     if (this.question.right_answer === this.question.user_answer) {
       this.question.result = true;
       this.quiz.corrects++;
+      this.audio.play('http://' + window.location.host + '/assets/audio/s.mp3');
     } else {
       this.question.result = false;
       this.quiz.wrongs++;
+      this.audio.play('http://' + window.location.host + '/assets/audio/e.mp3');
     }
     //console.log(this.question);
     this.answered = true;

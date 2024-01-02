@@ -125,7 +125,7 @@ export class WordReadComponent  implements OnInit {
           this.tracker.playWord();
           this.currentState = this.State.Evaluate;
         } else {
-          this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3')
+          this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3');
           this.tracker.playWord();
           this.answer = false;
           this.currentState = this.State.Repeater;
@@ -133,11 +133,11 @@ export class WordReadComponent  implements OnInit {
         break;
       case 'evaluate':
         if (option) {
-          this.tracker.play('http://' + window.location.host + '/assets/audio/s.mp3')
+          this.tracker.play('http://' + window.location.host + '/assets/audio/s.mp3');
           this.answer = true;
           this.performAction('next');
         } else {
-          this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3')
+          this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3');
           this.answer = false;
           this.currentState = this.State.Repeater;
         }

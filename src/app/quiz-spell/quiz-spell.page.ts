@@ -9,6 +9,7 @@ import {RestApiService} from "../services/rest-api.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {OverModalComponent} from "../over-modal/over-modal.component";
 import {TimerService} from "../services/timer-service";
+import {AudioService} from "../services/audio.service";
 
 @Component({
   selector: 'app-quiz-spell',
@@ -39,7 +40,14 @@ export class QuizSpellPage implements OnInit {
   endTime: Date | undefined;
   isPause: boolean = false;
 
-  constructor(private ctx: AppCtxService, public tracker: WordTrackerService, private rest: RestApiService, private activatedRouter: ActivatedRoute, private router: Router, private modalCtrl: ModalController, public timerService: TimerService) {
+  constructor(private ctx: AppCtxService,
+              public tracker: WordTrackerService,
+              private rest: RestApiService,
+              private activatedRouter: ActivatedRoute,
+              private router: Router,
+              private modalCtrl: ModalController,
+              public timerService: TimerService,
+              private audio: AudioService) {
   }
 
   ngOnInit() {
@@ -205,12 +213,15 @@ export class QuizSpellPage implements OnInit {
   }
 
 
-  async choice_answer() {
+   choice_answer() {
     if (this.answer) {
       this.question.result = true;
       this.quiz.corrects = this.quiz.corrects + 1;
+      this.audio.play('http://' + window.location.host + '/assets/audio/s.mp3');
     } else {
       this.quiz.wrongs = this.quiz.wrongs + 1;
+      this.question.result = false;
+      this.audio.play('http://' + window.location.host + '/assets/audio/s.mp3');
     }
     this.answered = true;
 
