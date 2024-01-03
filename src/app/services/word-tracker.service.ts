@@ -29,7 +29,6 @@ export class WordTrackerService {
   options: any[] = [];
   learned_book: any = {};
   erred: Boolean = false;
-  learnedWords: any[] = [];
   startTime: number = 0;
   endTime: number = 0;
 
@@ -90,44 +89,40 @@ export class WordTrackerService {
   }
 
   saveWordState() {
-    let du = Math.floor((this.endTime - this.startTime)/1000);
+    let du = 0;
+    if (this.endTime > this.startTime) {
+      du = Math.round((this.endTime - this.startTime)/1000);
+    }
     let learnedWord: any = {
       student_id: this.learned_book.student_id,
       book_id: this.learned_book.book_id,
-      unit_id: this.learnedUnit.unit_id,
-      dictionary_id: this.getWord().id,
-      duration: du < 15 ? du : 15
+      reviews: 0,
+      completions: 0,
+      durations: du < 15  ? du : 15
     }
-    console.log(this.startTime);
-    console.log(this.endTime);
 
     let learnedBook: any = {
       id: this.learned_book.id,
       error_words: [],
       learned_units: [],
-      learned_words: [learnedWord]
+      learned_words: []
     };
 
-    let ws = this.getWordState();
-    if (ws) {
-      learnedBook.error_words.push({
-        unit_id: ws.unit_id,
-        dictionary_id: ws.dictionary_id,
-        repeats: ws.repeats,
-        learns: ws.learns,
-        reviews: ws.reviews
-      });
-    }
-
     if (!this.isReview) {
-      console.log('save')
-      console.log(this);
+      learnedWord.completions = 1;
       this.learnedUnit.completions = this.rights + this.wrongs;
       this.learnedUnit.wrongs = this.wrongs;
       this.learnedUnit.rights = this.rights;
       this.learnedUnit.last_word_index = this.stepper.lastWordIndex;
       learnedBook.learned_units.push(this.learnedUnit);
+    }else{
+      learnedWord.reviews = 1;
+      let ws = this.getWordState();
+      if (ws) {
+        learnedBook.error_words.push(ws);
+      }
     }
+    learnedBook.learned_words.push(learnedWord);
 
     this.rest.update('learned_books/'+this.learned_book.id, {learned_book: learnedBook}).subscribe();
   }
@@ -161,7 +156,6 @@ export class WordTrackerService {
       this.words.push(ew.dictionary);
     });
 
-    console.log(this.wordStates);
     this.getWord();
   }
 
@@ -269,8 +263,6 @@ export class WordTrackerService {
     }
     return '';
   }
-
-
 
   findWord(wordId: string) {
     return this.words.find(w => w.id === wordId);

@@ -67,11 +67,12 @@ export class StatisticsPage implements OnInit {
         labels: res.data.days,
         datasets: [
           {data: res.data.durations, label: '学习时间'},
-          {data: res.data.words, label: '学习单词数量'},
+          {data: res.data.completions, label: '学习单词数量'},
+          {data: res.data.reviews, label: '复习单词数量'},
         ]
       };
       //this.cdr.detectChanges(); // 手动触发变更检测
-      console.log(this.barChartData);
+      //console.log(this.barChartData);
     });
   }
 
@@ -81,10 +82,11 @@ export class StatisticsPage implements OnInit {
         labels: res.data.days,
         datasets: [
           {data: res.data.durations, label: '学习时间'},
-          {data: res.data.words, label: '学习单词数量'},
+          {data: res.data.completions, label: '学习单词数量'},
+          {data: res.data.reviews, label: '复习单词数量'},
         ]
       };
-      console.log(this.barChartData);
+      //console.log(this.barChartData);
     });
   }
 
@@ -94,7 +96,8 @@ export class StatisticsPage implements OnInit {
         labels: res.data.days,
         datasets: [
           {data: res.data.durations, label: '学习时间'},
-          {data: res.data.words, label: '学习单词数量'},
+          {data: res.data.completions, label: '学习单词数量'},
+          {data: res.data.reviews, label: '复习单词数量'},
         ]
       };
       console.log(this.barChartData);
