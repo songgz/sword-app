@@ -24,7 +24,6 @@ export class TimerService {
       takeUntil(this.destroy$)
       //take(10)
     ).subscribe(() => {
-      console.log(this);
       if (this.isTimerRunning && !this.isTimerPaused) {
         this.timerCount++;
         this.timer$.next(this.timerCount);

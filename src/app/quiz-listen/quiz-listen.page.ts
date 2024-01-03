@@ -89,17 +89,17 @@ export class QuizListenPage implements OnInit {
     this.tracker.audio.stop();
     if (this.index === this.quiz.questions.length) {
       this.endTime = new Date();
-      this.quiz.duration = Math.floor(this.endTime.getTime() - this.startTime.getTime());
+      this.quiz.duration = Math.round(this.endTime.getTime() - this.startTime.getTime());
       this.quiz.score = Math.round(100 * this.quiz.corrects / this.quiz.total);
       this.saveQuiz();
       this.quizOverModal();
     }else{
       this.answered = false;
       this.question = this.quiz.questions[this.index];
-
-      this.tracker.playWord(this.tracker.findWord(this.question.word_id));
       this.index = this.index + 1;
-
+      console.log(this.question);
+      console.log(this.tracker.words);
+      this.tracker.playWord(this.tracker.findWord(this.question.dictionary_id));
       this.timerService.cancelTimer();
       this.timerService.startTimer(1000).subscribe({
         next: c => {

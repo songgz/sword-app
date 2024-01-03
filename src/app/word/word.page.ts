@@ -51,7 +51,6 @@ export class WordPage implements OnInit {
               private toastCtl: ToastController) {
 
 
-
   }
 
   ngOnInit() {
@@ -69,7 +68,7 @@ export class WordPage implements OnInit {
     this.tracker.loadLearnedBook(studentId, bookId, learnType).subscribe(res => {
       if (this.tracker.isReview) {
         this.addCom();
-      }else{
+      } else {
         this.openUnit(this.tracker.learnedUnit.unit_id);
       }
     });
@@ -85,19 +84,23 @@ export class WordPage implements OnInit {
     this.tracker.getLearnUnit(unitId);
     console.log('ss');
     console.log(this.tracker.learnedUnit);
-    if(this.tracker.isReview) {
+    if (this.tracker.isReview) {
       this.presentToast("请先完成复习内容!", "middle");
-    }else if(this.tracker.learnedUnit.completions === this.tracker.learnedUnit.total) {
+    } else if (this.tracker.learnedUnit.completions === this.tracker.learnedUnit.total) {
       //this.presentToast(this.tracker.learnedUnit.unit_name +"单元已学完!", "middle").then();
       this.learnedModal().then(() => {
         this.started = true;
       });
-    }else if (!this.tracker.learnedUnit.before_learn_quiz) {
+    } else if (!this.tracker.learnedUnit.before_learn_quiz) {
+      this.tracker.loadUnitWords().subscribe(res => {
+        this.addCom();
         this.prevUnitModal();
-    }else{
-        this.tracker.loadUnitWords().subscribe(res => {
-          this.addCom();
-        });
+      });
+
+    } else {
+      this.tracker.loadUnitWords().subscribe(res => {
+        this.addCom();
+      });
     }
   }
 
@@ -137,7 +140,7 @@ export class WordPage implements OnInit {
 
     modal.onDidDismiss().then((result) => {
       if (result.role === 'confirm') {
-        this.tracker.deleteErrorWord().subscribe(res =>{
+        this.tracker.deleteErrorWord().subscribe(res => {
           this.load(this.tracker.learned_book.student_id, this.tracker.learned_book.book_id, this.tracker.learned_book.learn_type);
         });
       }
@@ -160,13 +163,31 @@ export class WordPage implements OnInit {
       if (result.role === 'confirm') {
         switch (this.ctx.learnType) {
           case "read":
-            this.router.navigate(['/tabs/quiz'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+            this.router.navigate(['/tabs/quiz'], {
+              queryParams: {
+                unitId: this.tracker.learnedUnit.unit_id,
+                learnType: this.ctx.learnType,
+                testType: 'beforeLearn'
+              }
+            });
             break;
           case "listen":
-            this.router.navigate(['/tabs/quiz-listen'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+            this.router.navigate(['/tabs/quiz-listen'], {
+              queryParams: {
+                unitId: this.tracker.learnedUnit.unit_id,
+                learnType: this.ctx.learnType,
+                testType: 'beforeLearn'
+              }
+            });
             break;
           case "spell":
-            this.router.navigate(['/tabs/quiz-spell'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id, learnType: this.ctx.learnType, testType: 'beforeLearn'}});
+            this.router.navigate(['/tabs/quiz-spell'], {
+              queryParams: {
+                unitId: this.tracker.learnedUnit.unit_id,
+                learnType: this.ctx.learnType,
+                testType: 'beforeLearn'
+              }
+            });
             break;
           default:
             console.log("It's an unknown.");
@@ -187,7 +208,7 @@ export class WordPage implements OnInit {
       cssClass: 'custom-modal'
     });
     modal.present();
-    const { data, role } = await modal.onWillDismiss();
+    const {data, role} = await modal.onWillDismiss();
     if (role === 'confirm') {
     }
     if (role === 'cancel') {
@@ -199,14 +220,19 @@ export class WordPage implements OnInit {
     if (this.tracker.isReview === true) {
       this.tracker.isReview = false;
       this.openUnit(this.tracker.nextLearnedUnit().unit_id);
-    }else{
+    } else {
 
       switch (this.ctx.learnType) {
         case "read":
           if (this.tracker.learned_book?.book?.kind === 'FREE') {
             this.nextUnitModal();
-          }else{
-            this.router.navigate(['tabs/match-game'], {queryParams: {unitId: this.tracker.learnedUnit.unit_id,bookId: this.tracker.learned_book.book_id}});
+          } else {
+            this.router.navigate(['tabs/match-game'], {
+              queryParams: {
+                unitId: this.tracker.learnedUnit.unit_id,
+                bookId: this.tracker.learned_book.book_id
+              }
+            });
           }
           break;
         case "listen":
