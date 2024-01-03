@@ -13,12 +13,12 @@ import {Hotkey, HotkeysService} from "angular2-hotkeys";
   standalone: true,
   imports: [IonicModule, CommonModule]
 })
-export class WordListenComponent  implements OnInit {
+export class WordListenComponent implements OnInit {
   @Output() learnOverEvent: EventEmitter<any> = new EventEmitter();
   protected readonly State = MemoryState;
   currentState: MemoryState = MemoryState.Initial;
   private answer: boolean = false;
-  options: string[] = ['A','B','C','D'];
+  options: string[] = ['A', 'B', 'C', 'D'];
 
   constructor(public tracker: WordTrackerService, public ctx: AppCtxService, private hotkeys: HotkeysService) {
     this.setuphotkeys();
@@ -32,10 +32,10 @@ export class WordListenComponent  implements OnInit {
     this.hotkeys.add(new Hotkey('z', (event: KeyboardEvent): boolean => {
       switch (this.currentState) {
         case this.State.Survey:
-          this.performAction('survey',true);
+          this.performAction('survey', true);
           break;
         case this.State.Evaluate:
-          this.performAction('evaluate',true);
+          this.performAction('evaluate', true);
           break;
         default:
           console.log('Invalid action');
@@ -48,10 +48,10 @@ export class WordListenComponent  implements OnInit {
     this.hotkeys.add(new Hotkey('x', (event: KeyboardEvent): boolean => {
       switch (this.currentState) {
         case this.State.Survey:
-          this.performAction('survey',false);
+          this.performAction('survey', false);
           break;
         case this.State.Evaluate:
-          this.performAction('evaluate',false);
+          this.performAction('evaluate', false);
           break;
         case this.State.Repeater:
           this.performAction('repeater');
@@ -70,10 +70,10 @@ export class WordListenComponent  implements OnInit {
     this.hotkeys.add(new Hotkey('1', (event: KeyboardEvent): boolean => {
       switch (this.currentState) {
         case this.State.Survey:
-          this.performAction('survey',true);
+          this.performAction('survey', true);
           break;
         case this.State.Evaluate:
-          this.performAction('evaluate',true);
+          this.performAction('evaluate', true);
           break;
         default:
           console.log('Invalid action');
@@ -86,10 +86,10 @@ export class WordListenComponent  implements OnInit {
     this.hotkeys.add(new Hotkey('2', (event: KeyboardEvent): boolean => {
       switch (this.currentState) {
         case this.State.Survey:
-          this.performAction('survey',false);
+          this.performAction('survey', false);
           break;
         case this.State.Evaluate:
-          this.performAction('evaluate',false);
+          this.performAction('evaluate', false);
           break;
         case this.State.Repeater:
           this.performAction('repeater');
@@ -109,8 +109,9 @@ export class WordListenComponent  implements OnInit {
   performAction(action: string, option?: boolean) {
     switch (action) {
       case 'initial':
+        this.tracker.startTime = Date.now();
         this.tracker.audio.stop();
-        this.currentState = MemoryState.Survey;
+        this.currentState = this.State.Survey;
         this.tracker.getWord();
         this.tracker.playWord();
         if (this.tracker.testable()) {
@@ -122,12 +123,12 @@ export class WordListenComponent  implements OnInit {
         if (option) {
           this.tracker.play('http://' + window.location.host + '/assets/audio/a.mp3');
           this.tracker.playWord();
-          this.currentState = MemoryState.Evaluate;
+          this.currentState = this.State.Evaluate;
         } else {
           this.tracker.play('http://' + window.location.host + '/assets/audio/e.mp3');
           this.tracker.playWord();
           this.answer = false;
-          this.currentState = MemoryState.Repeater;
+          this.currentState = this.State.Repeater;
         }
         break;
       case 'evaluate':
@@ -146,7 +147,8 @@ export class WordListenComponent  implements OnInit {
         this.currentState = MemoryState.Next;
         break;
       case 'next':
-        if(option) {
+        this.tracker.endTime = Date.now();
+        if (option) {
           this.tracker.play('http://' + window.location.host + '/assets/audio/n.mp3');
         }
 
@@ -155,7 +157,7 @@ export class WordListenComponent  implements OnInit {
 
         if (this.tracker.isOver()) {
           this.learnOverEvent.emit();
-        }else{
+        } else {
           this.tracker.next();
           this.performAction('initial');
         }

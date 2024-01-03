@@ -109,8 +109,8 @@ export class WordReadComponent  implements OnInit {
   performAction(action: string, option?: boolean) {
     switch (action) {
       case 'initial':
-        this.tracker.audio.stop();
         this.tracker.startTime = Date.now();
+        this.tracker.audio.stop();
         this.currentState = this.State.Survey;
         this.tracker.getWord();
         this.tracker.playWord();
