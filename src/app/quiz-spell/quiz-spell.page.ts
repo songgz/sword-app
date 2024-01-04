@@ -188,14 +188,14 @@ export class QuizSpellPage implements OnInit {
   next() {
     if (this.index === this.quiz.questions.length) {
       this.endTime = new Date();
-      this.quiz.duration = Math.floor(this.endTime.getTime() - this.startTime.getTime());
+      this.quiz.duration = Math.round(this.endTime.getTime() - this.startTime.getTime());
       this.quiz.score = Math.round(100 * this.quiz.corrects / this.quiz.total);
       this.saveQuiz();
       this.quizOverModal();
     } else {
       this.answered = false;
       this.question = this.quiz.questions[this.index];
-      this.word = this.tracker.findWord(this.question.word_id);
+      this.word = this.tracker.findWord(this.question.dictionary_id);
       this.initSpell(this.word.word);
       this.index = this.index + 1;
 

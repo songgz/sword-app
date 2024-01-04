@@ -96,9 +96,6 @@ export class QuizListenPage implements OnInit {
     }else{
       this.answered = false;
       this.question = this.quiz.questions[this.index];
-      this.index = this.index + 1;
-      console.log(this.question);
-      console.log(this.tracker.words);
       this.tracker.playWord(this.tracker.findWord(this.question.dictionary_id));
       this.timerService.cancelTimer();
       this.timerService.startTimer(1000).subscribe({
@@ -110,6 +107,7 @@ export class QuizListenPage implements OnInit {
           }
         }
       });
+      this.index = this.index + 1;
     }
   }
 
@@ -118,21 +116,18 @@ export class QuizListenPage implements OnInit {
       component: OverModalComponent,
       cssClass: 'custom-modal',
       componentProps: {
-        total: this.quiz.questions?.length,
+        total: this.quiz.total,
         rights: this.quiz.corrects,
         wrongs: this.quiz.wrongs,
         score: this.quiz.score
       }
     });
-    modal.present();
 
-    const { data, role } = await modal.onWillDismiss();
+    modal.onWillDismiss().then(result => {
+      this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.quiz.studentId}});
+    });
 
-    if (role === 'confirm') {
-      //this.message = `Hello, ${data}!`;
-      this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.ctx.getUserId()}});
-
-    }
+    await modal.present();
   }
 
 
