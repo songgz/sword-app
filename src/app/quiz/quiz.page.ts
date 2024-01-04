@@ -136,16 +136,12 @@ export class QuizPage implements OnInit {
         score: this.quiz.score
       }
     });
-    modal.present();
 
-    const {data, role} = await modal.onWillDismiss();
+    modal.onWillDismiss().then(result => {
+      this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.quiz.studentId}});
+    });
 
-    if (role === 'confirm') {
-      this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.ctx.getUserId()}});
-
-    }
-
-
+    await modal.present();
   }
 
   stop() {

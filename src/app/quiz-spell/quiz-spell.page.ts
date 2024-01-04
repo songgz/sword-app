@@ -245,9 +245,7 @@ export class QuizSpellPage implements OnInit {
     });
 
     modal.onWillDismiss().then(result => {
-      if (result.role === 'confirm') {
-        this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.ctx.getUserId()}});
-      }
+      this.router.navigate(['/tabs/quiz-list'], {queryParams: {studentId: this.ctx.getUserId()}});
     });
 
     await modal.present();
