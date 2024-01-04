@@ -96,7 +96,7 @@ export class QuizListenPage implements OnInit {
     }else{
       this.answered = false;
       this.question = this.quiz.questions[this.index];
-      this.tracker.playWord(this.tracker.findWord(this.question.dictionary_id));
+      this.tracker.playWordPronunciation(this.question.pronunciation);
       this.timerService.cancelTimer();
       this.timerService.startTimer(1000).subscribe({
         next: c => {

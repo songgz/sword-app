@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {IonicModule, ModalController} from '@ionic/angular';
-import {interval, map, Subscription, take, tap} from "rxjs";
 import {AppCtxService} from "../services/app-ctx.service";
 import {WordTrackerService} from "../services/word-tracker.service";
 import {RestApiService} from "../services/rest-api.service";

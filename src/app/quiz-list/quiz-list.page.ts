@@ -18,6 +18,10 @@ export class QuizListPage implements OnInit {
   constructor(private rest: RestApiService, private ctx: AppCtxService, private navCtrl: NavController) { }
 
   ngOnInit() {
+
+  }
+
+  ionViewDidEnter() {
     this.loadQuizzes(this.ctx.getUserId());
   }
 
@@ -25,7 +29,6 @@ export class QuizListPage implements OnInit {
     this.rest.index('quizzes', {student_id: studentId}).subscribe(res => {
       this.quizzes = res.data;
     });
-
   }
 
   goBack() {

@@ -82,21 +82,20 @@ export class WordPage implements OnInit {
   openUnit(unitId: string) {
     this.started = false;
     this.tracker.getLearnUnit(unitId);
-    console.log('ss');
-    console.log(this.tracker.learnedUnit);
+    //console.log('ss');
+    //console.log(this.tracker.learnedUnit);
     if (this.tracker.isReview) {
-      this.presentToast("请先完成复习内容!", "middle");
+      this.presentToast("请先完成复习内容!", "middle").then(()=>{
+        this.started = true;
+      });
     } else if (this.tracker.learnedUnit.completions === this.tracker.learnedUnit.total) {
-      //this.presentToast(this.tracker.learnedUnit.unit_name +"单元已学完!", "middle").then();
       this.learnedModal().then(() => {
         this.started = true;
       });
     } else if (!this.tracker.learnedUnit.before_learn_quiz) {
       this.tracker.loadUnitWords().subscribe(res => {
-        this.addCom();
         this.prevUnitModal();
       });
-
     } else {
       this.tracker.loadUnitWords().subscribe(res => {
         this.addCom();

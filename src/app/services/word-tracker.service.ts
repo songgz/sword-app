@@ -276,6 +276,10 @@ export class WordTrackerService {
     }
   }
 
+  playWordPronunciation(pronunciation: string) {
+    this.audio.play(this.rest.getWordAudio(pronunciation));
+  }
+
   play(url: string) {
     return this.audio.play(url);
   }
