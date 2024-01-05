@@ -38,4 +38,15 @@ export class QuizDetailPage implements OnInit {
     return this.options[i];
   }
 
+  getOptionColor(question: any, choice: any) {
+    if (question.right_answer === choice.id) {
+      return 'err1'; //? 'success': ''
+    }else{
+      if (question.user_answer === choice.id) {
+        return 'danger';
+      }
+    }
+    return '';
+  }
+
 }

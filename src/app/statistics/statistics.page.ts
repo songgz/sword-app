@@ -1,11 +1,11 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import {BaseChartDirective, NgChartsModule} from "ng2-charts";
+import {NgChartsModule} from "ng2-charts";
 import {RestApiService} from "../services/rest-api.service";
 import {AppCtxService} from "../services/app-ctx.service";
-import {ChartOptions} from "chart.js";
+import {ChartConfiguration, ChartOptions} from "chart.js";
 
 @Component({
   selector: 'app-statistics',
@@ -15,19 +15,33 @@ import {ChartOptions} from "chart.js";
   imports: [IonicModule, CommonModule, FormsModule, NgChartsModule]
 })
 export class StatisticsPage implements OnInit {
-  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
-  week_data: any = {};
 
-  constructor(private rest: RestApiService, private ctx: AppCtxService, private cdr: ChangeDetectorRef) { }
+  constructor(private rest: RestApiService, private ctx: AppCtxService) { }
 
   ngOnInit() {
 
   }
 
-  public barChartOptions: ChartOptions = {
+  chartOptions: ChartOptions<'bar'> = {
     responsive: true,
-    // 其他选项设置
+    maintainAspectRatio: false,
+    // 其他选项...
   };
+
+  public barChartOptions: ChartConfiguration['options'] = {
+    // We use these empty structures as placeholders for dynamic theming.
+    scales: {
+      x: {},
+      y: {
+        min: 10,
+      },
+    },
+
+  };
+  // public barChartOptions: ChartOptions = {
+  //   responsive: true,
+  //   // 其他选项设置
+  // };
   // public barChartOptions: ChartConfiguration['options'] = {
   //   // We use these empty structures as placeholders for dynamic theming.
   //   scales: {

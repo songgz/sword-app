@@ -8,15 +8,22 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-item lines="none"><ion-label slot="start">当前第 {{page_no}}/{{page_count}} 组</ion-label> <ion-label>本组进度: {{count}}/10<ion-progress-bar slot="end" [value]="count/10"></ion-progress-bar></ion-label></ion-item>
   <ion-grid>
     <ion-row>
-      <ion-col>
+      <ion-col size="5">
+        <ion-item lines="none"><ion-label slot="start">当前第 {{page_no}}/{{page_count}} 组</ion-label></ion-item>
+      </ion-col>
+      <ion-col size="7">
+        <ion-item><ion-label>本组进度: {{count}}/10<ion-progress-bar slot="end" [value]="count/10"></ion-progress-bar></ion-label></ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="5">
         <ion-button size="large" *ngFor="let word of xCol" (click)="clickX(word)" [color]="x.id === word.id ? 'err6' : 'dark'" [class]="word.hedden" fill="outline" class="my-button1">
           <ion-text text-left>{{word.word}}</ion-text>
         </ion-button>
       </ion-col>
-      <ion-col>
+      <ion-col size="7">
         <ion-button size="large" *ngFor="let word of yCol" (click)="clickY(word)" [color]="y.id === word.id ? 'err6' : 'dark'" [class]="word.hedden" fill="outline" class="my-button1">
           <ion-text text-left>{{word.acceptation}}</ion-text>
         </ion-button>

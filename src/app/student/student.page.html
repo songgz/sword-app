@@ -5,19 +5,15 @@
     <ion-row >
       <ion-col size="auto">
         <ion-card  style="width:250px;background: #fff;">
-          <img style="width:200px;height:200px;margin: 10px;position: relative;" alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+          <img style="width:200px;height:200px;margin: 10px;position: relative;" alt="Silhouette of mountains" src="/assets/images/default.png" />
           <ion-card-header>
-            <ion-card-subtitle>昵称: {{ctx.getUser().name}}</ion-card-subtitle>
-            <ion-card-subtitle>年级: {{ctx.getUser()}}</ion-card-subtitle>
-            <ion-card-subtitle>生日:</ion-card-subtitle>
+            <ion-card-subtitle>姓名: {{ctx.getUser().name}}</ion-card-subtitle>
+            <ion-card-subtitle>年级: {{ctx.getUser().grade}}</ion-card-subtitle>
             <ion-card-subtitle>VIP剩余天数: {{ctx.getUser().vip_days}}天</ion-card-subtitle>
           </ion-card-header>
-
           <ion-card-content>
-
               <ion-button (click)="rechargeModal()">充值</ion-button>
               <ion-button (click)="changePasswordModal()">修改密码</ion-button>
-
           </ion-card-content>
         </ion-card>
 

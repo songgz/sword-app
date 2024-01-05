@@ -117,10 +117,16 @@ export class WordTrackerService {
       learnedBook.learned_units.push(this.learnedUnit);
     }else{
       learnedWord.reviews = 1;
-      let ws = this.getWordState();
-      if (ws) {
-        learnedBook.error_words.push(ws);
-      }
+    }
+    let ws = this.getWordState();
+    if (ws) {
+      learnedBook.error_words.push({
+        unit_id: ws.unit_id,
+        dictionary_id: ws.dictionary_id,
+        repeats: ws.repeats,
+        learns: ws.learns,
+        reviews: ws.reviews
+      });
     }
     learnedBook.learned_words.push(learnedWord);
 

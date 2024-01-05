@@ -24,8 +24,7 @@
       </ion-item-divider>
 
       <ion-item *ngFor="let choice of question.choices; let i=index">
-        <ion-label><ion-text [color]="question.right_answer === choice.id ? 'success': ''">{{options[i]}}.　{{choice.title}}</ion-text></ion-label>
-
+        <ion-label><ion-text [color]="getOptionColor(question, choice)">{{options[i]}}.　{{choice.title}}</ion-text></ion-label>
       </ion-item>
 f
     </ion-item-group>

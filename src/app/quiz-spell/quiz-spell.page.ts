@@ -116,11 +116,7 @@ export class QuizSpellPage implements OnInit {
     }
 
     if (this.isSpellOver()) {
-      if (this.check('answer')) {
-        this.answer = true;
-      } else {
-        this.answer = false;
-      }
+
       this.choice_answer();
     }
   }
@@ -203,7 +199,6 @@ export class QuizSpellPage implements OnInit {
         next: c => {
           this.progress = (10 - c) / 10;
           if (c > 9 && !this.answered) {
-            //console.log('cc'+c);
             this.choice_answer();
           }
         }
@@ -213,7 +208,8 @@ export class QuizSpellPage implements OnInit {
 
 
    choice_answer() {
-    if (this.answer) {
+     this.answer = this.check('answer');
+     if (this.answer) {
       this.question.result = true;
       this.quiz.corrects = this.quiz.corrects + 1;
       this.audio.play('http://' + window.location.host + '/assets/audio/s.mp3');
