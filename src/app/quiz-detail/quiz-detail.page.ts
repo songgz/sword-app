@@ -40,7 +40,7 @@ export class QuizDetailPage implements OnInit {
 
   getOptionColor(question: any, choice: any) {
     if (question.right_answer === choice.id) {
-      return 'err1'; //? 'success': ''
+      return 'err1';
     }else{
       if (question.user_answer === choice.id) {
         return 'danger';
